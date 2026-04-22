@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>تفاصيل المنتج - بصرة سنتر</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Cairo Font -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#008477",
+              secondary: "#E16A24",
+              background: "#FDFBF7",
+              surface: "#FFFFFF",
+              accent: "#F2F9F8",
+            },
+            fontFamily: {
+              cairo: ["Cairo", "sans-serif"],
+            },
+            borderRadius: {
+              xs: "8px",
+              md: "16px",
+              lg: "24px",
+              xl: "32px",
+            },
+            boxShadow: {
+              premium: "0 10px 20px -5px rgba(0, 0, 0, 0.05)",
+              nav: "0 -10px 40px -10px rgba(0, 132, 119, 0.15)",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        font-family: "Cairo", sans-serif;
+        background-color: #fdfbf7;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .glass {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+      }
+      @keyframes slideUp {
+        from {
+          transform: translateY(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+      .animate-slide-up {
+        animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      }
+      .product-main-image {
+        height: 50vh;
+        object-fit: contain;
+        width: 100%;
+        background: white;
+      }
+    </style>
+  </head>
+  <body class="pb-32 bg-background min-h-screen">
+    <!-- Header Controls -->
+    <header
+      class="fixed top-0 left-0 w-full p-5 flex items-center justify-between z-50"
+    >
+      <button
+        onclick="window.history.back()"
+        class="w-12 h-12 glass rounded-full flex items-center justify-center active:scale-90 transition-transform"
+      >
+        <i data-lucide="chevron-right" class="w-6 h-6 text-slate-800"></i>
+      </button>
+      <div class="flex gap-2">
+        <button
+          id="detail-like"
+          onclick="toggleLike()"
+          class="w-12 h-12 glass rounded-full flex items-center justify-center active:scale-90 transition-transform"
+        >
+          <i data-lucide="heart" class="w-6 h-6 text-slate-400"></i>
+        </button>
+        <button
+          class="w-12 h-12 glass rounded-full flex items-center justify-center active:scale-90 transition-transform"
+        >
+          <i data-lucide="share-2" class="w-6 h-6 text-slate-800"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Product Image Gallery -->
+    <section class="relative">
+      <div
+        class="product-main-image flex items-center justify-center p-8 bg-white rounded-b-[48px] shadow-sm"
+      >
+        <img
+          id="product-img"
+          src=""
+          class="max-h-full object-contain"
+          alt="Product"
+        />
+      </div>
+    </section>
+
+    <!-- Product Info Content -->
+    <main class="px-6 pt-8 animate-slide-up">
+      <div class="flex items-center gap-2 mb-3">
+        <span
+          id="product-cat"
+          class="bg-primary/10 text-primary text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider"
+          >القسم</span
+        >
+        <span
+          class="bg-secondary/10 text-secondary text-[10px] font-black px-3 py-1 rounded-full"
+          >خصم 20%</span
+        >
+      </div>
+
+      <h1
+        id="product-name"
+        class="text-2xl font-black text-slate-900 mb-2 leading-tight"
+      >
+        اسم المنتج يظهر هنا
+      </h1>
+      <p id="product-desc" class="text-slate-400 font-normal mb-6">
+        هذا الوصف يعبر عن تفاصيل المنتج ومميزاته التي تهم المستخدم.
+      </p>
+
+      <div class="flex items-center gap-4 mb-8">
+        <div class="flex flex-col">
+          <span
+            class="text-xs font-bold text-slate-400 uppercase tracking-widest"
+            >السعر</span
+          >
+          <div class="flex items-baseline gap-1">
+            <span id="product-price" class="text-xl font-black text-primary"
+              >0,000</span
+            >
+            <span class="text-sm font-bold text-primary/60">د.ع</span>
+          </div>
+        </div>
+        <div class="h-10 w-px bg-slate-100 mx-2"></div>
+        <div class="flex flex-col">
+          <span
+            class="text-xs font-bold text-slate-400 uppercase tracking-widest"
+            >التوافر</span
+          >
+          <span class="text-sm font-black text-emerald-600"
+            >متوفر في المخزن</span
+          >
+        </div>
+      </div>
+
+      <!-- Features Grid -->
+      <div class="grid grid-cols-2 gap-4 mb-10">
+        <div
+          class="bg-white p-4 rounded-3xl border border-slate-100 flex items-center gap-3"
+        >
+          <div
+            class="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center text-amber-500"
+          >
+            <i data-lucide="truck" class="w-5 h-5"></i>
+          </div>
+          <div class="flex flex-col">
+            <span class="text-[10px] font-bold text-slate-400">توصيل سريع</span>
+            <span class="text-xs font-black">خلال 24 ساعة</span>
+          </div>
+        </div>
+        <div
+          class="bg-white p-4 rounded-3xl border border-slate-100 flex items-center gap-3"
+        >
+          <div
+            class="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-500"
+          >
+            <i data-lucide="shield-check" class="w-5 h-5"></i>
+          </div>
+          <div class="flex flex-col">
+            <span class="text-[10px] font-bold text-slate-400"
+              >جودة مضمونة</span
+            >
+            <span class="text-xs font-black">منتج أصلي 100%</span>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Bottom Action Bar -->
+    <div class="fixed bottom-0 left-0 w-full p-6 z-50">
+      <nav
+        class="max-w-md mx-auto glass rounded-[32px] p-2 flex items-center justify-between gap-4 shadow-nav border border-white/60 pointer-events-auto"
+      >
+        <!-- Qty Selector -->
+        <div
+          class="flex items-center gap-3 bg-slate-50 p-1.5 rounded-2xl border border-slate-100"
+        >
+          <button
+            onclick="changeQty(-1)"
+            class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-slate-400 shadow-sm active:scale-90"
+          >
+            <i data-lucide="minus" class="w-5 h-5"></i>
+          </button>
+          <span
+            id="qty-count"
+            class="text-lg font-black min-w-[24px] text-center"
+            >1</span
+          >
+          <button
+            onclick="changeQty(1)"
+            class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-primary shadow-sm active:scale-90"
+          >
+            <i data-lucide="plus" class="w-5 h-5"></i>
+          </button>
+        </div>
+
+        <!-- Add Button -->
+        <button
+          class="flex-1 h-14 bg-primary text-white rounded-2xl font-black text-lg shadow-lg shadow-primary/25 active:scale-[0.98] transition-transform flex items-center justify-center gap-3"
+        >
+          <i data-lucide="shopping-cart" class="w-6 h-6"></i>
+          إضافة للسلة
+        </button>
+      </nav>
+    </div>
+
+    <script>
+      // Data Loading
+      const urlParams = new URLSearchParams(window.location.search);
+      const productId = urlParams.get("id") || "p1";
+
+      async function loadProduct() {
+        try {
+          const response = await fetch("data.json");
+          const data = await response.json();
+
+          // Find product across all sections
+          let product = null;
+          data.sections.forEach((s) => {
+            const p = s.products.find((item) => item.id === productId);
+            if (p) {
+              product = p;
+              product.cat = s.title; // Use section title as category
+            }
+          });
+
+          if (product) {
+            document.getElementById("product-name").innerText = product.name;
+            document.getElementById("product-price").innerText = product.price;
+            document.getElementById("product-desc").innerText =
+              product.fullDesc || product.desc;
+            document.getElementById("product-cat").innerText = product.cat;
+            document.getElementById("product-img").src = product.img;
+            lucide.createIcons();
+          }
+        } catch (error) {
+          console.error("Error loading product data:", error);
+        }
+      }
+
+      let currentQty = 1;
+      let isLiked = false;
+
+      function changeQty(delta) {
+        currentQty = Math.max(1, currentQty + delta);
+        document.getElementById("qty-count").innerText = currentQty;
+      }
+
+      function toggleLike() {
+        isLiked = !isLiked;
+        const btn = document.getElementById("detail-like");
+        const icon = btn.querySelector("svg") || btn.querySelector("i");
+
+        if (isLiked) {
+          icon.classList.remove("text-slate-400");
+          icon.classList.add("text-red-500", "fill-red-500");
+        } else {
+          icon.classList.remove("text-red-500", "fill-red-500");
+          icon.classList.add("text-slate-400");
+        }
+      }
+
+      window.onload = loadProduct;
+    </script>
+  </body>
+</html>

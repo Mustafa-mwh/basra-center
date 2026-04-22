@@ -1,0 +1,191 @@
+{
+  "categories": [
+    {
+      "id": "dates",
+      "name": "تمور",
+      "img": "https://images.unsplash.com/photo-1629738601425-494c3d6ba3e2?q=80&w=400",
+      "color": "emerald"
+    },
+    {
+      "id": "dairy",
+      "name": "ألبان",
+      "img": "https://plus.unsplash.com/premium_photo-1695042864778-6d67ec3953e9?q=80&w=400",
+      "color": "amber"
+    },
+    {
+      "id": "bakery",
+      "name": "مخبوزات",
+      "img": "https://images.unsplash.com/photo-1608198093002-ad4e005484ec?q=80&w=400",
+      "color": "orange"
+    },
+    {
+      "id": "meat",
+      "name": "لحوم",
+      "img": "https://images.unsplash.com/photo-1602470521006-59ab77068b0d?q=80&w=400",
+      "color": "rose"
+    },
+    {
+      "id": "canned",
+      "name": "معلبات",
+      "img": "https://plus.unsplash.com/premium_photo-1664305040276-66cf5c0ac52b?q=80&w=1160&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "color": "rose"
+    }
+  ],
+  "sections": [
+    {
+      "title": "جديد على بصرة سنتر",
+      "subtitle": "وصلنا حديثاً هذا الأسبوع",
+      "accentColor": "primary",
+      "products": [
+        {
+          "id": "p1",
+          "name": "بخاخ معطر جو- 300 مل",
+          "desc": "عبوة 1 كغم",
+          "fullDesc": "معطر جو منعش يدوم طويلاً، يقضي على الروائح الكريهة ويمنح منزلك عبقاً مميزاً.",
+          "price": "4,500",
+          "img": "https://www.elryan.com/img/600/600/resize/catalog/product/6/3/636f74c8a2429e9897d84cc852665ls2-14782.jpg"
+        },
+        {
+          "id": "p2",
+          "name": "ايلينا ميد شامبو مضاد للقشرة, 250 مل",
+          "desc": "برطمان 500 غم",
+          "fullDesc": "شامبو طبي بتركيبة متطورة للتخلص من القشرة والحكة من أول استخدام.",
+          "price": "12,000",
+          "img": "https://www.elryan.com/img/600/600/resize/catalog/product/e/l/elina-med20new2013-26578.jpg",
+          "discount": "20%"
+        },
+        {
+          "id": "p3",
+          "name": "حليب نيدو ليتل كيدز",
+          "desc": "عبوة 1 لتر",
+          "fullDesc": "حليب مدعم للأطفال في مراحل النمو، يحتوي على الفيتامينات والمعادن الضرورية.",
+          "price": "2,250",
+          "img": "https://www.elryan.com/img/600/600/resize/catalog/product/6/7/676fe4ad14f7ff003dd45bfe993444-78089.jpg"
+        }
+      ]
+    },
+    {
+      "title": "منتجات مميزة",
+      "subtitle": "اختياراتنا المفضلة لك اليوم",
+      "accentColor": "secondary",
+      "products": [
+        {
+          "id": "p4",
+          "name": "خلاط يدوي نوال - 1200 واط",
+          "desc": "1 كغم",
+          "fullDesc": "خلاط يدوي قوي ومتعدد الاستخدامات، مثالي لتحضير الشوربات والصلصات.",
+          "price": "24,000",
+          "img": "https://www.elryan.com/img/600/600/resize/catalog/product/6/4/64788760807f48007ca9b873755886824-26506.jpg"
+        },
+        {
+          "id": "p5",
+          "name": "جيكور كبة لحم وسط",
+          "desc": "10 قطع",
+          "fullDesc": "كبة لحم عراقية تقليدية، محضرة من أفضل المكونات وجاهزة للقلي.",
+          "price": "2,500",
+          "img": "https://amyar-market.com/wp-content/uploads/2023/03/img_3895.png"
+        },
+        {
+          "id": "p6",
+          "name": "مربى فراولة 850 غم",
+          "desc": "1 كغم",
+          "fullDesc": "مربى فراولة طبيعي بقطع الفاكهة، طعم رائع ومثالي للفطور.",
+          "price": "1,250",
+          "img": "https://herostore.com.eg/wp-content/uploads/2022/01/6221024050015_H1C1_Hero_Strawberry_850g_Jumbo-min.png"
+        }
+      ]
+    },
+    {
+      "title": "عروض المنظفات",
+      "subtitle": "أفضل الماركات للعناية بمنزلك",
+      "accentColor": "emerald-600",
+      "products": [
+        {
+          "id": "p7",
+          "name": "تايد مسحوق غسيل - 2.5 كغم",
+          "desc": "الأصلي للغسالات الأوتوماتيك",
+          "fullDesc": "مسحوق غسيل تايد الأصلي، يزيل البقع الصعبة ويحافظ على بياض الملابس.",
+          "price": "11,500",
+          "img": "https://bazar-center.com/249932-large_default/%D8%AA%D8%A7%D9%8A%D8%AF_%D9%85%D8%B3%D8%AD%D9%88%D9%82_%D8%BA%D8%B3%D9%8A%D9%84_%D9%83%D9%8A%D8%B3_2_5_%D9%83%D8%BA%D9%85__4.jpg"
+        },
+        {
+          "id": "p8",
+          "name": "داوني منعم ملابس - 1 لتر",
+          "desc": "نسيم الوادي",
+          "fullDesc": "منعم ملابس داوني يمنح ملابسك نعومة فائقة ورائحة تدوم طويلاً.",
+          "price": "5,250",
+          "img": "https://cdn.salla.sa/Nyonb/LkNRD5HXRtqAkSJAiWV8vpqABtues3nGLUMbvNlY.jpg"
+        },
+        {
+          "id": "p9",
+          "name": "فيري سائل جلي - 750 مل",
+          "desc": "بقوة الليمون",
+          "fullDesc": "سائل جلي فيري يقضي على الدهون بفعالية عالية ويترك الأطباق لامعة.",
+          "price": "2,750",
+          "img": "https://orisdi.com/cdn/shop/products/8001090688033n.jpg?v=1578356055"
+        }
+      ]
+    },
+    {
+      "title": "قسم المعلبات",
+      "subtitle": "خزين البيت الأساسي",
+      "accentColor": "amber-600",
+      "products": [
+        {
+          "id": "p10",
+          "name": "تونة العلالي - 170 غم",
+          "desc": "لحم تونة خفيف بالزيت",
+          "fullDesc": "لحم تونة خفيف بالزيت النباتي، غني بالأوميغا 3 والبروتين.",
+          "price": "1,750",
+          "img": "https://cdn.mafrservices.com/pim-content/UAE/media/product/1121777/1746428404/1121777_main.jpg?im=Resize=376"
+        },
+        {
+          "id": "p11",
+          "name": "شاي ربيع أكسبرس 400 جم",
+          "desc": "شاي اسود حبيبات",
+          "fullDesc": "شاي ربيع إكسبرس الفاخر، حبيبات شاي أسود نقية لطعم قوي ومنعش.",
+          "price": "1,250",
+          "img": "https://cdn.salla.sa/qQqpAm/3a628b85-8c88-4f5b-a9d3-3a6d6e61e671-1000x1000-WhMWANvkLsGCSU0EwvYZr6TyVnsoXDm97TVjhxQh.jpg"
+        },
+        {
+          "id": "p12",
+          "name": "معجون طماطم هينز - 360 غم",
+          "desc": "برطمان زجاج",
+          "fullDesc": "معجون طماطم هينز المركز، يعطي لوناً وطعماً رائعاً لجميع طبخاتك.",
+          "price": "1,500",
+          "img": "https://z.nooncdn.com/products/tr:n-t_240/v1670325065/N38906360A_1.jpg"
+        }
+      ]
+    }
+  ],
+  "orders": [
+    {
+      "id": "ORD-1284",
+      "date": "2024-04-20",
+      "status": "delivered",
+      "statusAr": "تم التوصيل",
+      "total": "24,500",
+      "itemsCount": 3,
+      "preview": "زيت، سكر، حليب..."
+    },
+    {
+      "id": "ORD-1295",
+      "date": "2024-04-21",
+      "status": "processing",
+      "statusAr": "قيد التجهيز",
+      "total": "12,750",
+      "itemsCount": 2,
+      "preview": "تونة، شاي..."
+    },
+    {
+      "id": "ORD-1250",
+      "date": "2024-04-15",
+      "status": "cancelled",
+      "statusAr": "ملغي",
+      "total": "8,000",
+      "itemsCount": 1,
+      "preview": "منظف أرضيات..."
+    }
+  ]
+}
+
