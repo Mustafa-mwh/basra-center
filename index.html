@@ -718,32 +718,35 @@
       // UI Helpers
       const renderProductCard = (p, delay = 0) => `
         <div class="product-card w-[170px] lg:w-full bg-white rounded-[28px] p-1 border border-slate-100 shrink-0 lg:shrink relative animate-fade-in flex flex-col" style="animation-delay: ${delay}s">
-          ${p.discount ? `<div class="absolute top-4 right-4 z-10"><span class="bg-secondary text-white text-[9px] font-black px-2 py-1 rounded-lg">خصم ${p.discount}</span></div>` : ""}
-          <button onclick="toggleLike('${p.id}')" id="like-${p.id}" class="absolute top-4 left-4 z-10 w-8 h-8 glass rounded-full flex items-center justify-center transition-all active:scale-90">
+          ${p.discount ? `<div class="absolute top-2.5 right-2.5 z-10"><span class="bg-secondary text-white text-[9px] font-black px-2 py-1 rounded-lg">خصم ${p.discount}</span></div>` : ""}
+          <button onclick="event.stopPropagation(); toggleLike('${p.id}')" id="like-${p.id}" class="absolute top-2.5 left-2.5 z-20 w-8 h-8 glass rounded-full flex items-center justify-center transition-all active:scale-90">
             <i data-lucide="heart" class="w-4 h-4 ${APP_DATA.likes[p.id] ? "text-red-500 fill-red-500" : "text-slate-400"}"></i>
           </button>
-          <div onclick="window.location.href='product-details.html?id=${p.id}'" class="w-full h-48 lg:h-56 rounded-[22px] mb-3 overflow-hidden cursor-pointer">
-            <img src="${p.img}" class="product-image object-cover rounded-lg" alt="${p.name}">
-          </div>
-          <div class="px-2 pb-2 flex-1 flex flex-col">
-            <h4 onclick="window.location.href='product-details.html?id=${p.id}'" class="text-sm font-black text-slate-900 truncate mb-1 cursor-pointer hover:text-primary transition-colors">${p.name}</h4>
-            <p class="text-[10px] font-bold text-slate-400 mb-3">${p.desc || "وحدة واحدة"}</p>
-            <div class="flex items-center justify-between mt-auto">
-              <span class="text-sm font-black text-slate-900">${p.price} <span class="text-[10px] opacity-40">د.ع</span></span>
-              <div id="controls-${p.id}">
-                <button onclick="addToCart('${p.id}')" class="w-9 h-9 bg-primary text-white rounded-xl flex items-center justify-center shadow-lg shadow-primary/20 active:scale-90 transition-transform">
-                  <i data-lucide="plus" class="w-5 h-5"></i>
+          
+          <div onclick="window.location.href='product-details.html?id=${p.id}'" class="w-full h-48 lg:h-56 rounded-[22px] mb-3 overflow-hidden cursor-pointer relative group">
+            <img src="${p.img}" class="product-image w-full h-full object-cover border border-slate-200 rounded-lg" alt="${p.name}">
+            
+            <div id="controls-${p.id}" class="absolute bottom-2.5 right-2.5 z-20">
+              <button onclick="event.stopPropagation(); addToCart('${p.id}')" class="w-9 h-9 bg-primary text-white rounded-xl flex items-center justify-center shadow-lg shadow-primary/20 active:scale-90 transition-transform">
+                <i data-lucide="plus" class="w-5 h-5"></i>
+              </button>
+              <div id="selector-${p.id}" class="hidden flex items-center gap-1.5 bg-white/90 backdrop-blur-md rounded-xl p-1 animate-fade-in border border-slate-200">
+                <button onclick="event.stopPropagation(); changeQty('${p.id}', 1)" class="w-7 h-7 bg-white rounded-lg flex items-center justify-center shadow-sm text-primary active:scale-90">
+                  <i data-lucide="plus" class="w-4 h-4"></i>
                 </button>
-                <div id="selector-${p.id}" class="hidden flex items-center gap-1.5 bg-accent rounded-xl p-1 animate-fade-in">
-                  <button onclick="changeQty('${p.id}', 1)" class="w-7 h-7 bg-white rounded-lg flex items-center justify-center shadow-sm text-primary active:scale-90">
-                    <i data-lucide="plus" class="w-4 h-4"></i>
-                  </button>
-                  <span id="qty-${p.id}" class="text-xs font-black px-1 min-w-[12px] text-center">1</span>
-                  <button onclick="changeQty('${p.id}', -1)" class="w-7 h-7 bg-white rounded-lg flex items-center justify-center shadow-sm text-slate-400 active:scale-90">
-                    <i data-lucide="minus" class="w-4 h-4"></i>
-                  </button>
-                </div>
+                <span id="qty-${p.id}" class="text-xs font-black px-1 min-w-[12px] text-center">1</span>
+                <button onclick="event.stopPropagation(); changeQty('${p.id}', -1)" class="w-7 h-7 bg-white rounded-lg flex items-center justify-center shadow-sm text-slate-400 active:scale-90">
+                  <i data-lucide="minus" class="w-4 h-4"></i>
+                </button>
               </div>
+            </div>
+          </div>
+
+          <div class="px-3 pb-3 flex-1 flex flex-col">
+            <h4 onclick="window.location.href='product-details.html?id=${p.id}'" class="text-sm font-black text-slate-900 truncate mb-1 cursor-pointer hover:text-primary transition-colors">${p.name}</h4>
+            <p class="text-[10px] font-bold text-slate-400 mb-2">${p.desc || "وحدة واحدة"}</p>
+            <div class="mt-auto">
+              <span class="text-sm font-black text-slate-900">${p.price} <span class="text-[10px] opacity-40 font-bold">د.ع</span></span>
             </div>
           </div>
         </div>
