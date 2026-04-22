@@ -53,6 +53,33 @@
         overflow-x: hidden;
       }
 
+      @media (min-width: 1024px) {
+        body {
+          background-image:
+            radial-gradient(
+              at 0% 0%,
+              rgba(0, 132, 119, 0.068) 0px,
+              transparent 50%
+            ),
+            radial-gradient(
+              at 100% 0%,
+              rgba(225, 105, 36, 0.089) 0px,
+              transparent 50%
+            ),
+            radial-gradient(
+              at 100% 100%,
+              rgba(0, 132, 119, 0.05) 0px,
+              transparent 50%
+            ),
+            radial-gradient(
+              at 0% 100%,
+              rgba(225, 105, 36, 0.158) 0px,
+              transparent 50%
+            );
+          background-attachment: fixed;
+        }
+      }
+
       .hide-scrollbar::-webkit-scrollbar {
         display: none;
       }
@@ -69,13 +96,20 @@
       }
 
       .product-card {
-        min-width: 170px;
-        max-width: 170px;
+        width: 100%;
       }
 
       .banner-card {
         min-width: 90%;
         height: 180px;
+      }
+
+      @media (min-width: 1024px) {
+        .banner-card {
+          min-width: 0;
+          flex: 1;
+          height: 240px;
+        }
       }
 
       @keyframes fadeIn {
@@ -110,12 +144,12 @@
   </head>
   <body class="pb-32 text-slate-800 bg-background min-h-screen">
     <!-- Main Views Container -->
-    <main id="main-content">
+    <main id="main-content" class="bg-[#fdfbf7] max-w-5xl mx-auto">
       <!-- Home View -->
       <div id="home-view" class="animate-fade-in">
         <!-- Header -->
         <header
-          class="px-5 pt-8 pb-4 flex items-center justify-between sticky top-0 bg-background/80 backdrop-blur-xl z-50"
+          class="px-5 pt-8 pb-4 flex items-center justify-between sticky top-0 bg-background/80 backdrop-blur-xl z-50 max-w-7xl mx-auto"
         >
           <div class="flex items-center gap-3">
             <div
@@ -151,7 +185,9 @@
         </header>
 
         <!-- Search Section -->
-        <section class="px-5 mb-8 flex gap-3">
+        <section
+          class="px-5 mb-8 flex flex-col md:flex-row gap-3 max-w-2xl mx-auto lg:max-w-4xl"
+        >
           <div class="relative flex-1 group">
             <i
               data-lucide="search"
@@ -164,7 +200,7 @@
             />
           </div>
           <button
-            class="w-14 h-14 bg-slate-900 rounded-2xl flex items-center justify-center text-white active:scale-95 transition-transform"
+            class="w-full md:w-14 h-14 bg-slate-900 rounded-2xl flex items-center justify-center text-white active:scale-95 transition-transform"
           >
             <i data-lucide="sliders-horizontal" class="w-6 h-6"></i>
           </button>
@@ -172,10 +208,12 @@
 
         <!-- Banners Section (Hypermarket Style) -->
         <section class="mb-8">
-          <div class="flex overflow-x-auto px-5 gap-4 hide-scrollbar">
+          <div
+            class="flex lg:grid lg:grid-cols-2 overflow-x-auto px-5 gap-4 hide-scrollbar"
+          >
             <!-- Banner 1: Fresh Food -->
             <div
-              class="banner-card relative rounded-[32px] overflow-hidden bg-[#0A2E2A] shrink-0 animate-fade-in"
+              class="banner-card relative rounded-[32px] overflow-hidden bg-[#0A2E2A] shrink-0 lg:shrink animate-fade-in"
             >
               <img
                 src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=800"
@@ -204,7 +242,7 @@
             </div>
             <!-- Banner 2: Electronics -->
             <div
-              class="banner-card relative rounded-[32px] overflow-hidden bg-slate-900 shrink-0 animate-fade-in"
+              class="banner-card relative rounded-[32px] overflow-hidden bg-slate-900 shrink-0 lg:shrink animate-fade-in"
               style="animation-delay: 0.1s"
             >
               <img
@@ -249,7 +287,7 @@
           </div>
           <div
             id="home-categories"
-            class="flex px-5 gap-5 overflow-x-auto hide-scrollbar"
+            class="flex lg:grid lg:grid-cols-8 px-5 gap-5 overflow-x-auto hide-scrollbar"
           >
             <!-- Populated by JS -->
           </div>
@@ -298,7 +336,10 @@
       </div>
 
       <!-- Browse View (Hidden by default) -->
-      <div id="browse-view" class="hidden animate-fade-in px-5 pt-8">
+      <div
+        id="browse-view"
+        class="hidden animate-fade-in px-5 pt-8 min-h-screen"
+      >
         <!-- Browse Search -->
         <div class="relative group mb-8">
           <i
@@ -333,7 +374,10 @@
         </div>
 
         <!-- Categories Grid -->
-        <div id="browse-categories" class="grid grid-cols-2 gap-4">
+        <div
+          id="browse-categories"
+          class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4"
+        >
           <!-- Populated by JS -->
         </div>
       </div>
@@ -358,7 +402,10 @@
         </header>
 
         <!-- Category Products Grid -->
-        <div id="category-products" class="grid grid-cols-2 gap-4 pb-10">
+        <div
+          id="category-products"
+          class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 gap-4 pb-10"
+        >
           <!-- Products will be injected here -->
         </div>
       </div>
@@ -367,12 +414,12 @@
     <!-- Cart View -->
     <div
       id="cart-view"
-      class="hidden fixed inset-0 bg-background z-30 flex flex-col animate-fade-in"
+      class="hidden bg-[#fdfbf7] fixed inset-0 z-30 flex flex-col animate-fade-in max-w-5xl mx-auto"
     >
       <header
         class="px-5 pt-10 pb-4 bg-background/80 backdrop-blur-xl border-b border-slate-50 shrink-0"
       >
-        <div class="max-w-md mx-auto">
+        <div class="mx-auto">
           <h1 class="text-2xl font-black text-slate-900 text-right">
             سلة التسوق
           </h1>
@@ -420,7 +467,7 @@
         id="cart-summary"
         class="hidden absolute bottom-24 left-0 w-full px-5 py-6 bg-background/90 backdrop-blur-2xl border-t border-slate-100/50 shadow-[0_-20px_50px_-20px_rgba(0,0,0,0.05)] z-40"
       >
-        <div class="max-w-md mx-auto space-y-4">
+        <div class="max-w-5xl mx-auto space-y-4">
           <div
             class="bg-white rounded-[28px] p-5 border border-slate-100 space-y-3 shadow-sm"
           >
@@ -454,7 +501,10 @@
     </div>
 
     <!-- Account View -->
-    <div id="account-view" class="hidden animate-fade-in pb-32">
+    <div
+      id="account-view"
+      class="hidden bg-[#fdfbf7] animate-fade-in pb-32 max-w-5xl mx-auto min-h-screen"
+    >
       <header class="px-5 pt-12 pb-8">
         <div class="flex items-center gap-5">
           <div class="w-20 h-20 rounded-3xl">
@@ -599,7 +649,7 @@
       class="fixed bottom-0 left-0 w-full px-5 pb-8 pt-2 pointer-events-none z-50"
     >
       <nav
-        class="max-w-md mx-auto glass rounded-[32px] p-2 flex items-center justify-between shadow-nav border border-white/60 pointer-events-auto"
+        class="max-w-md lg:max-w-2xl mx-auto glass rounded-[32px] p-2 flex items-center justify-between shadow-nav border border-white/60 pointer-events-auto"
       >
         <button
           id="nav-home"
@@ -667,12 +717,12 @@
 
       // UI Helpers
       const renderProductCard = (p, delay = 0) => `
-        <div class="product-card bg-white rounded-[28px] p-1 border border-slate-100 shrink-0 relative animate-fade-in flex flex-col" style="animation-delay: ${delay}s">
+        <div class="product-card w-[170px] lg:w-full bg-white rounded-[28px] p-1 border border-slate-100 shrink-0 lg:shrink relative animate-fade-in flex flex-col" style="animation-delay: ${delay}s">
           ${p.discount ? `<div class="absolute top-4 right-4 z-10"><span class="bg-secondary text-white text-[9px] font-black px-2 py-1 rounded-lg">خصم ${p.discount}</span></div>` : ""}
           <button onclick="toggleLike('${p.id}')" id="like-${p.id}" class="absolute top-4 left-4 z-10 w-8 h-8 glass rounded-full flex items-center justify-center transition-all active:scale-90">
             <i data-lucide="heart" class="w-4 h-4 ${APP_DATA.likes[p.id] ? "text-red-500 fill-red-500" : "text-slate-400"}"></i>
           </button>
-          <div onclick="window.location.href='product-details.html?id=${p.id}'" class="w-full h-48 rounded-[22px] mb-3 overflow-hidden cursor-pointer">
+          <div onclick="window.location.href='product-details.html?id=${p.id}'" class="w-full h-48 lg:h-56 rounded-[22px] mb-3 overflow-hidden cursor-pointer">
             <img src="${p.img}" class="product-image object-cover rounded-lg" alt="${p.name}">
           </div>
           <div class="px-2 pb-2 flex-1 flex flex-col">
@@ -1018,7 +1068,7 @@
               </div>
               <button class="text-primary text-sm font-black bg-primary/5 px-3 py-1.5 rounded-lg">عرض الكل</button>
             </div>
-            <div class="flex overflow-x-auto px-5 gap-4 hide-scrollbar">
+            <div class="flex lg:grid lg:grid-cols-4 xl:grid-cols-5 overflow-x-auto px-5 gap-4 hide-scrollbar">
               ${s.products.map((p, i) => renderProductCard(p, i * 0.1)).join("")}
             </div>
           </section>
