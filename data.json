@@ -4,31 +4,66 @@
       "id": "dates",
       "name": "تمور",
       "img": "https://images.unsplash.com/photo-1629738601425-494c3d6ba3e2?q=80&w=400",
-      "color": "emerald"
+      "color": "emerald",
+      "subCategories": [
+        { "id": "zahdi", "name": "زهدي" },
+        { "id": "khastawi", "name": "خستاوي" },
+        { "id": "barhi", "name": "برحي" }
+      ]
     },
     {
       "id": "dairy",
       "name": "ألبان",
       "img": "https://plus.unsplash.com/premium_photo-1695042864778-6d67ec3953e9?q=80&w=400",
-      "color": "amber"
+      "color": "amber",
+      "subCategories": [
+        { "id": "cheese", "name": "أجبان" },
+        { "id": "yogurt", "name": "روب وزبادي" },
+        { "id": "milk", "name": "حليب" }
+      ]
     },
     {
       "id": "bakery",
       "name": "مخبوزات",
       "img": "https://images.unsplash.com/photo-1608198093002-ad4e005484ec?q=80&w=400",
-      "color": "orange"
+      "color": "orange",
+      "subCategories": [
+        { "id": "bread", "name": "خبز وصمون" },
+        { "id": "pastries", "name": "معجنات" },
+        { "id": "sweets", "name": "حلويات" }
+      ]
     },
     {
       "id": "meat",
       "name": "لحوم",
       "img": "https://images.unsplash.com/photo-1602470521006-59ab77068b0d?q=80&w=400",
-      "color": "rose"
+      "color": "rose",
+      "subCategories": [
+        { "id": "red-meat", "name": "لحوم حمراء" },
+        { "id": "poultry", "name": "دواجن" },
+        { "id": "frozen", "name": "لحوم مجمدة" }
+      ]
     },
     {
       "id": "canned",
       "name": "معلبات",
       "img": "https://plus.unsplash.com/premium_photo-1664305040276-66cf5c0ac52b?q=80&w=1160&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      "color": "rose"
+      "color": "rose",
+      "subCategories": [
+        { "id": "tuna", "name": "تونة ومعلبات بحرية" },
+        { "id": "oils", "name": "زيوت ودهون" },
+        { "id": "dry", "name": "مواد جافة" }
+      ]
+    },
+    {
+      "id": "appliances",
+      "name": "المواد المنزلية",
+      "img": "https://powerhouseexpress.com.pk/cdn/shop/collections/kitchen-appliances.webp?v=1745918952",
+      "color": "rose",
+      "subCategories": [
+        { "id": "kitchen", "name": "ادوات مطبخ" },
+        { "id": "cleaning", "name": "مواد التنظيف" }
+      ]
     }
   ],
   "sections": [
@@ -39,6 +74,8 @@
       "products": [
         {
           "id": "p1",
+          "categoryId": "appliances",
+          "subCategoryId": "cleaning",
           "name": "بخاخ معطر جو- 300 مل",
           "desc": "عبوة 1 كغم",
           "fullDesc": "معطر جو منعش يدوم طويلاً، يقضي على الروائح الكريهة ويمنح منزلك عبقاً مميزاً.",
@@ -47,6 +84,8 @@
         },
         {
           "id": "p2",
+          "categoryId": "appliances",
+          "subCategoryId": "cleaning",
           "name": "ايلينا ميد شامبو مضاد للقشرة, 250 مل",
           "desc": "برطمان 500 غم",
           "fullDesc": "شامبو طبي بتركيبة متطورة للتخلص من القشرة والحكة من أول استخدام.",
@@ -56,6 +95,8 @@
         },
         {
           "id": "p3",
+          "categoryId": "dairy",
+          "subCategoryId": "milk",
           "name": "حليب نيدو ليتل كيدز",
           "desc": "عبوة 1 لتر",
           "fullDesc": "حليب مدعم للأطفال في مراحل النمو، يحتوي على الفيتامينات والمعادن الضرورية.",
@@ -71,6 +112,8 @@
       "products": [
         {
           "id": "p4",
+          "categoryId": "appliances",
+          "subCategoryId": "kitchen",
           "name": "خلاط يدوي نوال - 1200 واط",
           "desc": "1 كغم",
           "fullDesc": "خلاط يدوي قوي ومتعدد الاستخدامات، مثالي لتحضير الشوربات والصلصات.",
@@ -79,6 +122,8 @@
         },
         {
           "id": "p5",
+          "categoryId": "meat",
+          "subCategoryId": "frozen",
           "name": "جيكور كبة لحم وسط",
           "desc": "10 قطع",
           "fullDesc": "كبة لحم عراقية تقليدية، محضرة من أفضل المكونات وجاهزة للقلي.",
@@ -87,6 +132,8 @@
         },
         {
           "id": "p6",
+          "categoryId": "canned",
+          "subCategoryId": "dry",
           "name": "مربى فراولة 850 غم",
           "desc": "1 كغم",
           "fullDesc": "مربى فراولة طبيعي بقطع الفاكهة، طعم رائع ومثالي للفطور.",
@@ -102,6 +149,8 @@
       "products": [
         {
           "id": "p7",
+          "categoryId": "appliances",
+          "subCategoryId": "cleaning",
           "name": "تايد مسحوق غسيل - 2.5 كغم",
           "desc": "الأصلي للغسالات الأوتوماتيك",
           "fullDesc": "مسحوق غسيل تايد الأصلي، يزيل البقع الصعبة ويحافظ على بياض الملابس.",
@@ -110,6 +159,8 @@
         },
         {
           "id": "p8",
+          "categoryId": "appliances",
+          "subCategoryId": "cleaning",
           "name": "داوني منعم ملابس - 1 لتر",
           "desc": "نسيم الوادي",
           "fullDesc": "منعم ملابس داوني يمنح ملابسك نعومة فائقة ورائحة تدوم طويلاً.",
@@ -118,6 +169,8 @@
         },
         {
           "id": "p9",
+          "categoryId": "appliances",
+          "subCategoryId": "cleaning",
           "name": "فيري سائل جلي - 750 مل",
           "desc": "بقوة الليمون",
           "fullDesc": "سائل جلي فيري يقضي على الدهون بفعالية عالية ويترك الأطباق لامعة.",
@@ -133,6 +186,8 @@
       "products": [
         {
           "id": "p10",
+          "categoryId": "canned",
+          "subCategoryId": "tuna",
           "name": "تونة العلالي - 170 غم",
           "desc": "لحم تونة خفيف بالزيت",
           "fullDesc": "لحم تونة خفيف بالزيت النباتي، غني بالأوميغا 3 والبروتين.",
@@ -141,6 +196,8 @@
         },
         {
           "id": "p11",
+          "categoryId": "canned",
+          "subCategoryId": "dry",
           "name": "شاي ربيع أكسبرس 400 جم",
           "desc": "شاي اسود حبيبات",
           "fullDesc": "شاي ربيع إكسبرس الفاخر، حبيبات شاي أسود نقية لطعم قوي ومنعش.",
@@ -149,11 +206,110 @@
         },
         {
           "id": "p12",
+          "categoryId": "canned",
+          "subCategoryId": "dry",
           "name": "معجون طماطم هينز - 360 غم",
           "desc": "برطمان زجاج",
           "fullDesc": "معجون طماطم هينز المركز، يعطي لوناً وطعماً رائعاً لجميع طبخاتك.",
           "price": "1,500",
           "img": "https://z.nooncdn.com/products/tr:n-t_240/v1670325065/N38906360A_1.jpg"
+        }
+      ]
+    },
+    {
+      "title": "منتجات طازجة",
+      "subtitle": "من المزرعة إلى منزلك",
+      "accentColor": "emerald-600",
+      "products": [
+        {
+          "id": "p13",
+          "categoryId": "dates",
+          "subCategoryId": "zahdi",
+          "name": "تمور زهدي فاخرة - 1 كغم",
+          "desc": "إنتاج البصرة",
+          "fullDesc": "تمور زهدي بصرية منتقاة بعناية، تتميز بطعمها الحلو وقوامها المميز.",
+          "price": "3,500",
+          "img": "https://www.tawfeer.nl/s/629be774d1d5b8b85d68bede/69431473e67ff3d2778003e5/khudry-selection-03-640x640.png"
+        },
+        {
+          "id": "p14",
+          "categoryId": "dairy",
+          "subCategoryId": "cheese",
+          "name": "جبن كرافت شيدر - 190 غم",
+          "desc": "عبوة معدنية",
+          "fullDesc": "جبن كرافت شيدر الأصلي، الطعم الذي تعودت عليه منذ أجيال.",
+          "price": "2,250",
+          "img": "https://m.media-amazon.com/images/I/81rmviX3hpL._AC_SX679_.jpg"
+        },
+        {
+          "id": "p15",
+          "categoryId": "dairy",
+          "subCategoryId": "yogurt",
+          "name": "زبادي المراعي - 2 كغم",
+          "desc": "طبيعي 100%",
+          "fullDesc": "زبادي المراعي الطازج، غني بالكالسيوم والبروتين ومثالي لجميع الوجبات.",
+          "price": "4,000",
+          "img": "https://cdn.salla.sa/xPdma/b236519d-94f8-4ac4-b473-02272845ba03-1000x1000-zWnAZKZOMXDKVjtFSrRtIfCKZlx0jYe9mUw6qXLL.jpg"
+        },
+        {
+          "id": "p16",
+          "categoryId": "bakery",
+          "subCategoryId": "bread",
+          "name": "صمون كهربائي - 10 قطع",
+          "desc": "كيس مغلف",
+          "fullDesc": "صمون كهربائي طازج وهش، يخبز يومياً في مخابزنا الخاصة.",
+          "price": "1,000",
+          "img": "https://scontent-sof1-2.xx.fbcdn.net/v/t39.30808-6/485723963_1074583254706661_2503029870966898889_n.jpg?stp=dst-jpg_s590x590_tt6&_nc_cat=110&ccb=1-7&_nc_sid=7b2446&_nc_ohc=eLGi_BOfTGEQ7kNvwEPc-iy&_nc_oc=AdomNmPmgEfHA-ACizVNb2emgHll0cJUKYptpHxPF1BgMJn3eMaAKuO7HG_SDypKGXI&_nc_zt=23&_nc_ht=scontent-sof1-2.xx&_nc_gid=toniLPYJrCd9Z1wcOCO-Kw&oh=00_Af2L-7_vRBQlWNInygU0eB_Gu-WM-evjtUWPamUqEMOeUA&oe=69EFEDE7"
+        },
+        {
+          "id": "p17",
+          "categoryId": "bakery",
+          "subCategoryId": "sweets",
+          "name": "بقلاوة مشكلة - 500 غم",
+          "desc": "بالفستق واللوز",
+          "fullDesc": "تشكيلة من البقلاوة العراقية الفاخرة، محضرة بالسمن الحيواني والمكسرات الطازجة.",
+          "price": "8,500",
+          "img": "https://img.ananinja.com/media/ninja-catalog-42/restaurants/e8te26r5hzx89w07llwhq5r3wtvy/806664.jpg?w=1080&q=75"
+        },
+        {
+          "id": "p18",
+          "categoryId": "meat",
+          "subCategoryId": "red-meat",
+          "name": "لحم غنم طازج - 1 كغم",
+          "desc": "عراقي من بصرة سنتر",
+          "fullDesc": "لحم غنم عراقي طازج يومياً، ذبح اليوم تحت إشراف صحي كامل.",
+          "price": "18,000",
+          "img": "https://taibafarmsarabia.com/wp-content/uploads/2021/04/Fresh-Mutton-with-Bone.jpg"
+        },
+        {
+          "id": "p19",
+          "categoryId": "meat",
+          "subCategoryId": "poultry",
+          "name": "دجاج ساديا - 1.1 كغم",
+          "desc": "دجاج مجمد",
+          "fullDesc": "دجاج ساديا عالي الجودة، منظف ومجمد بعناية للحفاظ على القيمة الغذائية.",
+          "price": "5,500",
+          "img": "https://m.media-amazon.com/images/I/41IIDthvbtL._AC_SY300_SX300_QL70_ML2_.jpg"
+        },
+        {
+          "id": "p22",
+          "categoryId": "bakery",
+          "subCategoryId": "pastries",
+          "name": "كب كيك فانيلا - 6 قطع",
+          "desc": "مخبوزات طازجة",
+          "fullDesc": "كب كيك فانيلا هش ولذيذ، مثالي مع الشاي أو كوجبة خفيفة للأطفال.",
+          "price": "1,500",
+          "img": "https://hungerstation.dhmedia.io/image/product-information-management/685d30df2c3f1fd36a79e47c.png?width=1440&quality=75&webp=true"
+        },
+        {
+          "id": "p23",
+          "categoryId": "canned",
+          "subCategoryId": "oils",
+          "name": "زيت زيتون بكر ممتاز - 500 مل",
+          "desc": "عصرة أولى على البارد",
+          "fullDesc": "زيت زيتون بكر ممتاز نقي 100%، غني بالفوائد الصحية والطعم الأصيل.",
+          "price": "6,500",
+          "img": "https://cdn.salla.sa/QdoGmN/c04e4c9b-087a-4034-b73f-53bdf9005b96-1000x1000-Tr3ePS2dMr2NlshyXni4YG7uyQkAHJtKrxLwb2Qc.jpg"
         }
       ]
     }
@@ -188,4 +344,3 @@
     }
   ]
 }
-
