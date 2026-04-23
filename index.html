@@ -287,7 +287,7 @@
           </div>
           <div
             id="home-categories"
-            class="flex lg:grid lg:grid-cols-8 px-5 gap-5 overflow-x-auto hide-scrollbar"
+            class="flex px-5 gap-1 lg:gap-5 overflow-x-auto hide-scrollbar"
           >
             <!-- Populated by JS -->
           </div>
@@ -417,15 +417,15 @@
       class="hidden bg-[#fdfbf7] fixed inset-0 z-30 flex flex-col animate-fade-in max-w-5xl mx-auto"
     >
       <header
-        class="px-5 pt-10 pb-4 bg-background/80 backdrop-blur-xl border-b border-slate-50 shrink-0"
+        class="px-5 pt-8 pb-4 bg-background/80 backdrop-blur-xl border-b border-slate-50 shrink-0"
       >
         <div class="mx-auto">
-          <h1 class="text-2xl font-black text-slate-900 text-right">
+          <h1 class="text-lg font-black text-slate-900 text-right">
             سلة التسوق
           </h1>
           <p
             id="cart-item-count"
-            class="text-xs font-bold text-slate-400 mt-1 text-right"
+            class="text-xs text-slate-400 mt-1 text-right"
           >
             0 منتجات في السلة
           </p>
@@ -434,7 +434,7 @@
 
       <div
         id="cart-items"
-        class="flex-1 overflow-y-auto px-5 py-6 space-y-4 pb-96 hide-scrollbar"
+        class="flex-1 overflow-y-auto px-5 py-6 space-y-2 pb-96 hide-scrollbar"
       >
         <!-- Populated by JS -->
       </div>
@@ -453,7 +453,7 @@
         </div>
         <h3 class="text-lg font-black text-slate-900 mb-2">سلتك فارغة</h3>
         <p class="text-sm font-bold text-slate-400 mb-8 leading-relaxed">
-          يبدو أنك لم تضف أي منتجات بعد. ابدأ بالتسوق الآن!
+          لا توجد منتجات في السلة. ابدأ بالتسوق الآن!
         </p>
         <button
           onclick="switchView('home')"
@@ -465,31 +465,64 @@
 
       <div
         id="cart-summary"
-        class="hidden absolute bottom-24 left-0 w-full px-5 py-6 bg-background/90 backdrop-blur-2xl border-t border-slate-100/50 shadow-[0_-20px_50px_-20px_rgba(0,0,0,0.05)] z-40"
+        class="hidden absolute bottom-24 left-0 w-full px-5 pt-2 pb-6 bg-background/90 backdrop-blur-2xl border-t border-slate-100/50 shadow-[0_-20px_50px_-20px_rgba(0,0,0,0.05)] z-40"
       >
         <div class="max-w-5xl mx-auto space-y-4">
           <div
-            class="bg-white rounded-[28px] p-5 border border-slate-100 space-y-3 shadow-sm"
+            class="bg-white rounded-[28px] p-5 border border-slate-100 shadow-sm transition-all duration-300"
           >
-            <div class="flex justify-between items-center text-xs font-bold">
-              <span class="text-slate-400">المجموع الفرعي</span>
-              <span id="cart-subtotal" class="text-slate-900">0 د.ع</span>
-            </div>
-            <div class="flex justify-between items-center text-xs font-bold">
-              <span class="text-slate-400">خدمة التوصيل</span>
-              <span class="text-primary">3,000 د.ع</span>
-            </div>
+            <!-- Header/Total Row (Always visible) -->
             <div
-              class="pt-3 border-t border-slate-50 flex justify-between items-center"
+              onclick="toggleCartDetails()"
+              class="flex justify-between items-center cursor-pointer group"
             >
-              <span class="font-extrabold text-slate-900 text-sm"
-                >المجموع الكلي</span
-              >
-              <span id="cart-total" class="text-lg font-black text-primary"
-                >0 د.ع</span
-              >
+              <div class="flex items-center gap-3">
+                <div
+                  id="cart-toggle-arrow"
+                  class="w-9 h-9 rounded-xl bg-slate-50 flex items-center justify-center transition-all duration-300 group-hover:bg-primary/10"
+                >
+                  <i
+                    data-lucide="chevron-up"
+                    class="w-5 h-5 text-slate-400 group-hover:text-primary"
+                  ></i>
+                </div>
+                <div class="flex flex-col">
+                  <span class="font-extrabold text-slate-900 text-sm"
+                    >تفاصيل السعر</span
+                  >
+                  <span
+                    id="price-details"
+                    class="text-[10px] font-bold text-slate-400"
+                    >اضغط لعرض التفاصيل</span
+                  >
+                </div>
+              </div>
+              <div class="flex flex-col items-end">
+                <span class="text-[10px] font-bold text-slate-400"
+                  >المجموع الكلي</span
+                >
+                <span id="cart-total" class="text-lg font-black text-primary"
+                  >0 د.ع</span
+                >
+              </div>
+            </div>
+
+            <!-- Collapsible Content -->
+            <div
+              id="cart-details-content"
+              class="hidden pt-4 mt-4 border-t border-slate-50 space-y-3 animate-fade-in"
+            >
+              <div class="flex justify-between items-center text-xs font-bold">
+                <span class="text-slate-400">المجموع الفرعي</span>
+                <span id="cart-subtotal" class="text-slate-900">0 د.ع</span>
+              </div>
+              <div class="flex justify-between items-center text-xs font-bold">
+                <span class="text-slate-400">خدمة التوصيل</span>
+                <span class="text-primary">3,000 د.ع</span>
+              </div>
             </div>
           </div>
+
           <button
             class="w-full bg-slate-900 text-white h-14 rounded-2xl font-black shadow-xl active:scale-95 transition-transform flex items-center justify-center gap-3 text-sm"
           >
@@ -621,7 +654,7 @@
       class="hidden fixed inset-0 bg-background z-30 flex flex-col max-w-5xl mx-auto animate-fade-in"
     >
       <header
-        class="px-5 pt-10 pb-4 bg-background/80 backdrop-blur-xl border-b border-slate-50 shrink-0"
+        class="px-5 pt-8 pb-4 bg-background/80 backdrop-blur-xl border-b border-slate-50 shrink-0"
       >
         <div class="max-w-md mx-auto flex items-center justify-between">
           <button
@@ -717,14 +750,14 @@
 
       // UI Helpers
       const renderProductCard = (p, delay = 0) => `
-        <div class="product-card w-[170px] lg:w-full bg-white rounded-[28px] p-1 border border-slate-100 shrink-0 lg:shrink relative animate-fade-in flex flex-col" style="animation-delay: ${delay}s">
+        <div class="product-card w-[200px] lg:w-full bg-transparent rounded-[28px] shrink-0 lg:shrink relative animate-fade-in flex flex-col" style="animation-delay: ${delay}s">
           ${p.discount ? `<div class="absolute top-2.5 right-2.5 z-10"><span class="bg-secondary text-white text-[9px] font-black px-2 py-1 rounded-lg">خصم ${p.discount}</span></div>` : ""}
           <button onclick="event.stopPropagation(); toggleLike('${p.id}')" id="like-${p.id}" class="absolute top-2.5 left-2.5 z-20 w-8 h-8 glass rounded-full flex items-center justify-center transition-all active:scale-90">
             <i data-lucide="heart" class="w-4 h-4 ${APP_DATA.likes[p.id] ? "text-red-500 fill-red-500" : "text-slate-400"}"></i>
           </button>
           
           <div onclick="window.location.href='product-details.html?id=${p.id}'" class="w-full h-48 lg:h-56 rounded-[22px] mb-3 overflow-hidden cursor-pointer relative group">
-            <img src="${p.img}" class="product-image w-full h-full object-cover border border-slate-200 rounded-lg" alt="${p.name}">
+            <img src="${p.img}" class="product-image w-full h-full object-fit border border-slate-200 rounded-lg" alt="${p.name}">
             
             <div id="controls-${p.id}" class="absolute bottom-2.5 right-2.5 z-20">
               <button onclick="event.stopPropagation(); addToCart('${p.id}')" class="w-9 h-9 bg-primary text-white rounded-xl flex items-center justify-center shadow-lg shadow-primary/20 active:scale-90 transition-transform">
@@ -869,7 +902,7 @@
                   <span class="text-xs font-black text-slate-600">${order.date}</span>
                 </div>
                 <div class="flex flex-col items-end gap-1">
-                  <span class="text-[10px] font-bold text-slate-400">عدد المواد</span>
+                  <span class="text-[10px] font-bold text-slate-400">عدد المنتجات</span>
                   <span class="text-xs font-black text-slate-600">${order.itemsCount} مواد</span>
                 </div>
               </div>
@@ -983,7 +1016,7 @@
             return `
             <div class="bg-white rounded-3xl p-4 flex gap-4 border border-slate-100 animate-fade-in">
               <div class="w-24 h-24 bg-accent rounded-2xl overflow-hidden p-2 shrink-0">
-                <img src="${p.img}" class="w-full h-full object-contain" alt="${p.name}">
+                <img src="${p.img}" class="w-full h-full object-contain rounded-md" alt="${p.name}">
               </div>
               <div class="flex-1 flex flex-col justify-between py-1">
                 <div>
@@ -1049,6 +1082,22 @@
         }
       }
 
+      function toggleCartDetails() {
+        const content = document.getElementById("cart-details-content");
+        const arrow = document.getElementById("cart-toggle-arrow");
+        const price = document.getElementById("price-details");
+
+        if (content.classList.contains("hidden")) {
+          content.classList.remove("hidden");
+          arrow.classList.add("rotate-180");
+          price.innerText = "اضغط لاخفاء التفاصيل";
+        } else {
+          content.classList.add("hidden");
+          arrow.classList.remove("rotate-180");
+          price.innerText = "اضغط لعرض التفاصيل";
+        }
+      }
+
       // Initial Render
       async function init() {
         await loadData();
@@ -1071,7 +1120,7 @@
               </div>
               <button class="text-primary text-sm font-black bg-primary/5 px-3 py-1.5 rounded-lg">عرض الكل</button>
             </div>
-            <div class="flex lg:grid lg:grid-cols-4 xl:grid-cols-5 overflow-x-auto px-5 gap-4 hide-scrollbar">
+            <div class="flex lg:grid lg:grid-cols-4 xl:grid-cols-5 lg:gap-3 xl:gap-4 overflow-x-auto px-5 gap-2 hide-scrollbar">
               ${s.products.map((p, i) => renderProductCard(p, i * 0.1)).join("")}
             </div>
           </section>
