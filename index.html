@@ -757,7 +757,7 @@
           </button>
           
           <div onclick="window.location.href='product-details.html?id=${p.id}'" class="w-full h-48 lg:h-56 rounded-[22px] mb-3 overflow-hidden cursor-pointer relative group">
-            <img src="${p.img}" class="product-image w-full h-full object-fit border border-slate-200 rounded-lg" alt="${p.name}">
+            <img src="${p.img}" class="product-image bg-white w-full h-full object-fit border border-slate-200 rounded-lg" alt="${p.name}">
             
             <div id="controls-${p.id}" class="absolute bottom-2.5 right-2.5 z-20">
               <button onclick="event.stopPropagation(); addToCart('${p.id}')" class="w-9 h-9 bg-primary text-white rounded-xl flex items-center justify-center shadow-lg shadow-primary/20 active:scale-90 transition-transform">
