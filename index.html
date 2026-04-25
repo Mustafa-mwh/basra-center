@@ -853,7 +853,7 @@
         }
         return `
           <div onclick="showCategory('${cat.id}')" class="flex flex-col items-center gap-2 cursor-pointer group active:scale-95 transition-transform">
-            <div class="w-full aspect-square flex items-center justify-center overflow-hidden">
+            <div class="w-full aspect-square flex items-center rounded-md justify-center overflow-hidden">
               <img src="${cat.img}" alt="${cat.name}" class="w-full h-full object-cover rounded-md group-hover:scale-110 transition-transform">
             </div>
             <h4 class="text-slate-900 text-sm lg:text-xs text-center truncate w-full px-1">${cat.name}</h4>
@@ -1295,7 +1295,7 @@
               </div>
               <button onclick="switchView('browse')" class="text-primary text-sm font-black bg-primary/5 px-3 py-1.5 rounded-lg">عرض الكل</button>
             </div>
-            <div class="flex lg:grid lg:grid-cols-4 xl:grid-cols-5 lg:gap-3 xl:gap-4 overflow-x-auto px-5 gap-2 hide-scrollbar">
+            <div class="flex lg:grid-cols-4 xl:grid-cols-5 lg:gap-3 overflow-x-auto px-5 gap-2 hide-scrollbar">
               ${s.products.map((p, i) => renderProductCard(p, i * 0.1)).join("")}
             </div>
           </section>
