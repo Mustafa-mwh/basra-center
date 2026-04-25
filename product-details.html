@@ -49,6 +49,34 @@
         font-family: "Cairo", sans-serif;
         background-color: #fff;
         -webkit-tap-highlight-color: transparent;
+        overflow-x: hidden;
+      }
+
+      @media (min-width: 1024px) {
+        body {
+          background-image:
+            radial-gradient(
+              at 0% 0%,
+              rgba(0, 132, 119, 0.068) 0px,
+              transparent 50%
+            ),
+            radial-gradient(
+              at 100% 0%,
+              rgba(225, 105, 36, 0.089) 0px,
+              transparent 50%
+            ),
+            radial-gradient(
+              at 100% 100%,
+              rgba(0, 132, 119, 0.05) 0px,
+              transparent 50%
+            ),
+            radial-gradient(
+              at 0% 100%,
+              rgba(225, 105, 36, 0.158) 0px,
+              transparent 50%
+            );
+          background-attachment: fixed;
+        }
       }
       .glass {
         background: rgba(255, 255, 255, 0.85);
@@ -77,252 +105,260 @@
       }
     </style>
   </head>
-  <body class="pb-32 bg-background min-h-screen">
-    <!-- Header Controls -->
-    <header
-      class="fixed top-0 left-0 w-full p-5 flex items-center justify-between z-50"
+  <body class="pb-32 bg-transparent min-h-screen">
+    <div
+      class="max-w-5xl mx-auto bg-[#fbfbfb] min-h-screen relative overflow-hidden"
     >
-      <button
-        onclick="window.history.back()"
-        class="w-12 h-12 glass rounded-full flex items-center justify-center active:scale-90 transition-transform"
+      <!-- Header Controls -->
+      <header
+        class="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-5xl p-5 flex items-center justify-between z-50"
       >
-        <i data-lucide="chevron-right" class="w-6 h-6 text-slate-800"></i>
-      </button>
-      <div class="flex gap-2">
         <button
-          id="detail-like"
-          onclick="toggleLike()"
+          onclick="window.history.back()"
           class="w-12 h-12 glass rounded-full flex items-center justify-center active:scale-90 transition-transform"
         >
-          <i data-lucide="heart" class="w-6 h-6 text-slate-400"></i>
+          <i data-lucide="chevron-right" class="w-6 h-6 text-slate-800"></i>
         </button>
-        <button
-          class="w-12 h-12 glass rounded-full flex items-center justify-center active:scale-90 transition-transform"
-        >
-          <i data-lucide="share-2" class="w-6 h-6 text-slate-800"></i>
-        </button>
-      </div>
-    </header>
+        <div class="flex gap-2">
+          <button
+            id="detail-like"
+            onclick="toggleLike()"
+            class="w-12 h-12 glass rounded-full flex items-center justify-center active:scale-90 transition-transform"
+          >
+            <i data-lucide="heart" class="w-6 h-6 text-slate-400"></i>
+          </button>
+          <button
+            class="w-12 h-12 glass rounded-full flex items-center justify-center active:scale-90 transition-transform"
+          >
+            <i data-lucide="share-2" class="w-6 h-6 text-slate-800"></i>
+          </button>
+        </div>
+      </header>
 
-    <!-- Product Image Gallery -->
-    <section class="relative">
+      <!-- Product Image Gallery -->
+      <section class="relative">
+        <div
+          class="product-main-image flex items-center justify-center p-8 bg-white rounded-b-[48px] shadow-sm"
+        >
+          <img
+            id="product-img"
+            src=""
+            class="max-h-full object-contain"
+            alt="Product"
+          />
+        </div>
+      </section>
+
+      <!-- Product Info Content -->
+      <main class="px-6 pt-8 animate-slide-up">
+        <div class="flex items-center gap-2 mb-3">
+          <span
+            id="product-cat"
+            class="bg-primary/10 text-primary text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider"
+            >القسم</span
+          >
+          <span
+            class="bg-secondary/10 text-secondary text-[10px] font-black px-3 py-1 rounded-full"
+            >خصم 20%</span
+          >
+        </div>
+
+        <h1
+          id="product-name"
+          class="text-2xl font-black text-slate-900 mb-2 leading-tight"
+        >
+          اسم المنتج يظهر هنا
+        </h1>
+        <p id="product-desc" class="text-slate-400 font-normal mb-6">
+          هذا الوصف يعبر عن تفاصيل المنتج ومميزاته التي تهم المستخدم.
+        </p>
+
+        <div class="flex items-center gap-4 mb-8">
+          <div class="flex flex-col">
+            <span
+              class="text-xs font-bold text-slate-400 uppercase tracking-widest"
+              >السعر</span
+            >
+            <div class="flex items-baseline gap-1">
+              <span id="product-price" class="text-xl font-black text-primary"
+                >0,000</span
+              >
+              <span class="text-sm font-bold text-primary/60">د.ع</span>
+            </div>
+          </div>
+          <div class="h-10 w-px bg-slate-100 mx-2"></div>
+          <div class="flex flex-col">
+            <span
+              class="text-xs font-bold text-slate-400 uppercase tracking-widest"
+              >التوافر</span
+            >
+            <span class="text-sm font-black text-emerald-600"
+              >متوفر في المخزن</span
+            >
+          </div>
+        </div>
+
+        <!-- Features Grid -->
+        <div class="grid grid-cols-2 gap-4 mb-10">
+          <div
+            class="bg-white p-4 rounded-3xl border border-slate-100 flex items-center gap-3"
+          >
+            <div
+              class="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center text-amber-500"
+            >
+              <i data-lucide="truck" class="w-5 h-5"></i>
+            </div>
+            <div class="flex flex-col">
+              <span class="text-[10px] font-bold text-slate-400"
+                >توصيل سريع</span
+              >
+              <span class="text-xs font-black">خلال 24 ساعة</span>
+            </div>
+          </div>
+          <div
+            class="bg-white p-4 rounded-3xl border border-slate-100 flex items-center gap-3"
+          >
+            <div
+              class="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-500"
+            >
+              <i data-lucide="shield-check" class="w-5 h-5"></i>
+            </div>
+            <div class="flex flex-col">
+              <span class="text-[10px] font-bold text-slate-400"
+                >جودة مضمونة</span
+              >
+              <span class="text-xs font-black">منتج أصلي 100%</span>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <!-- Bottom Action Bar -->
       <div
-        class="product-main-image flex items-center justify-center p-8 bg-white rounded-b-[48px] shadow-sm"
+        class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-5xl p-6 z-50"
       >
-        <img
-          id="product-img"
-          src=""
-          class="max-h-full object-contain"
-          alt="Product"
-        />
-      </div>
-    </section>
-
-    <!-- Product Info Content -->
-    <main class="px-6 pt-8 animate-slide-up">
-      <div class="flex items-center gap-2 mb-3">
-        <span
-          id="product-cat"
-          class="bg-primary/10 text-primary text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider"
-          >القسم</span
+        <nav
+          class="max-w-md mx-auto glass rounded-[32px] p-2 flex items-center justify-between gap-4 shadow-nav border border-white/60 pointer-events-auto"
         >
-        <span
-          class="bg-secondary/10 text-secondary text-[10px] font-black px-3 py-1 rounded-full"
-          >خصم 20%</span
-        >
-      </div>
-
-      <h1
-        id="product-name"
-        class="text-2xl font-black text-slate-900 mb-2 leading-tight"
-      >
-        اسم المنتج يظهر هنا
-      </h1>
-      <p id="product-desc" class="text-slate-400 font-normal mb-6">
-        هذا الوصف يعبر عن تفاصيل المنتج ومميزاته التي تهم المستخدم.
-      </p>
-
-      <div class="flex items-center gap-4 mb-8">
-        <div class="flex flex-col">
-          <span
-            class="text-xs font-bold text-slate-400 uppercase tracking-widest"
-            >السعر</span
-          >
-          <div class="flex items-baseline gap-1">
-            <span id="product-price" class="text-xl font-black text-primary"
-              >0,000</span
-            >
-            <span class="text-sm font-bold text-primary/60">د.ع</span>
-          </div>
-        </div>
-        <div class="h-10 w-px bg-slate-100 mx-2"></div>
-        <div class="flex flex-col">
-          <span
-            class="text-xs font-bold text-slate-400 uppercase tracking-widest"
-            >التوافر</span
-          >
-          <span class="text-sm font-black text-emerald-600"
-            >متوفر في المخزن</span
-          >
-        </div>
-      </div>
-
-      <!-- Features Grid -->
-      <div class="grid grid-cols-2 gap-4 mb-10">
-        <div
-          class="bg-white p-4 rounded-3xl border border-slate-100 flex items-center gap-3"
-        >
+          <!-- Qty Selector -->
           <div
-            class="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center text-amber-500"
+            class="flex items-center gap-3 bg-slate-50 p-1.5 rounded-2xl border border-slate-100"
           >
-            <i data-lucide="truck" class="w-5 h-5"></i>
-          </div>
-          <div class="flex flex-col">
-            <span class="text-[10px] font-bold text-slate-400">توصيل سريع</span>
-            <span class="text-xs font-black">خلال 24 ساعة</span>
-          </div>
-        </div>
-        <div
-          class="bg-white p-4 rounded-3xl border border-slate-100 flex items-center gap-3"
-        >
-          <div
-            class="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-500"
-          >
-            <i data-lucide="shield-check" class="w-5 h-5"></i>
-          </div>
-          <div class="flex flex-col">
-            <span class="text-[10px] font-bold text-slate-400"
-              >جودة مضمونة</span
+            <button
+              onclick="changeQty(-1)"
+              class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-slate-400 shadow-sm active:scale-90"
             >
-            <span class="text-xs font-black">منتج أصلي 100%</span>
+              <i data-lucide="minus" class="w-5 h-5"></i>
+            </button>
+            <span
+              id="qty-count"
+              class="text-lg font-black min-w-[24px] text-center"
+              >1</span
+            >
+            <button
+              onclick="changeQty(1)"
+              class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-primary shadow-sm active:scale-90"
+            >
+              <i data-lucide="plus" class="w-5 h-5"></i>
+            </button>
           </div>
-        </div>
+
+          <!-- Add Button -->
+          <button
+            onclick="addToCart()"
+            class="flex-1 h-14 bg-primary text-white rounded-2xl font-black text-md shadow-lg shadow-primary/25 active:scale-[0.98] transition-transform flex items-center justify-center gap-3"
+          >
+            <i data-lucide="shopping-cart" class="w-6 h-6"></i>
+            إضافة
+          </button>
+        </nav>
       </div>
-    </main>
 
-    <!-- Bottom Action Bar -->
-    <div class="fixed bottom-0 left-0 w-full p-6 z-50">
-      <nav
-        class="max-w-md mx-auto glass rounded-[32px] p-2 flex items-center justify-between gap-4 shadow-nav border border-white/60 pointer-events-auto"
-      >
-        <!-- Qty Selector -->
-        <div
-          class="flex items-center gap-3 bg-slate-50 p-1.5 rounded-2xl border border-slate-100"
-        >
-          <button
-            onclick="changeQty(-1)"
-            class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-slate-400 shadow-sm active:scale-90"
-          >
-            <i data-lucide="minus" class="w-5 h-5"></i>
-          </button>
-          <span
-            id="qty-count"
-            class="text-lg font-black min-w-[24px] text-center"
-            >1</span
-          >
-          <button
-            onclick="changeQty(1)"
-            class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-primary shadow-sm active:scale-90"
-          >
-            <i data-lucide="plus" class="w-5 h-5"></i>
-          </button>
-        </div>
+      <script>
+        // Data Loading
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = urlParams.get("id") || "p1";
+        let currentProduct = null;
+        let cart = {};
+        let likes = {};
 
-        <!-- Add Button -->
-        <button
-          onclick="addToCart()"
-          class="flex-1 h-14 bg-primary text-white rounded-2xl font-black text-md shadow-lg shadow-primary/25 active:scale-[0.98] transition-transform flex items-center justify-center gap-3"
-        >
-          <i data-lucide="shopping-cart" class="w-6 h-6"></i>
-          إضافة
-        </button>
-      </nav>
-    </div>
+        async function loadProduct() {
+          try {
+            const response = await fetch("data.json");
+            const data = await response.json();
 
-    <script>
-      // Data Loading
-      const urlParams = new URLSearchParams(window.location.search);
-      const productId = urlParams.get("id") || "p1";
-      let currentProduct = null;
-      let cart = {};
-      let likes = {};
+            // Load state from local storage
+            cart = JSON.parse(localStorage.getItem("cart") || "{}");
+            likes = JSON.parse(localStorage.getItem("likes") || "{}");
 
-      async function loadProduct() {
-        try {
-          const response = await fetch("data.json");
-          const data = await response.json();
+            // Find product across all sections
+            data.sections.forEach((s) => {
+              const p = s.products.find((item) => item.id === productId);
+              if (p) {
+                currentProduct = p;
+                currentProduct.cat = s.title;
+              }
+            });
 
-          // Load state from local storage
-          cart = JSON.parse(localStorage.getItem("cart") || "{}");
-          likes = JSON.parse(localStorage.getItem("likes") || "{}");
+            if (currentProduct) {
+              document.getElementById("product-name").innerText =
+                currentProduct.name;
+              document.getElementById("product-price").innerText =
+                currentProduct.price;
+              document.getElementById("product-desc").innerText =
+                currentProduct.fullDesc || currentProduct.desc;
+              document.getElementById("product-cat").innerText =
+                currentProduct.cat;
+              document.getElementById("product-img").src = currentProduct.img;
 
-          // Find product across all sections
-          data.sections.forEach((s) => {
-            const p = s.products.find((item) => item.id === productId);
-            if (p) {
-              currentProduct = p;
-              currentProduct.cat = s.title;
+              updateLikeUI(likes[productId]);
+              updateCartUI();
+              lucide.createIcons();
             }
-          });
-
-          if (currentProduct) {
-            document.getElementById("product-name").innerText =
-              currentProduct.name;
-            document.getElementById("product-price").innerText =
-              currentProduct.price;
-            document.getElementById("product-desc").innerText =
-              currentProduct.fullDesc || currentProduct.desc;
-            document.getElementById("product-cat").innerText =
-              currentProduct.cat;
-            document.getElementById("product-img").src = currentProduct.img;
-
-            updateLikeUI(likes[productId]);
-            updateCartUI();
-            lucide.createIcons();
+          } catch (error) {
+            console.error("Error loading product data:", error);
           }
-        } catch (error) {
-          console.error("Error loading product data:", error);
         }
-      }
 
-      function updateLikeUI(active) {
-        const btn = document.getElementById("detail-like");
-        const icon = btn.querySelector("svg") || btn.querySelector("i");
-        if (active) {
-          icon.classList.remove("text-slate-400");
-          icon.classList.add("text-red-500", "fill-red-500");
-        } else {
-          icon.classList.remove("text-red-500", "fill-red-500");
-          icon.classList.add("text-slate-400");
+        function updateLikeUI(active) {
+          const btn = document.getElementById("detail-like");
+          const icon = btn.querySelector("svg") || btn.querySelector("i");
+          if (active) {
+            icon.classList.remove("text-slate-400");
+            icon.classList.add("text-red-500", "fill-red-500");
+          } else {
+            icon.classList.remove("text-red-500", "fill-red-500");
+            icon.classList.add("text-slate-400");
+          }
         }
-      }
 
-      function updateCartUI() {
-        const qty = cart[productId] || 1;
-        document.getElementById("qty-count").innerText = qty;
-      }
+        function updateCartUI() {
+          const qty = cart[productId] || 1;
+          document.getElementById("qty-count").innerText = qty;
+        }
 
-      function changeQty(delta) {
-        let qty = cart[productId] || 1;
-        qty = Math.max(1, qty + delta);
-        cart[productId] = qty;
-        localStorage.setItem("cart", JSON.stringify(cart));
-        updateCartUI();
-      }
+        function changeQty(delta) {
+          let qty = cart[productId] || 1;
+          qty = Math.max(1, qty + delta);
+          cart[productId] = qty;
+          localStorage.setItem("cart", JSON.stringify(cart));
+          updateCartUI();
+        }
 
-      function addToCart() {
-        if (!cart[productId]) cart[productId] = 1;
-        localStorage.setItem("cart", JSON.stringify(cart));
-        window.location.href = "index.html?view=cart";
-      }
+        function addToCart() {
+          if (!cart[productId]) cart[productId] = 1;
+          localStorage.setItem("cart", JSON.stringify(cart));
+          window.location.href = "index.html?view=cart";
+        }
 
-      function toggleLike() {
-        likes[productId] = !likes[productId];
-        localStorage.setItem("likes", JSON.stringify(likes));
-        updateLikeUI(likes[productId]);
-      }
+        function toggleLike() {
+          likes[productId] = !likes[productId];
+          localStorage.setItem("likes", JSON.stringify(likes));
+          updateLikeUI(likes[productId]);
+        }
 
-      window.onload = loadProduct;
-    </script>
+        window.onload = loadProduct;
+      </script>
+    </div>
   </body>
 </html>
