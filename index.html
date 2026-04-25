@@ -305,7 +305,7 @@
           </div>
           <div
             id="home-categories"
-            class="flex px-5 gap-1 lg:gap-5 overflow-x-auto hide-scrollbar"
+            class="flex px-5 gap-1 lg:gap-5 overflow-x-auto overflow-y-hidden hide-scrollbar"
           >
             <!-- Populated by JS -->
           </div>
@@ -1295,7 +1295,7 @@
               </div>
               <button onclick="switchView('browse')" class="text-primary text-sm font-black bg-primary/5 px-3 py-1.5 rounded-lg">عرض الكل</button>
             </div>
-            <div class="flex lg:grid-cols-4 xl:grid-cols-5 lg:gap-3 overflow-x-auto px-5 gap-1 hide-scrollbar">
+            <div class="flex lg:grid-cols-4 xl:grid-cols-5 lg:gap-3 overflow-x-auto overflow-y-hidden px-5 gap-1 hide-scrollbar">
               ${s.products.map((p, i) => renderProductCard(p, i * 0.1)).join("")}
             </div>
           </section>
