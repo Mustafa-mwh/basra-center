@@ -23,7 +23,8 @@
             colors: {
               primary: "#008477",
               secondary: "#E16A24",
-              background: "#FDFBF7",
+              // background: "#FDFBFs7",
+              background: "#fff",
               surface: "#FFFFFF",
               accent: "#F2F9F8",
               cardBg: "#FFFFFF",
@@ -48,7 +49,7 @@
     <style>
       body {
         font-family: "Cairo", sans-serif;
-        background-color: #fdfbf7;
+        background-color: #fff;
         -webkit-tap-highlight-color: transparent;
         overflow-x: hidden;
       }
@@ -144,7 +145,7 @@
   </head>
   <body class="pb-32 text-slate-800 bg-background min-h-screen">
     <!-- Main Views Container -->
-    <main id="main-content" class="bg-[#fdfbf7] max-w-5xl mx-auto">
+    <main id="main-content" class="bg-[#fbfbfb] max-w-5xl mx-auto">
       <!-- Home View -->
       <div id="home-view" class="animate-fade-in min-h-screen">
         <!-- Header -->
@@ -383,7 +384,10 @@
       </div>
 
       <!-- Category Detail View (Hidden by default) -->
-      <div id="category-view" class="hidden animate-fade-in px-5 pt-8 min-h-screen">
+      <div
+        id="category-view"
+        class="hidden animate-fade-in px-5 pt-8 min-h-screen"
+      >
         <header class="flex items-center gap-4 mb-8">
           <button
             onclick="switchView('browse')"
@@ -422,7 +426,7 @@
     <!-- Cart View -->
     <div
       id="cart-view"
-      class="hidden bg-[#fdfbf7] fixed inset-0 z-30 flex flex-col animate-fade-in max-w-5xl mx-auto"
+      class="hidden bg-[#fff] fixed inset-0 z-30 flex flex-col animate-fade-in max-w-5xl mx-auto"
     >
       <header
         class="px-5 pt-8 pb-4 bg-background/80 backdrop-blur-xl border-b border-slate-50 shrink-0"
@@ -544,7 +548,7 @@
     <!-- Account View -->
     <div
       id="account-view"
-      class="hidden bg-[#fdfbf7] animate-fade-in pb-32 max-w-5xl mx-auto min-h-screen"
+      class="hidden bg-[#fff] animate-fade-in pb-32 max-w-5xl mx-auto min-h-screen"
     >
       <header class="px-5 pt-12 pb-8">
         <div class="flex items-center gap-5">
@@ -774,7 +778,7 @@
             <i data-lucide="heart" class="w-4 h-4 ${APP_DATA.likes[p.id] ? "text-red-500 fill-red-500" : "text-slate-400"}"></i>
           </button>
           
-          <div onclick="window.location.href='product-details.html?id=${p.id}'" class="w-full h-40 lg:h-56 rounded-[22px] mb-3 overflow-hidden cursor-pointer relative group">
+          <div onclick="window.location.href='product-details.html?id=${p.id}'" class="w-full h-56 lg:h-56 rounded-[22px] mb-3 overflow-hidden cursor-pointer relative group">
             <img src="${p.img}" class="product-image bg-white w-full h-full object-contain border border-slate-200 rounded-lg" alt="${p.name}">
             
             <div data-id="${p.id}" class="controls-container absolute bottom-2.5 right-2.5 z-20">
