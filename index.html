@@ -21,8 +21,9 @@
         theme: {
           extend: {
             colors: {
-              primary: "#008477",
-              secondary: "#E16A24",
+              // primary: "#008477",
+              primary: "#26b559",
+              secondary: "#F58220",
               // background: "#FDFBFs7",
               background: "#fff",
               surface: "#FFFFFF",
@@ -147,8 +148,8 @@
 
       /* Active state for bottom nav icons */
       .nav-item.active {
-        color: #008477;
-        background: rgba(0, 132, 119, 0.08);
+        color: #26b559;
+        background: rgba(38, 181, 89, 0.08);
       }
 
       /* Ensure images fit perfectly */
@@ -171,9 +172,9 @@
         >
           <div class="flex items-center gap-3">
             <div
-              class="w-12 h-12 rounded-2xl flex items-center justify-center text-white font-black text-xl"
+              class="w-14 h-12 rounded-2xl flex items-center justify-center text-white font-black text-xl"
             >
-              <img src="bc-logo.png" alt="" width="35px" />
+              <img src="bc-logo.png" alt="" width="60px" />
             </div>
             <div class="flex flex-col">
               <span
@@ -321,34 +322,36 @@
           style="animation-delay: 0.4s"
         >
           <div
-            class="relative h-44 rounded-[32px] overflow-hidden bg-gradient-to-br from-emerald-900 to-primary"
+            class="relative h-32 lg:h-96 rounded-[32px] overflow-hidden bg-gradient-to-br from-emerald-900 to-primary"
           >
             <img
-              src="https://images.unsplash.com/photo-1578916171728-46686eac8d58?q=80&w=800"
-              class="absolute inset-0 w-full h-full object-cover opacity-30 mix-blend-overlay"
+              src="/images/banner1.png"
+              class="absolute inset-0 w-full h-full object-cover"
               alt="Mid Banner"
             />
-            <div
-              class="relative h-full p-7 flex flex-col justify-center text-white"
-            >
-              <span
-                class="bg-white/20 backdrop-blur-md px-3 py-1 rounded-lg text-[9px] font-black w-fit mb-3"
-                >تجهيزات المنزل</span
-              >
-              <h3 class="text-xl font-black mb-1">عروض المنظفات الخاصة</h3>
-              <p class="text-xs font-bold text-white/70 mb-4">
-                وفر حتى 25% على الماركات العالمية
-              </p>
-              <button
-                class="bg-white text-primary px-6 py-2.5 rounded-xl text-xs font-black w-fit shadow-xl active:scale-95 transition-transform"
-              >
-                تسوق الآن
-              </button>
-            </div>
           </div>
         </section>
 
         <div id="home-sections-bottom" class="space-y-12 mb-10">
+          <!-- Populated by JS -->
+        </div>
+
+        <section
+          class="px-5 my-10 animate-fade-in"
+          style="animation-delay: 0.4s"
+        >
+          <div
+            class="relative h-32 lg:h-96 rounded-[32px] overflow-hidden bg-gradient-to-br from-emerald-900 to-primary"
+          >
+            <img
+              src="/images/banner2.png"
+              class="absolute inset-0 w-full h-full object-cover"
+              alt="Mid Banner"
+            />
+          </div>
+        </section>
+
+        <div id="second-sections-bottom" class="space-y-12 mb-10">
           <!-- Populated by JS -->
         </div>
       </div>
@@ -735,7 +738,7 @@
           class="flex flex-col items-center gap-1 min-w-[70px] py-3 text-slate-400 hover:text-primary relative group transition-all rounded-2xl"
         >
           <i
-            data-lucide="shopping-cart"
+            data-lucide="shopping-basket"
             class="w-5 h-5 group-hover:scale-110 transition-transform"
           ></i>
           <span class="text-[10px] font-bold">السلة</span>
@@ -750,7 +753,7 @@
           onclick="switchView('account')"
           class="flex flex-col items-center gap-1 min-w-[70px] py-3 text-slate-400 hover:text-primary transition-all rounded-2xl"
         >
-          <i data-lucide="user" class="w-5 h-5"></i>
+          <i data-lucide="user-round" class="w-5 h-5"></i>
           <span class="text-[10px] font-bold">حسابي</span>
         </button>
       </nav>
@@ -1306,6 +1309,9 @@
           .join("");
 
         document.getElementById("home-sections-bottom").innerHTML =
+          sectionsBottom.map(renderSection).join("");
+
+        document.getElementById("second-sections-bottom").innerHTML =
           sectionsBottom.map(renderSection).join("");
 
         // Render Browse Categories
