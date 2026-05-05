@@ -69,7 +69,7 @@
   "sections": [
     {
       "title": "جديد على بصرة سنتر",
-      "subtitle": "وصلنا حديثاً هذا الأسبوع",
+      "subtitle": "",
       "accentColor": "primary",
       "products": [
         {
@@ -107,7 +107,7 @@
     },
     {
       "title": "منتجات مميزة",
-      "subtitle": "اختياراتنا المفضلة لك اليوم",
+      "subtitle": "",
       "accentColor": "secondary",
       "products": [
         {
@@ -128,7 +128,7 @@
           "desc": "10 قطع",
           "fullDesc": "كبة لحم عراقية تقليدية، محضرة من أفضل المكونات وجاهزة للقلي.",
           "price": "2,500",
-          "img": "https://amyar-market.com/wp-content/uploads/2023/03/img_3895.png"
+          "img": "https://cdn.mafrservices.com/sys-master-root/h33/h60/48744079228958/1809127_main.jpg?im=Resize=376"
         },
         {
           "id": "p6",
@@ -144,7 +144,7 @@
     },
     {
       "title": "عروض المنظفات",
-      "subtitle": "أفضل الماركات للعناية بمنزلك",
+      "subtitle": "",
       "accentColor": "emerald-600",
       "products": [
         {
@@ -181,7 +181,7 @@
     },
     {
       "title": "قسم المعلبات",
-      "subtitle": "خزين البيت الأساسي",
+      "subtitle": "",
       "accentColor": "amber-600",
       "products": [
         {
@@ -218,7 +218,7 @@
     },
     {
       "title": "منتجات طازجة",
-      "subtitle": "من المزرعة إلى منزلك",
+      "subtitle": "",
       "accentColor": "emerald-600",
       "products": [
         {
@@ -327,8 +327,8 @@
     {
       "id": "ORD-1295",
       "date": "2024-04-21",
-      "status": "processing",
-      "statusAr": "قيد التجهيز",
+      "status": "out-for-delivery",
+      "statusAr": "قيد التوصيل",
       "total": "12,750",
       "itemsCount": 2,
       "preview": "تونة، شاي..."

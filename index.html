@@ -293,6 +293,9 @@
           </div>
         </section>
 
+        <!-- Active Order Banner Container -->
+        <div id="active-order-container" class="px-5 mb-8 hidden"></div>
+
         <!-- Categories -->
         <section class="mb-10">
           <div class="px-5 mb-5 flex items-center justify-between">
@@ -308,7 +311,6 @@
             id="home-categories"
             class="flex px-5 gap-1 lg:gap-5 overflow-x-auto overflow-y-hidden hide-scrollbar"
           >
-            <!-- Populated by JS -->
           </div>
         </section>
 
@@ -731,7 +733,7 @@
         <div class="mx-auto flex items-center justify-start gap-4">
           <button
             onclick="switchView('cart')"
-            class="w-10 h-10 bg-white rounded-xl flex items-center justify-start border border-slate-100 active:scale-90 transition-transform"
+            class="w-10 h-10 bg-white rounded-xl flex items-center justify-center border border-slate-100 active:scale-90 transition-transform"
           >
             <i data-lucide="chevron-right" class="w-6 h-6 text-slate-600"></i>
           </button>
@@ -757,9 +759,29 @@
             <div class="flex flex-col flex-1">
               <div class="flex items-center gap-2 mb-1">
                 <span class="text-sm font-black text-slate-900">المنزل</span>
-                <span class="bg-primary/10 text-primary text-[9px] font-black px-2 py-0.5 rounded-md">افتراضي</span>
               </div>
               <span class="text-[11px] font-bold text-slate-400 leading-relaxed">البصرة، الطويسة، شارع 14 تموز، قرب جامع العباس</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Delivery Time -->
+        <section class="space-y-4">
+          <div class="flex items-center justify-between px-1">
+            <h3 class="text-base font-black text-slate-900">وقت التوصيل</h3>
+            <button onclick="openDeliveryTimeSheet()" class="text-primary text-xs font-black flex items-center gap-1.5 hover:opacity-70 transition-opacity">
+              تغيير الوقت
+              <i data-lucide="chevron-left" class="w-4 h-4"></i>
+            </button>
+          </div>
+          <div onclick="openDeliveryTimeSheet()" class="bg-white rounded-[32px] p-6 border border-slate-100 flex items-center gap-5 group active:scale-[0.98] transition-all cursor-pointer">
+            <div class="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center text-primary shrink-0 group-hover:bg-primary group-hover:text-white transition-colors">
+              <i data-lucide="timer" class="w-7 h-7"></i>
+            </div>
+            <div class="flex flex-col flex-1">
+              <div class="flex items-center gap-2 mb-1">
+                <span id="display-delivery-time" class="text-sm font-black text-slate-900">المتوقع 15 - 30 دقيقة</span>
+              </div>
             </div>
           </div>
         </section>
@@ -815,6 +837,30 @@
             <p class="text-[11px] font-bold text-emerald-800 leading-relaxed">
               سيتم خصم مبلغ الطلب من رصيد محفظتك مباشرة بعد التأكيد.
             </p>
+          </div>
+        </section>
+
+        <!-- Order Notes -->
+        <section class="space-y-4">
+          <h3 class="text-base font-black text-slate-900 px-1">ملاحظات الطلب</h3>
+          <textarea
+            placeholder="اكتب ملاحظاتك هنا (اختياري)..."
+            class="w-full h-24 bg-white border border-slate-100 rounded-[24px] p-5 text-sm font-bold text-slate-900 focus:border-primary focus:ring-4 focus:ring-primary/5 outline-none transition-all resize-none"
+          ></textarea>
+        </section>
+
+        <!-- Discount Coupon -->
+        <section class="space-y-4">
+          <h3 class="text-base font-black text-slate-900 px-1">كوبون الخصم</h3>
+          <div class="relative flex items-center">
+            <input
+              type="text"
+              placeholder="أدخل رمز الكوبون"
+              class="w-full h-14 bg-white border border-slate-100 rounded-[24px] pr-5 pl-24 text-sm font-bold text-slate-900 focus:border-primary focus:ring-4 focus:ring-primary/5 outline-none transition-all uppercase tracking-widest"
+            />
+            <button class="absolute left-2 text-primary/70 h-10 px-5 rounded-2xl text-xs font-black active:scale-95 transition-transform">
+              تطبيق
+            </button>
           </div>
         </section>
 
@@ -996,6 +1042,51 @@
       </div>
     </div>
 
+    <!-- Floating Cart Bar -->
+    <div
+      id="floating-cart-bar"
+      class="hidden fixed left-1/2 -translate-x-1/2 w-full max-w-5xl px-6 z-[60] transition-all duration-300 pointer-events-none"
+      style="bottom: 130px;"
+    >
+      <div class="max-w-md lg:max-w-2xl mx-auto pointer-events-auto">
+        <button onclick="switchView('cart')" class="w-full bg-white/95 backdrop-blur-md rounded-2xl p-4 border border-slate-100 flex flex-col gap-3 shadow-premium active:scale-[0.98] transition-all animate-fade-in">
+          <!-- Reward Progress Section -->
+          <div class="w-full flex flex-col gap-1.5">
+            <div class="flex justify-between items-center text-[10px] font-black">
+              <span id="reward-message" class="text-primary">باقي 50,000 د.ع للحصول على توصيل مجاني</span>
+              <span id="reward-percent" class="text-slate-400">0%</span>
+            </div>
+            <div class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+              <div id="reward-progress" class="h-full bg-primary rounded-full transition-all duration-700" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <!-- Divider -->
+          <div class="w-full h-px bg-slate-50"></div>
+          
+          <!-- Main Content Section -->
+          <div class="flex items-center justify-between w-full">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-primary text-white shadow-sm shrink-0">
+                <i data-lucide="shopping-basket" class="w-5 h-5"></i>
+              </div>
+              <div class="flex flex-col items-start leading-none gap-1">
+                <span class="text-[11px] font-black text-slate-900">سلة التسوق</span>
+                <span id="floating-cart-count" class="text-[10px] font-bold text-slate-400">0 منتج</span>
+              </div>
+            </div>
+            
+            <div class="flex items-center gap-3">
+              <span id="floating-cart-total" class="text-sm font-black text-primary">0 د.ع</span>
+              <div class="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center text-slate-400 border border-slate-100">
+                <i data-lucide="chevron-left" class="w-4 h-4"></i>
+              </div>
+            </div>
+          </div>
+        </button>
+      </div>
+    </div>
+
     <!-- Floating Bottom Navigation - Optimized for Mobile -->
     <div
       id="bottom-nav"
@@ -1019,6 +1110,14 @@
         >
           <i data-lucide="layout-grid" class="w-5 h-5"></i>
           <span class="text-[10px] font-bold">الفئات</span>
+        </button>
+        <button
+          id="nav-orders"
+          onclick="switchView('orders')"
+          class="flex flex-col items-center gap-1 min-w-[70px] py-3 text-slate-400 hover:text-primary transition-all rounded-2xl"
+        >
+          <i data-lucide="package" class="w-5 h-5"></i>
+          <span class="text-[10px] font-bold">طلباتي</span>
         </button>
         <button
           id="nav-cart"
@@ -1049,6 +1148,7 @@
 
     <script>
       // Global App State
+      let APP_CURRENT_VIEW = 'home';
       let APP_DATA = {
         categories: [],
         sections: [],
@@ -1159,6 +1259,7 @@
 
       // View Controller
       function switchView(viewId) {
+        APP_CURRENT_VIEW = viewId;
         const views = [
           "home",
           "browse",
@@ -1225,6 +1326,8 @@
         if (viewId === "cart") renderCart();
         if (viewId === "orders") renderOrders();
         if (viewId === "checkout") renderCheckout();
+
+        updateFloatingCartBar();
 
         lucide.createIcons();
         window.scrollTo(0, 0);
@@ -1569,7 +1672,7 @@
               <div class="flex-1 flex flex-col justify-between py-1">
                 <div>
                   <h4 class="font-black text-slate-900 text-sm mb-1">${p.name}</h4>
-                  <p class="text-[10px] font-bold text-slate-400">${p.price} د.ع / للقطعة</p>
+                  <p class="text-[11px] font-black text-primary">${(priceNum * qty).toLocaleString()} د.ع</p>
                 </div>
                 <div class="flex items-center justify-between">
                   <div class="flex items-center gap-3 bg-accent rounded-xl p-1">
@@ -1628,11 +1731,78 @@
         badge.classList.toggle("hidden", total === 0);
         badge.innerText = total;
 
+        updateFloatingCartBar();
+
         // If we are on the cart view, re-render it
         if (
           !document.getElementById("cart-view").classList.contains("hidden")
         ) {
           renderCart();
+        }
+      }
+
+      function updateFloatingCartBar() {
+        const floatingBar = document.getElementById("floating-cart-bar");
+        if (!floatingBar) return;
+
+        const cartItems = Object.keys(APP_DATA.cart);
+        const totalProducts = cartItems.reduce((sum, id) => sum + APP_DATA.cart[id], 0);
+
+        if (totalProducts === 0) {
+          floatingBar.classList.add("hidden");
+          return;
+        }
+
+        let allProducts = [];
+        APP_DATA.sections.forEach(s => allProducts = [...allProducts, ...s.products]);
+        
+        let subtotal = 0;
+        cartItems.forEach(id => {
+          const p = allProducts.find(item => item.id === id) || { price: "0" };
+          const priceNum = parseInt(p.price.replace(/,/g, ""));
+          subtotal += priceNum * APP_DATA.cart[id];
+        });
+
+        const countEl = document.getElementById("floating-cart-count");
+        const totalEl = document.getElementById("floating-cart-total");
+        if (countEl) countEl.innerText = `${totalProducts} منتج`;
+        if (totalEl) totalEl.innerText = `${subtotal.toLocaleString()} د.ع`;
+
+        // Reward Progress Logic
+        const threshold = 50000;
+        const progress = Math.min((subtotal / threshold) * 100, 100);
+        const remaining = Math.max(threshold - subtotal, 0);
+        
+        const progressEl = document.getElementById("reward-progress");
+        const messageEl = document.getElementById("reward-message");
+        const percentEl = document.getElementById("reward-percent");
+        
+        if (progressEl) progressEl.style.width = `${progress}%`;
+        if (percentEl) percentEl.innerText = `${Math.round(progress)}%`;
+        
+        if (messageEl) {
+          if (remaining > 0) {
+            messageEl.innerText = `باقي ${remaining.toLocaleString()} د.ع للحصول على توصيل مجاني`;
+            messageEl.classList.replace("text-amber-500", "text-primary");
+          } else {
+            messageEl.innerText = "مبروك! حصلت على توصيل مجاني";
+            messageEl.classList.replace("text-primary", "text-amber-500");
+          }
+        }
+
+        const excludedViews = ["home", "cart", "checkout"];
+        
+        if (excludedViews.includes(APP_CURRENT_VIEW)) {
+          floatingBar.classList.add("hidden");
+        } else {
+          floatingBar.classList.remove("hidden");
+          
+          const hideNavViews = ["checkout", "cart", "addresses", "address-form", "favorites"];
+          if (hideNavViews.includes(APP_CURRENT_VIEW)) {
+            floatingBar.style.bottom = "32px";
+          } else {
+            floatingBar.style.bottom = "130px";
+          }
         }
       }
 
@@ -1764,9 +1934,152 @@
         renderAddresses();
       }
 
+      function renderActiveOrderBanner() {
+        const container = document.getElementById("active-order-container");
+        if (!container || !APP_DATA.orders) return;
+        
+        const activeOrder = APP_DATA.orders.find(o => o.status !== "delivered" && o.status !== "cancelled");
+        
+        if (activeOrder) {
+          container.classList.remove("hidden");
+          
+          let statusClass = "bg-primary/10 text-primary";
+          let icon = "package";
+          
+          if (activeOrder.status === "processing") {
+            statusClass = "bg-amber-100 text-amber-600";
+            icon = "motorbike";
+          }
+
+          if (activeOrder.status === "out-for-delivery") {
+            statusClass = "bg-primary/10 text-primary";
+            icon = "motorbike";
+          }
+          
+          container.innerHTML = `
+            <div class="bg-gradient-to-r from-primary/5 to-transparent rounded-[24px] p-4 border border-primary/20 flex items-center justify-between gap-3 animate-fade-in relative overflow-hidden">
+              <div class="absolute -right-4 -top-4 w-16 h-16 bg-primary/10 rounded-full blur-xl"></div>
+              
+              <div class="flex items-center gap-3 relative z-10">
+                <div class="w-12 h-12 rounded-2xl flex items-center justify-center ${statusClass} shrink-0 bg-white shadow-sm border border-slate-100">
+                  <i data-lucide="${icon}" class="w-6 h-6"></i>
+                </div>
+                <div class="flex flex-col items-start gap-1">
+                  <span class="text-sm font-black text-slate-900">طلبك قيد التنفيذ</span>
+                  <span class="w-fit px-2 py-0.5 rounded-md text-[10px] font-black ${statusClass}">${activeOrder.statusAr}</span>
+                </div>
+              </div>
+              
+              <button onclick="switchView('orders')" class="w-10 h-10 shrink-0 bg-white text-primary border border-slate-100 rounded-xl flex items-center justify-center shadow-sm transition-all active:scale-95 relative z-10 hover:bg-slate-50 hover:border-primary/30">
+                <i data-lucide="chevron-left" class="w-5 h-5 text-primary"></i>
+              </button>
+            </div>
+          `;
+        } else {
+          container.classList.add("hidden");
+          container.innerHTML = "";
+        }
+      }
+    </script>
+
+    <!-- Delivery Time Bottom Sheet -->
+    <div id="delivery-time-sheet" class="fixed inset-0 z-[100] hidden">
+      <div id="delivery-time-overlay" class="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity opacity-0" onclick="closeDeliveryTimeSheet()"></div>
+      <div id="delivery-time-panel" class="absolute bottom-0 left-0 right-0 max-w-5xl mx-auto bg-white rounded-t-[40px] p-8 pb-12 transition-transform translate-y-full flex flex-col gap-6 shadow-2xl">
+        <div class="w-12 h-1.5 bg-slate-100 rounded-full mx-auto mb-2"></div>
+        <h3 class="text-xl font-black text-slate-900 text-center">اختر وقت التوصيل</h3>
+        <div class="space-y-6">
+          <!-- ASAP Option -->
+          <button onclick="setDeliveryTime('now', 'الآن', '15 - 30 دقيقة')" class="w-full flex items-center justify-between p-5 bg-primary/5 rounded-[24px] border-2 border-primary group transition-all text-right">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 bg-primary rounded-xl flex items-center justify-center text-white shadow-sm">
+                <i data-lucide="timer" class="w-6 h-6"></i>
+              </div>
+              <div class="flex flex-col items-start">
+                <span class="text-sm font-black text-slate-900">الافتراضي</span>
+                <span class="text-[10px] font-bold text-slate-400">الوقت المتوقع 15 - 30 دقيقة</span>
+              </div>
+            </div>
+            <div class="w-6 h-6 rounded-full border-2 border-primary flex items-center justify-center bg-primary">
+              <div class="w-2 h-2 rounded-full bg-white"></div>
+            </div>
+          </button>
+
+          <!-- Divider -->
+          <div class="flex items-center gap-3">
+            <div class="h-px bg-slate-100 flex-1"></div>
+            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">أو اختر وقت محدد اليوم</span>
+            <div class="h-px bg-slate-100 flex-1"></div>
+          </div>
+
+          <!-- Time Picker -->
+          <div class="bg-slate-50 rounded-[32px] p-6 border border-slate-100 flex flex-col gap-4">
+            <div class="flex items-center gap-3 mb-1">
+              <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-slate-400 shadow-sm">
+                <i data-lucide="clock" class="w-5 h-5"></i>
+              </div>
+              <span class="text-sm font-black text-slate-900">تحديد وقت التوصيل</span>
+            </div>
+            <input type="time" id="custom-time-input" class="w-full h-16 bg-white rounded-2xl border border-slate-200 px-6 font-black text-xl focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all text-center">
+            <p class="text-[10px] font-bold text-slate-400 text-center">يرجى تحديد وقت خلال ساعات العمل الرسمية</p>
+          </div>
+        </div>
+        <button onclick="applyCustomTime()" class="w-full bg-slate-900 text-white h-14 rounded-2xl font-black active:scale-95 transition-all mt-2">تأكيد</button>
+      </div>
+    </div>
+
+    <script>
+      function openDeliveryTimeSheet() {
+        const sheet = document.getElementById('delivery-time-sheet');
+        const overlay = document.getElementById('delivery-time-overlay');
+        const panel = document.getElementById('delivery-time-panel');
+        
+        sheet.classList.remove('hidden');
+        setTimeout(() => {
+          overlay.classList.remove('opacity-0');
+          panel.classList.remove('translate-y-full');
+        }, 10);
+      }
+
+      function closeDeliveryTimeSheet() {
+        const overlay = document.getElementById('delivery-time-overlay');
+        const panel = document.getElementById('delivery-time-panel');
+        const sheet = document.getElementById('delivery-time-sheet');
+        
+        overlay.classList.add('opacity-0');
+        panel.classList.add('translate-y-full');
+        setTimeout(() => {
+          sheet.classList.add('hidden');
+        }, 300);
+      }
+
+      function applyCustomTime() {
+        const timeInput = document.getElementById('custom-time-input');
+        if (timeInput.value) {
+          const time = timeInput.value;
+          setDeliveryTime('custom', `الساعة ${time}`, `توصيل مجدول في تمام الساعة ${time}`);
+        } else {
+          closeDeliveryTimeSheet();
+        }
+      }
+
+      function setDeliveryTime(type, label, hint) {
+        const displayEl = document.getElementById('display-delivery-time');
+        if (displayEl) displayEl.innerText = label;
+        
+        const hintEl = document.getElementById('delivery-time-hint');
+        if (hintEl) hintEl.innerText = hint;
+        
+        closeDeliveryTimeSheet();
+      }
+
       // Initial Render
       async function init() {
         await loadData();
+        
+        renderActiveOrderBanner();
+        updateFloatingCartBar();
+
         // Render Home Categories
         document.getElementById("home-categories").innerHTML =
           APP_DATA.categories

@@ -165,13 +165,10 @@
 
         <h1
           id="product-name"
-          class="text-2xl font-black text-slate-900 mb-2 leading-tight"
+          class="text-2xl font-black text-slate-900 mb-6 leading-tight"
         >
           اسم المنتج يظهر هنا
         </h1>
-        <p id="product-desc" class="text-slate-400 font-normal mb-6">
-          هذا الوصف يعبر عن تفاصيل المنتج ومميزاته التي تهم المستخدم.
-        </p>
 
         <div class="flex items-center gap-4 mb-8">
           <div class="flex flex-col">
@@ -198,40 +195,297 @@
           </div>
         </div>
 
-        <!-- Features Grid -->
-        <div class="grid grid-cols-2 gap-4 mb-10">
-          <div
-            class="bg-white p-4 rounded-3xl border border-slate-100 flex items-center gap-3"
+        <!-- Tabs Navigation -->
+        <div class="flex gap-6 border-b border-slate-100 mb-6">
+          <button
+            onclick="switchTab('details')"
+            id="tab-details"
+            class="pb-3 text-primary font-black border-b-2 border-primary transition-all text-sm"
           >
+            التفاصيل
+          </button>
+          <button
+            onclick="switchTab('reviews')"
+            id="tab-reviews"
+            class="pb-3 text-slate-400 font-bold border-b-2 border-transparent transition-all text-sm"
+          >
+            التقييمات
+          </button>
+        </div>
+
+        <!-- Details Tab -->
+        <div id="content-details" class="block animate-slide-up">
+          <p
+            id="product-desc"
+            class="text-slate-400 font-normal mb-8 leading-relaxed"
+          >
+            هذا الوصف يعبر عن تفاصيل المنتج ومميزاته التي تهم المستخدم.
+          </p>
+
+          <!-- Features Grid -->
+          <div class="grid grid-cols-2 gap-4 mb-10">
             <div
-              class="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center text-amber-500"
+              class="bg-white p-4 rounded-3xl border border-slate-100 flex items-center gap-3"
             >
-              <i data-lucide="truck" class="w-5 h-5"></i>
-            </div>
-            <div class="flex flex-col">
-              <span class="text-[10px] font-bold text-slate-400"
-                >توصيل سريع</span
+              <div
+                class="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center text-amber-500 shrink-0"
               >
-              <span class="text-xs font-black">خلال 24 ساعة</span>
+                <i data-lucide="truck" class="w-5 h-5"></i>
+              </div>
+              <div class="flex flex-col">
+                <span class="text-[10px] font-bold text-slate-400"
+                  >توصيل سريع</span
+                >
+                <span class="text-xs font-black">خلال 24 ساعة</span>
+              </div>
+            </div>
+            <div
+              class="bg-white p-4 rounded-3xl border border-slate-100 flex items-center gap-3"
+            >
+              <div
+                class="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-500 shrink-0"
+              >
+                <i data-lucide="shield-check" class="w-5 h-5"></i>
+              </div>
+              <div class="flex flex-col">
+                <span class="text-[10px] font-bold text-slate-400"
+                  >جودة مضمونة</span
+                >
+                <span class="text-xs font-black">منتج أصلي 100%</span>
+              </div>
             </div>
           </div>
+        </div>
+
+        <!-- Reviews Tab -->
+        <div id="content-reviews" class="hidden animate-slide-up mb-10">
+          <!-- Rating Summary -->
           <div
-            class="bg-white p-4 rounded-3xl border border-slate-100 flex items-center gap-3"
+            class="bg-white rounded-3xl p-6 border border-slate-100 mb-6 flex items-center gap-6"
           >
-            <div
-              class="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-500"
-            >
-              <i data-lucide="shield-check" class="w-5 h-5"></i>
-            </div>
-            <div class="flex flex-col">
+            <div class="flex flex-col items-center">
+              <span class="text-4xl font-black text-slate-900">4.8</span>
+              <div class="flex gap-1 text-amber-400 my-2">
+                <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                <i data-lucide="star" class="w-4 h-4 fill-amber-400"></i>
+                <i
+                  data-lucide="star"
+                  class="w-4 h-4 fill-slate-200 text-slate-200"
+                ></i>
+              </div>
               <span class="text-[10px] font-bold text-slate-400"
-                >جودة مضمونة</span
+                >124 تقييم</span
               >
-              <span class="text-xs font-black">منتج أصلي 100%</span>
+            </div>
+            <div class="h-16 w-px bg-slate-100"></div>
+            <div class="flex-1 flex flex-col gap-1.5">
+              <!-- Rating Bars -->
+              <div
+                class="flex items-center gap-2 text-[10px] font-bold text-slate-400"
+              >
+                <span>5</span>
+                <div
+                  class="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden"
+                >
+                  <div class="h-full bg-primary w-[80%] rounded-full"></div>
+                </div>
+              </div>
+              <div
+                class="flex items-center gap-2 text-[10px] font-bold text-slate-400"
+              >
+                <span>4</span>
+                <div
+                  class="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden"
+                >
+                  <div class="h-full bg-primary w-[15%] rounded-full"></div>
+                </div>
+              </div>
+              <div
+                class="flex items-center gap-2 text-[10px] font-bold text-slate-400"
+              >
+                <span>3</span>
+                <div
+                  class="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden"
+                >
+                  <div class="h-full bg-primary w-[5%] rounded-full"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Add Review -->
+          <h3 class="text-sm font-black text-slate-900 mb-4">أضف تقييمك</h3>
+          <div
+            class="bg-white rounded-3xl p-5 border border-slate-100 mb-8 space-y-4"
+          >
+            <div class="flex justify-center gap-2">
+              <button
+                class="text-slate-200 hover:text-amber-400 transition-colors"
+              >
+                <i data-lucide="star" class="w-8 h-8 fill-current"></i>
+              </button>
+              <button
+                class="text-slate-200 hover:text-amber-400 transition-colors"
+              >
+                <i data-lucide="star" class="w-8 h-8 fill-current"></i>
+              </button>
+              <button
+                class="text-slate-200 hover:text-amber-400 transition-colors"
+              >
+                <i data-lucide="star" class="w-8 h-8 fill-current"></i>
+              </button>
+              <button
+                class="text-slate-200 hover:text-amber-400 transition-colors"
+              >
+                <i data-lucide="star" class="w-8 h-8 fill-current"></i>
+              </button>
+              <button
+                class="text-slate-200 hover:text-amber-400 transition-colors"
+              >
+                <i data-lucide="star" class="w-8 h-8 fill-current"></i>
+              </button>
+            </div>
+            <textarea
+              placeholder="اكتب تعليقك هنا..."
+              class="w-full h-24 bg-slate-50 border border-slate-100 rounded-2xl p-4 text-sm font-bold text-slate-900 focus:border-primary focus:ring-4 focus:ring-primary/5 outline-none transition-all resize-none"
+            ></textarea>
+            <button
+              class="w-full bg-primary text-white h-12 rounded-2xl font-black text-sm shadow-lg shadow-primary/20 active:scale-95 transition-transform"
+            >
+              إرسال التقييم
+            </button>
+          </div>
+
+          <!-- Reviews List -->
+          <h3 class="text-sm font-black text-slate-900 mb-4">التعليقات</h3>
+          <div class="space-y-4">
+            <!-- Review 1 -->
+            <div class="bg-white p-5 rounded-3xl border border-slate-100">
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-3">
+                  <div
+                    class="w-10 h-10 rounded-full bg-slate-100 overflow-hidden"
+                  >
+                    <img
+                      src="https://api.dicebear.com/9.x/initials/svg?seed=Ahmed"
+                      alt="User"
+                      class="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div class="flex flex-col">
+                    <span class="text-xs font-black text-slate-900"
+                      >أحمد محمد</span
+                    >
+                    <span class="text-[10px] font-bold text-slate-400"
+                      >قبل يومين</span
+                    >
+                  </div>
+                </div>
+                <div class="flex gap-0.5 text-amber-400">
+                  <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-400"></i>
+                  <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-400"></i>
+                  <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-400"></i>
+                  <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-400"></i>
+                  <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-400"></i>
+                </div>
+              </div>
+              <p class="text-xs font-bold text-slate-600 leading-relaxed">
+                منتج ممتاز جداً، التوصيل كان سريع والجودة أفضل مما توقعت. أنصح
+                به بشدة!
+              </p>
+            </div>
+
+            <!-- Review 2 -->
+            <div class="bg-white p-5 rounded-3xl border border-slate-100">
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-3">
+                  <div
+                    class="w-10 h-10 rounded-full bg-slate-100 overflow-hidden"
+                  >
+                    <img
+                      src="https://api.dicebear.com/9.x/initials/svg?seed=Ali"
+                      alt="User"
+                      class="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div class="flex flex-col">
+                    <span class="text-xs font-black text-slate-900"
+                      >علي حسين</span
+                    >
+                    <span class="text-[10px] font-bold text-slate-400"
+                      >قبل أسبوع</span
+                    >
+                  </div>
+                </div>
+                <div class="flex gap-0.5 text-amber-400">
+                  <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-400"></i>
+                  <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-400"></i>
+                  <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-400"></i>
+                  <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-400"></i>
+                  <i
+                    data-lucide="star"
+                    class="w-3.5 h-3.5 fill-slate-200 text-slate-200"
+                  ></i>
+                </div>
+              </div>
+              <p class="text-xs font-bold text-slate-600 leading-relaxed">
+                جيد، لكن السعر يمكن أن يكون أفضل بقليل مقارنة بالأسواق الأخرى.
+              </p>
             </div>
           </div>
         </div>
       </main>
+
+      <!-- Floating Cart Bar -->
+      <div
+        id="floating-cart-bar"
+        class="hidden fixed left-1/2 -translate-x-1/2 w-full max-w-5xl px-6 z-[60] transition-all duration-300 pointer-events-none"
+        style="bottom: 100px"
+      >
+        <div class="pointer-events-auto max-w-md mx-auto">
+          <button
+            onclick="window.location.href = 'index.html?view=cart'"
+            class="w-full bg-white/95 backdrop-blur-md rounded-2xl p-4 border border-slate-100 flex flex-col gap-3 shadow-premium active:scale-[0.98] transition-all animate-fade-in"
+          >
+            <!-- Reward Progress Section -->
+            <div class="w-full flex flex-col gap-1.5">
+              <div class="flex justify-between items-center text-[10px] font-black">
+                <span id="reward-message" class="text-primary">باقي 50,000 د.ع للحصول على توصيل مجاني</span>
+                <span id="reward-percent" class="text-slate-400">0%</span>
+              </div>
+              <div class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                <div id="reward-progress" class="h-full bg-primary rounded-full transition-all duration-700" style="width: 0%"></div>
+              </div>
+            </div>
+
+            <!-- Divider -->
+            <div class="w-full h-px bg-slate-50"></div>
+            
+            <!-- Main Content Section -->
+            <div class="flex items-center justify-between w-full">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-primary text-white shadow-sm shrink-0">
+                  <i data-lucide="shopping-basket" class="w-5 h-5"></i>
+                </div>
+                <div class="flex flex-col items-start leading-none gap-1">
+                  <span class="text-[11px] font-black text-slate-900">سلة التسوق</span>
+                  <span id="floating-cart-count" class="text-[10px] font-bold text-slate-400">0 منتج</span>
+                </div>
+              </div>
+              
+              <div class="flex items-center gap-3">
+                <span id="floating-cart-total" class="text-sm font-black text-primary">0 د.ع</span>
+                <div class="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center text-slate-400 border border-slate-100">
+                  <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                </div>
+              </div>
+            </div>
+          </button>
+        </div>
+      </div>
+
 
       <!-- Bottom Action Bar -->
       <div
@@ -335,6 +589,73 @@
         function updateCartUI() {
           const qty = cart[productId] || 1;
           document.getElementById("qty-count").innerText = qty;
+          updateFloatingCartBar();
+        }
+
+        async function updateFloatingCartBar() {
+          const floatingBar = document.getElementById("floating-cart-bar");
+          if (!floatingBar) return;
+
+          const cartItems = Object.keys(cart);
+          const totalProducts = cartItems.reduce(
+            (sum, id) => sum + cart[id],
+            0,
+          );
+
+          if (totalProducts === 0) {
+            floatingBar.classList.add("hidden");
+            return;
+          }
+
+          try {
+            const response = await fetch("data.json");
+            const data = await response.json();
+
+            let allProducts = [];
+            data.sections.forEach(
+              (s) => (allProducts = [...allProducts, ...s.products]),
+            );
+
+            let subtotal = 0;
+            cartItems.forEach((id) => {
+              const p = allProducts.find((item) => item.id === id) || {
+                price: "0",
+              };
+              const priceNum = parseInt(p.price.replace(/,/g, ""));
+              subtotal += priceNum * cart[id];
+            });
+
+            document.getElementById("floating-cart-count").innerText =
+              `${totalProducts} منتج`;
+            document.getElementById("floating-cart-total").innerText =
+              `${subtotal.toLocaleString()} د.ع`;
+
+            // Reward Progress Logic
+            const threshold = 50000;
+            const progress = Math.min((subtotal / threshold) * 100, 100);
+            const remaining = Math.max(threshold - subtotal, 0);
+            
+            const progressEl = document.getElementById("reward-progress");
+            const messageEl = document.getElementById("reward-message");
+            const percentEl = document.getElementById("reward-percent");
+            
+            if (progressEl) progressEl.style.width = `${progress}%`;
+            if (percentEl) percentEl.innerText = `${Math.round(progress)}%`;
+            
+            if (messageEl) {
+              if (remaining > 0) {
+                messageEl.innerText = `باقي ${remaining.toLocaleString()} د.ع للحصول على توصيل مجاني`;
+                messageEl.classList.replace("text-amber-500", "text-primary");
+              } else {
+                messageEl.innerText = "مبروك! حصلت على توصيل مجاني";
+                messageEl.classList.replace("text-primary", "text-amber-500");
+              }
+            }
+
+            floatingBar.classList.remove("hidden");
+          } catch (e) {
+            console.error("Error updating cart bar", e);
+          }
         }
 
         function changeQty(delta) {
@@ -355,6 +676,53 @@
           likes[productId] = !likes[productId];
           localStorage.setItem("likes", JSON.stringify(likes));
           updateLikeUI(likes[productId]);
+        }
+
+        function switchTab(tabId) {
+          const detailsTab = document.getElementById("tab-details");
+          const reviewsTab = document.getElementById("tab-reviews");
+          const detailsContent = document.getElementById("content-details");
+          const reviewsContent = document.getElementById("content-reviews");
+
+          if (tabId === "details") {
+            detailsTab.classList.replace("text-slate-400", "text-primary");
+            detailsTab.classList.replace("font-bold", "font-black");
+            detailsTab.classList.replace(
+              "border-transparent",
+              "border-primary",
+            );
+
+            reviewsTab.classList.replace("text-primary", "text-slate-400");
+            reviewsTab.classList.replace("font-black", "font-bold");
+            reviewsTab.classList.replace(
+              "border-primary",
+              "border-transparent",
+            );
+
+            detailsContent.classList.remove("hidden");
+            detailsContent.classList.add("block");
+            reviewsContent.classList.remove("block");
+            reviewsContent.classList.add("hidden");
+          } else {
+            reviewsTab.classList.replace("text-slate-400", "text-primary");
+            reviewsTab.classList.replace("font-bold", "font-black");
+            reviewsTab.classList.replace(
+              "border-transparent",
+              "border-primary",
+            );
+
+            detailsTab.classList.replace("text-primary", "text-slate-400");
+            detailsTab.classList.replace("font-black", "font-bold");
+            detailsTab.classList.replace(
+              "border-primary",
+              "border-transparent",
+            );
+
+            reviewsContent.classList.remove("hidden");
+            reviewsContent.classList.add("block");
+            detailsContent.classList.remove("block");
+            detailsContent.classList.add("hidden");
+          }
         }
 
         window.onload = loadProduct;
