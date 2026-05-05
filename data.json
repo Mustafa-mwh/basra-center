@@ -317,30 +317,84 @@
   "orders": [
     {
       "id": "ORD-1284",
-      "date": "2024-04-20",
+      "date": "2024-04-20 10:30 AM",
       "status": "delivered",
       "statusAr": "تم التوصيل",
       "total": "24,500",
+      "subtotal": "21,500",
+      "deliveryFee": "3,000",
       "itemsCount": 3,
-      "preview": "زيت، سكر، حليب..."
+      "preview": "زيت، سكر، حليب...",
+      "paymentMethod": "الدفع عند الاستلام",
+      "items": [
+        {
+          "name": "زيت زيتون بكر ممتاز - 500 مل",
+          "price": "6,500",
+          "qty": 1,
+          "img": "https://cdn.salla.sa/QdoGmN/c04e4c9b-087a-4034-b73f-53bdf9005b96-1000x1000-Tr3ePS2dMr2NlshyXni4YG7uyQkAHJtKrxLwb2Qc.jpg"
+        },
+        {
+          "name": "لحم غنم طازج - 1 كغم",
+          "price": "18,000",
+          "qty": 1,
+          "img": "https://taibafarmsarabia.com/wp-content/uploads/2021/04/Fresh-Mutton-with-Bone.jpg"
+        },
+        {
+          "name": "دجاج ساديا - 1.1 كغم",
+          "price": "5,500",
+          "qty": 2,
+          "img": "https://m.media-amazon.com/images/I/41IIDthvbtL._AC_SY300_SX300_QL70_ML2_.jpg"
+        }
+      ]
     },
     {
       "id": "ORD-1295",
-      "date": "2024-04-21",
+      "date": "2024-04-21 02:15 PM",
       "status": "out-for-delivery",
       "statusAr": "قيد التوصيل",
       "total": "12,750",
+      "subtotal": "9,750",
+      "deliveryFee": "3,000",
       "itemsCount": 2,
-      "preview": "تونة، شاي..."
+      "preview": "تونة، شاي...",
+      "paymentMethod": "المحفظة الإلكترونية",
+      "driverName": "أحمد علي",
+      "driverPhone": "07712345678",
+      "estimatedTime": "15 - 30 دقيقة",
+      "items": [
+        {
+          "name": "لحم غنم طازج - 1 كغم",
+          "price": "18,000",
+          "qty": 1,
+          "img": "https://taibafarmsarabia.com/wp-content/uploads/2021/04/Fresh-Mutton-with-Bone.jpg"
+        },
+        {
+          "name": "بقلاوة مشكلة - 500 غم",
+          "price": "8,500",
+          "qty": 1,
+          "img": "https://img.ananinja.com/media/ninja-catalog-42/restaurants/e8te26r5hzx89w07llwhq5r3wtvy/806664.jpg?w=1080&q=75"
+        }
+      ]
     },
     {
       "id": "ORD-1250",
-      "date": "2024-04-15",
+      "date": "2024-04-15 09:00 AM",
       "status": "cancelled",
       "statusAr": "ملغي",
       "total": "8,000",
+      "subtotal": "5,000",
+      "deliveryFee": "3,000",
       "itemsCount": 1,
-      "preview": "منظف أرضيات..."
+      "preview": "جبنة...",
+      "paymentMethod": "الدفع عند الاستلام",
+      "items": [
+        {
+          "name": "شاي ربيع أكسبرس 400 جم",
+          "price": "3,000",
+          "qty": 2,
+          "img": "https://cdn.salla.sa/qQqpAm/3a628b85-8c88-4f5b-a9d3-3a6d6e61e671-1000x1000-WhMWANvkLsGCSU0EwvYZr6TyVnsoXDm97TVjhxQh.jpg"
+        }
+      ]
     }
   ]
 }
