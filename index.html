@@ -828,45 +828,25 @@
 
         <!-- Payment Methods -->
         <section class="space-y-4">
-          <h3 class="text-base font-black text-slate-900 px-1">طريقة الدفع</h3>
           <div class="space-y-3">
-            <!-- Cash Option -->
-            <button
-              id="pay-cash"
-              onclick="setPaymentMethod('cash')"
-              class="payment-method-btn w-full flex items-center justify-between p-4 bg-white border-2 border-primary rounded-[24px] transition-all active:scale-[0.98]"
+            <!-- Wallet Toggle Option -->
+            <div
+              class="w-full flex items-center justify-between p-4 bg-white border border-slate-100 rounded-[24px] transition-all"
             >
               <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
-                  <i data-lucide="banknote" class="w-6 h-6"></i>
-                </div>
-                <div class="flex flex-col items-start">
-                  <span class="text-sm font-black text-slate-900">نقداً (كاش)</span>
-                  <span class="text-[10px] font-bold text-slate-400">الدفع عند استلام الطلب</span>
-                </div>
-              </div>
-              <div class="payment-indicator w-6 h-6 rounded-full border-2 border-primary flex items-center justify-center bg-primary">
-                <div class="w-2 h-2 rounded-full bg-white"></div>
-              </div>
-            </button>
-
-            <!-- Wallet Option -->
-            <button
-              id="pay-wallet"
-              onclick="setPaymentMethod('wallet')"
-              class="payment-method-btn w-full flex items-center justify-between p-4 bg-white border border-slate-100 rounded-[24px] transition-all active:scale-[0.98]"
-            >
-              <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400 transition-colors">
+                <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary transition-colors">
                   <i data-lucide="wallet" class="w-6 h-6"></i>
                 </div>
                 <div class="flex flex-col items-start">
                   <span class="text-sm font-black text-slate-900">المحفظة الإلكترونية</span>
-                  <span class="text-[10px] font-bold text-slate-400">رصيدك: 25,000 د.ع</span>
+                  <span class="text-[10px] font-bold text-slate-400">المبلغ المتوفر: 25,000 د.ع</span>
                 </div>
               </div>
-              <div class="payment-indicator w-6 h-6 rounded-full border-2 border-slate-200 flex items-center justify-center"></div>
-            </button>
+              <label class="relative inline-flex items-center cursor-pointer" dir="ltr">
+                <input type="checkbox" id="wallet-switch" onchange="toggleWalletPayment(this.checked)" class="sr-only peer">
+                <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+              </label>
+            </div>
           </div>
           
           <!-- Wallet Balance Message -->
@@ -875,7 +855,7 @@
               <i data-lucide="check" class="w-4 h-4"></i>
             </div>
             <p class="text-[11px] font-bold text-emerald-800 leading-relaxed">
-              سيتم خصم مبلغ الطلب من رصيد محفظتك مباشرة بعد التأكيد.
+              سيتم خصم <span id="wallet-deduction-amount" class="font-black">0 د.ع</span> من رصيد المحفظة.
             </p>
           </div>
         </section>
@@ -907,20 +887,24 @@
         <!-- Order Summary -->
         <section class="space-y-4">
           <h3 class="text-base font-black text-slate-900 px-1">ملخص الطلب</h3>
-          <div class="bg-white text-white border border-slate-100 rounded-[32px] p-6 relative overflow-hidden">
+          <div class="bg-white border border-slate-100 rounded-[32px] p-6 relative overflow-hidden">
             <!-- Decorative circle -->
-            <div class="absolute -top-10 -left-10 w-32 h-32 bg-white/5 rounded-full"></div>
+            <div class="absolute -top-10 -left-10 w-32 h-32 bg-slate-50/50 rounded-full"></div>
             
             <div class="space-y-4 relative z-10">
               <div class="flex justify-between items-center text-xs">
                 <span class="text-slate-400 font-bold">مجموع السلة</span>
-                <span id="checkout-subtotal" class="text-black">0 د.ع</span>
+                <span id="checkout-subtotal" class="text-slate-900">0 د.ع</span>
               </div>
               <div class="flex justify-between items-center text-xs">
                 <span class="text-slate-400 font-bold">رسوم التوصيل</span>
                 <span class="text-secondary font-black">+ 3,000 د.ع</span>
               </div>
-              <div class="pt-4 border-t border-white/10 flex justify-between items-center">
+              <div id="checkout-wallet-discount-row" class="hidden justify-between items-center text-xs">
+                <span class="text-slate-400 font-bold">خصم المحفظة</span>
+                <span id="checkout-wallet-discount" class="text-emerald-500 font-black">- 0 د.ع</span>
+              </div>
+              <div class="pt-4 border-t border-slate-100 flex justify-between items-center">
                 <div class="flex flex-col">
                   <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">الإجمالي المستحق</span>
                   <span id="checkout-total" class="text-2xl font-black text-primary">0 د.ع</span>
@@ -1374,44 +1358,20 @@
         window.scrollTo(0, 0);
       }
 
-      let selectedPaymentMethod = "cash";
+      let isWalletUsed = false;
+      const WALLET_BALANCE = 25000;
 
-      function setPaymentMethod(method) {
-        selectedPaymentMethod = method;
-        const cashBtn = document.getElementById("pay-cash");
-        const walletBtn = document.getElementById("pay-wallet");
+      function toggleWalletPayment(isChecked) {
+        isWalletUsed = isChecked;
         const walletInfo = document.getElementById("wallet-info");
-
-        const updateBtn = (btn, isActive) => {
-          const iconContainer = btn.querySelector("div:first-child");
-          const indicator = btn.querySelector(".payment-indicator");
-          
-          if (isActive) {
-            btn.classList.add("border-primary");
-            btn.classList.remove("border-slate-100");
-            iconContainer.classList.add("text-primary");
-            iconContainer.classList.remove( "text-slate-400");
-            indicator.classList.add("bg-primary", "border-primary");
-            indicator.classList.remove("border-slate-200");
-            indicator.innerHTML = '<div class="w-2 h-2 rounded-full bg-white"></div>';
-          } else {
-            btn.classList.remove("border-primary");
-            btn.classList.add("border-slate-100");
-            iconContainer.classList.remove("text-primary");
-            iconContainer.classList.add( "text-slate-400");
-            indicator.classList.remove("bg-primary", "border-primary");
-            indicator.classList.add("border-slate-200");
-            indicator.innerHTML = '';
-          }
-        };
-
-        updateBtn(cashBtn, method === "cash");
-        updateBtn(walletBtn, method === "wallet");
         
-        if (method === "wallet") walletInfo.classList.remove("hidden");
-        else walletInfo.classList.add("hidden");
+        if (isWalletUsed) {
+          walletInfo.classList.remove("hidden");
+        } else {
+          walletInfo.classList.add("hidden");
+        }
         
-        lucide.createIcons();
+        renderCheckout();
       }
 
       function renderCheckout() {
@@ -1425,8 +1385,32 @@
           subtotal += priceNum * APP_DATA.cart[id];
         });
 
+        const deliveryFee = 3000;
+        let total = subtotal + deliveryFee;
+        let walletDeduction = 0;
+
+        if (isWalletUsed) {
+          walletDeduction = Math.min(total, WALLET_BALANCE);
+          total -= walletDeduction;
+        }
+
         document.getElementById("checkout-subtotal").innerText = `${subtotal.toLocaleString()} د.ع`;
-        document.getElementById("checkout-total").innerText = `${(subtotal + 3000).toLocaleString()} د.ع`;
+        
+        const discountRow = document.getElementById("checkout-wallet-discount-row");
+        const discountText = document.getElementById("checkout-wallet-discount");
+        const deductionAmountText = document.getElementById("wallet-deduction-amount");
+        
+        if (isWalletUsed && walletDeduction > 0) {
+          discountRow.classList.remove("hidden");
+          discountRow.classList.add("flex");
+          discountText.innerText = `- ${walletDeduction.toLocaleString()} د.ع`;
+          if (deductionAmountText) deductionAmountText.innerText = `${walletDeduction.toLocaleString()} د.ع`;
+        } else {
+          discountRow.classList.add("hidden");
+          discountRow.classList.remove("flex");
+        }
+
+        document.getElementById("checkout-total").innerText = `${total.toLocaleString()} د.ع`;
       }
 
       function completeOrder() {
