@@ -622,6 +622,25 @@
       </header>
 
       <section class="px-5 space-y-4">
+        <!-- Loyalty Points Card -->
+        <div onclick="switchView('loyalty-points')" class="bg-white rounded-[32px] border border-slate-100 p-5 flex items-center justify-between cursor-pointer active:scale-[0.98] transition-all group shadow-[0_4px_20px_-10px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_30px_-10px_rgba(0,0,0,0.08)]">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 bg-amber-50 rounded-2xl flex items-center justify-center text-amber-500 group-hover:scale-110 group-hover:bg-amber-100 transition-all">
+              <i data-lucide="gift" class="w-6 h-6"></i>
+            </div>
+            <div class="flex flex-col">
+              <span class="text-sm font-black text-slate-900">نقاطي</span>
+              <div class="flex items-center gap-1.5 mt-0.5">
+                <span class="text-amber-500 font-black text-sm">1,450</span>
+                <span class="text-[10px] font-bold text-slate-400">نقطة متوفرة <span class="font-normal">/ تنتهي في 16/12/2026</span></span>
+              </div>
+            </div>
+          </div>
+          <div class="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center group-hover:bg-amber-50 transition-colors">
+            <i data-lucide="chevron-left" class="w-5 h-5 text-slate-400 group-hover:text-amber-500"></i>
+          </div>
+        </div>
+
         <div
           class="bg-white rounded-[32px] border border-slate-100 overflow-hidden"
         >
@@ -1066,6 +1085,43 @@
       </div>
     </div>
 
+    <!-- Loyalty Points View -->
+    <div
+      id="loyalty-points-view"
+      class="hidden bg-[#fbfbfb] fixed inset-0 z-30 flex flex-col animate-fade-in max-w-5xl mx-auto"
+    >
+      <header
+        class="px-5 pt-8 pb-4 bg-background/80 backdrop-blur-xl border-b border-slate-50 shrink-0"
+      >
+        <div class="mx-auto flex items-center justify-start gap-4">
+          <button
+            onclick="switchView('account')"
+            class="w-10 h-10 bg-white rounded-xl flex items-center justify-center border border-slate-100 active:scale-90 transition-transform"
+          >
+            <i data-lucide="chevron-right" class="w-6 h-6 text-slate-600"></i>
+          </button>
+          <div class="flex flex-col">
+            <h1 class="text-xl font-black text-slate-900">سجل النقاط</h1>
+            <span class="text-[10px] font-bold text-slate-400">الرصيد الحالي: 1,450 نقطة</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Tabs -->
+      <div class="px-5 pt-4 pb-2 shrink-0 overflow-x-auto hide-scrollbar">
+        <div class="flex items-center gap-2 w-max">
+          <button onclick="switchLoyaltyTab('all')" id="tab-loyalty-all" class="loyalty-tab px-5 py-2.5 bg-primary text-white rounded-xl text-xs font-black transition-all">الكل</button>
+          <button onclick="switchLoyaltyTab('earned')" id="tab-loyalty-earned" class="loyalty-tab px-5 py-2.5 bg-white border border-slate-100 text-slate-500 rounded-xl text-xs font-bold transition-all">المكتسبة</button>
+          <button onclick="switchLoyaltyTab('used')" id="tab-loyalty-used" class="loyalty-tab px-5 py-2.5 bg-white border border-slate-100 text-slate-500 rounded-xl text-xs font-bold transition-all">المستخدمة</button>
+          <button onclick="switchLoyaltyTab('expired')" id="tab-loyalty-expired" class="loyalty-tab px-5 py-2.5 bg-white border border-slate-100 text-slate-500 rounded-xl text-xs font-bold transition-all">منتهية الصلاحية</button>
+        </div>
+      </div>
+
+      <div id="loyalty-points-list" class="flex-1 overflow-y-auto px-5 py-4 space-y-3 pb-32 hide-scrollbar">
+        <!-- List populated by JS -->
+      </div>
+    </div>
+
     <!-- Floating Cart Bar -->
     <div
       id="floating-cart-bar"
@@ -1296,6 +1352,7 @@
           "addresses",
           "address-form",
           "favorites",
+          "loyalty-points",
         ];
         const navs = {
           home: "nav-home",
@@ -1314,7 +1371,7 @@
 
         // Toggle bottom navigation visibility
         const bottomNav = document.getElementById("bottom-nav");
-        const hideNavViews = ["checkout", "cart", "addresses", "address-form", "favorites", "order-details"];
+        const hideNavViews = ["checkout", "cart", "addresses", "address-form", "favorites", "order-details", "loyalty-points"];
         if (bottomNav) {
           if (hideNavViews.includes(viewId)) {
             bottomNav.classList.add("hidden");
@@ -1325,6 +1382,7 @@
 
         if (viewId === 'addresses') renderAddresses();
         if (viewId === 'favorites') renderFavorites();
+        if (viewId === 'loyalty-points') renderLoyaltyPoints('all');
 
         // Reset nav states
         Object.values(navs).forEach((id) => {
@@ -1356,6 +1414,93 @@
 
         lucide.createIcons();
         window.scrollTo(0, 0);
+      }
+
+      // Loyalty Points Logic
+      const MOCK_LOYALTY_POINTS = [
+        { id: 1, type: "earned", points: 250, desc: "مكافأة طلب رقم #1234", date: "15 مايو 2026", expireDate: "15 مايو 2027" },
+        { id: 2, type: "used", points: 100, desc: "خصم على طلب رقم #1230", date: "10 مايو 2026" },
+        { id: 3, type: "earned", points: 50, desc: "مكافأة تسجيل الدخول", date: "1 مايو 2026", expireDate: "1 مايو 2027" },
+        { id: 4, type: "expired", points: 30, desc: "نقاط منتهية الصلاحية", date: "20 أبريل 2026" },
+        { id: 5, type: "earned", points: 1250, desc: "مكافأة طلب رقم #1001", date: "1 يناير 2026", expireDate: "1 يناير 2027" }
+      ];
+
+      let currentLoyaltyTab = 'all';
+
+      function switchLoyaltyTab(tab) {
+        currentLoyaltyTab = tab;
+        document.querySelectorAll('.loyalty-tab').forEach(el => {
+          el.classList.remove('bg-primary', 'text-white', 'font-black');
+          el.classList.add('bg-white', 'border', 'border-slate-100', 'text-slate-500', 'font-bold');
+        });
+        const activeBtn = document.getElementById(`tab-loyalty-${tab}`);
+        if(activeBtn) {
+          activeBtn.classList.remove('bg-white', 'border', 'border-slate-100', 'text-slate-500', 'font-bold');
+          activeBtn.classList.add('bg-primary', 'text-white', 'font-black');
+        }
+        renderLoyaltyPoints(tab);
+      }
+
+      function renderLoyaltyPoints(tab = currentLoyaltyTab) {
+        const container = document.getElementById("loyalty-points-list");
+        if (!container) return;
+
+        let items = MOCK_LOYALTY_POINTS;
+        if (tab !== 'all') {
+          items = items.filter(item => item.type === tab);
+        }
+
+        if (items.length === 0) {
+          container.innerHTML = `
+            <div class="py-10 flex flex-col items-center justify-center text-center animate-fade-in">
+              <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center text-slate-300 mb-4">
+                <i data-lucide="history" class="w-8 h-8"></i>
+              </div>
+              <p class="text-sm font-bold text-slate-400">لا توجد سجلات في هذا القسم</p>
+            </div>
+          `;
+          lucide.createIcons();
+          return;
+        }
+
+        container.innerHTML = items.map((item, index) => {
+          let icon = "sparkles";
+          let colorClass = "text-amber-500 bg-amber-50";
+          let sign = "+";
+          
+          if (item.type === "used") {
+            icon = "arrow-down-right";
+            colorClass = "text-rose-500 bg-rose-50";
+            sign = "-";
+          } else if (item.type === "expired") {
+            icon = "clock";
+            colorClass = "text-slate-400 bg-slate-100 border border-slate-200";
+            sign = "-";
+          }
+
+          return `
+            <div class="bg-white rounded-2xl p-4 border border-slate-100 flex items-center justify-between animate-fade-in" style="animation-delay: ${index * 0.05}s">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 ${colorClass} rounded-xl flex items-center justify-center shrink-0">
+                  <i data-lucide="${icon}" class="w-5 h-5"></i>
+                </div>
+                <div class="flex flex-col">
+                  <span class="text-xs font-black text-slate-900 mb-0.5">${item.desc}</span>
+                  <div class="flex items-center gap-2">
+                    <span class="text-[10px] font-bold text-slate-400">${item.date}</span>
+                    ${item.type === 'earned' ? `<span class="text-[9px] bg-slate-50 border border-slate-100 text-slate-400 px-1.5 py-0.5 rounded font-bold">تنتهي: ${item.expireDate}</span>` : ''}
+                  </div>
+                </div>
+              </div>
+              <div class="flex flex-col items-end">
+                <span class="text-sm font-black ${item.type === 'earned' ? 'text-amber-500' : 'text-slate-900'}">${sign} ${item.points}</span>
+                <span class="text-[9px] font-bold text-slate-400">نقطة</span>
+              </div>
+            </div>
+          `;
+        }).join('');
+        
+        lucide.createIcons();
       }
 
       let isWalletUsed = false;
