@@ -379,7 +379,7 @@
           <input
             type="text"
             placeholder="ابحث في الفئات..."
-            class="w-full h-14 bg-white rounded-2xl pr-12 pl-4 border border-slate-100 focus:ring-4 focus:ring-primary/5 text-sm font-bold outline-none transition-all"
+            class="w-full h-14 bg-white rounded-2xl pr-12 pl-4 border border-slate-100 focus:ring-4 focus:ring-primary/5 text-sm font-medium outline-none transition-all"
           />
         </div>
 
@@ -442,14 +442,14 @@
           </button>
 
           <!-- Search Bar Overlay -->
-          <div id="category-search-bar" class="absolute inset-0 bg-[#fbfbfb] z-10 flex items-center gap-3 hidden animate-fade-in">
+          <div id="category-search-bar" class="absolute inset-0 bg-[#fbfbfb] z-10 flex items-center hidden animate-fade-in">
             <div class="relative flex-1 group">
               <i data-lucide="search" class="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-primary transition-colors"></i>
-              <input type="text" placeholder="ابحث في هذا القسم..." class="w-full h-14 bg-white rounded-2xl pr-12 pl-4 border border-slate-100 focus:ring-4 focus:ring-primary/5 text-sm font-bold outline-none transition-all" />
+              <input type="text" placeholder="ابحث في هذا القسم..." class="w-full h-14 bg-white rounded-2xl pr-12 pl-12 border border-slate-100 focus:ring-4 focus:ring-primary/5 text-sm font-medium outline-none transition-all" />
+              <button onclick="toggleCategorySearch()" class="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center text-slate-400 hover:text-rose-500 transition-colors cursor-pointer">
+                <i data-lucide="x" class="w-5 h-5"></i>
+              </button>
             </div>
-            <button onclick="toggleCategorySearch()" class="w-14 h-14 bg-slate-900 rounded-2xl flex items-center justify-center text-white active:scale-95 transition-transform shrink-0">
-              <i data-lucide="x" class="w-6 h-6"></i>
-            </button>
           </div>
         </header>
 
@@ -1172,7 +1172,7 @@
             type="text"
             placeholder="ابحث في المتجر..."
             oninput="handleSearchInput(this.value)"
-            class="w-full h-12 bg-transparent pr-12 pl-10 focus:ring-4 focus:ring-primary/5 rounded-2xl text-sm font-bold outline-none transition-all relative z-10"
+            class="w-full h-12 bg-transparent pr-12 pl-10 focus:ring-4 focus:ring-primary/5 rounded-2xl text-sm font-medium outline-none transition-all relative z-10"
           />
           <button
             id="clear-search-btn"
@@ -1188,13 +1188,13 @@
         <!-- Initial Suggestions State -->
         <div id="search-initial-state" class="flex flex-col gap-6">
           <div>
-            <h3 class="text-sm font-black text-slate-900 mb-3">فئات مقترحة</h3>
+            <h3 class="text-sm font-black text-slate-900 mb-3">الفئات</h3>
             <div id="search-suggested-categories" class="flex flex-wrap gap-2">
               <!-- Populated by JS -->
             </div>
           </div>
           <div>
-            <h3 class="text-sm font-black text-slate-900 mb-3">منتجات مقترحة</h3>
+            <h3 class="text-sm font-black text-slate-900 mb-3">منتجات قد تعجبك</h3>
             <div id="search-suggested-products" class="grid grid-cols-2 lg:grid-cols-4 gap-2">
               <!-- Populated by JS -->
             </div>
@@ -2652,8 +2652,8 @@
             placeholderEl.style.transition = "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)";
             placeholderEl.style.transform = "translateY(0)";
             placeholderEl.style.opacity = "1";
-          }, 300);
-        }, 2000);
+          }, 200);
+        }, 2500);
       }
 
       // Initial Render
