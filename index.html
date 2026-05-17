@@ -207,16 +207,23 @@
         <section
           class="px-5 mb-8 flex items-center gap-3 max-w-2xl mx-auto lg:max-w-5xl"
         >
-          <div class="relative flex-1 group">
+          <div class="relative flex-1 group bg-white rounded-2xl border border-slate-100">
             <i
               data-lucide="search"
-              class="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-primary transition-colors"
+              class="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-primary transition-colors z-20"
             ></i>
             <input
+              id="home-search-input"
               type="text"
-              placeholder="ابحث في المتجر..."
-              class="w-full h-14 bg-white rounded-2xl pr-12 pl-4 border border-slate-100 focus:ring-4 focus:ring-primary/5 text-sm font-bold outline-none transition-all"
+              readonly
+              onclick="openSearchView()"
+              class="w-full h-14 bg-transparent pr-12 pl-4 focus:ring-4 focus:ring-primary/5 rounded-2xl text-sm font-bold outline-none transition-all relative z-10 cursor-pointer"
+              onfocus="document.getElementById('search-placeholder-container').style.opacity='0'"
+              onblur="document.getElementById('search-placeholder-container').style.opacity='1'"
             />
+            <div id="search-placeholder-container" class="absolute inset-y-0 right-12 left-4 flex items-center pointer-events-none overflow-hidden h-14 z-0 transition-opacity duration-200">
+              <span id="animated-placeholder" class="text-slate-400 text-sm font-medium block transition-all duration-300 transform translate-y-0 opacity-100">ابحث في المتجر...</span>
+            </div>
           </div>
           <button
             class="w-14 h-14 bg-slate-900 rounded-2xl shrink-0 flex items-center justify-center text-white active:scale-95 transition-transform"
@@ -410,20 +417,39 @@
         id="category-view"
         class="hidden animate-fade-in px-5 pt-8 min-h-screen"
       >
-        <header class="flex items-center gap-4 mb-8">
-          <button
-            onclick="switchView('browse')"
-            class="w-10 h-10 bg-white rounded-xl flex items-center justify-center border border-slate-100 shadow-sm active:scale-90 transition-transform"
-          >
-            <i data-lucide="chevron-right" class="w-6 h-6 text-slate-600"></i>
-          </button>
-          <div class="flex flex-col">
-            <h1 id="category-title" class="text-2xl font-black text-slate-900">
-              القسم
-            </h1>
-            <span id="category-count" class="text-[10px] font-bold text-primary"
-              >جاري التحميل...</span
+        <header class="flex items-center justify-between gap-4 mb-8 relative min-h-[56px]">
+          <div class="flex items-center gap-4">
+            <button
+              onclick="switchView('browse')"
+              class="w-10 h-10 bg-white rounded-xl flex items-center justify-center border border-slate-100 shadow-sm active:scale-90 transition-transform shrink-0"
             >
+              <i data-lucide="chevron-right" class="w-6 h-6 text-slate-600"></i>
+            </button>
+            <div class="flex flex-col">
+              <h1 id="category-title" class="text-2xl font-black text-slate-900">
+                القسم
+              </h1>
+              <span id="category-count" class="text-[10px] font-bold text-primary"
+                >جاري التحميل...</span
+              >
+            </div>
+          </div>
+          <button
+            onclick="toggleCategorySearch()"
+            class="w-10 h-10 bg-white rounded-xl flex items-center justify-center border border-slate-100 shadow-sm active:scale-90 transition-transform shrink-0"
+          >
+            <i data-lucide="search" class="w-5 h-5 text-slate-600"></i>
+          </button>
+
+          <!-- Search Bar Overlay -->
+          <div id="category-search-bar" class="absolute inset-0 bg-[#fbfbfb] z-10 flex items-center gap-3 hidden animate-fade-in">
+            <div class="relative flex-1 group">
+              <i data-lucide="search" class="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-primary transition-colors"></i>
+              <input type="text" placeholder="ابحث في هذا القسم..." class="w-full h-14 bg-white rounded-2xl pr-12 pl-4 border border-slate-100 focus:ring-4 focus:ring-primary/5 text-sm font-bold outline-none transition-all" />
+            </div>
+            <button onclick="toggleCategorySearch()" class="w-14 h-14 bg-slate-900 rounded-2xl flex items-center justify-center text-white active:scale-95 transition-transform shrink-0">
+              <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
           </div>
         </header>
 
@@ -1122,6 +1148,75 @@
       </div>
     </div>
 
+    <!-- Search View -->
+    <div
+      id="search-view"
+      class="hidden bg-[#fbfbfb] fixed inset-0 z-40 flex flex-col animate-fade-in max-w-5xl mx-auto"
+    >
+      <header
+        class="px-5 pt-8 pb-4 bg-background/80 backdrop-blur-xl border-b border-slate-50 shrink-0 flex items-center gap-3"
+      >
+        <button
+          onclick="closeSearchView()"
+          class="w-10 h-10 shrink-0 bg-white rounded-xl flex items-center justify-center border border-slate-100 active:scale-90 transition-transform"
+        >
+          <i data-lucide="chevron-right" class="w-6 h-6 text-slate-600"></i>
+        </button>
+        <div class="relative flex-1 group bg-white rounded-2xl border border-slate-100">
+          <i
+            data-lucide="search"
+            class="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-primary transition-colors z-20"
+          ></i>
+          <input
+            id="main-search-input"
+            type="text"
+            placeholder="ابحث في المتجر..."
+            oninput="handleSearchInput(this.value)"
+            class="w-full h-12 bg-transparent pr-12 pl-10 focus:ring-4 focus:ring-primary/5 rounded-2xl text-sm font-bold outline-none transition-all relative z-10"
+          />
+          <button
+            id="clear-search-btn"
+            onclick="clearSearch()"
+            class="absolute left-3 top-1/2 -translate-y-1/2 w-6 h-6 hidden items-center justify-center text-slate-400 hover:text-slate-600 z-20"
+          >
+            <i data-lucide="x-circle" class="w-5 h-5"></i>
+          </button>
+        </div>
+      </header>
+
+      <div class="flex-1 overflow-y-auto px-5 py-4 pb-32 hide-scrollbar">
+        <!-- Initial Suggestions State -->
+        <div id="search-initial-state" class="flex flex-col gap-6">
+          <div>
+            <h3 class="text-sm font-black text-slate-900 mb-3">فئات مقترحة</h3>
+            <div id="search-suggested-categories" class="flex flex-wrap gap-2">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+          <div>
+            <h3 class="text-sm font-black text-slate-900 mb-3">منتجات مقترحة</h3>
+            <div id="search-suggested-products" class="grid grid-cols-2 lg:grid-cols-4 gap-2">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Search Results State -->
+        <div id="search-results-state" class="hidden">
+          <div id="search-results-grid" class="grid grid-cols-2 lg:grid-cols-4 gap-2">
+            <!-- Populated by JS -->
+          </div>
+          <div id="search-empty-state" class="hidden flex-col items-center justify-center py-20 text-center animate-fade-in">
+            <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center text-slate-300 mb-4 shadow-inner">
+              <i data-lucide="search-x" class="w-10 h-10"></i>
+            </div>
+            <h3 class="text-base font-black text-slate-900 mb-2">لم نجد نتائج مطابقة</h3>
+            <p class="text-sm text-slate-400">حاول البحث بكلمات مختلفة أو تصفح الأقسام</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Floating Cart Bar -->
     <div
       id="floating-cart-bar"
@@ -1236,6 +1331,17 @@
         likes: {},
         addresses: [],
       };
+
+      function toggleCategorySearch() {
+        const searchBar = document.getElementById("category-search-bar");
+        if (searchBar) {
+          searchBar.classList.toggle("hidden");
+          if (!searchBar.classList.contains("hidden")) {
+            const input = searchBar.querySelector("input");
+            if (input) input.focus();
+          }
+        }
+      }
 
       async function loadData() {
         try {
@@ -1353,6 +1459,7 @@
           "address-form",
           "favorites",
           "loyalty-points",
+          "search"
         ];
         const navs = {
           home: "nav-home",
@@ -1371,7 +1478,7 @@
 
         // Toggle bottom navigation visibility
         const bottomNav = document.getElementById("bottom-nav");
-        const hideNavViews = ["checkout", "cart", "addresses", "address-form", "favorites", "order-details", "loyalty-points"];
+        const hideNavViews = ["checkout", "cart", "addresses", "address-form", "favorites", "order-details", "loyalty-points", "search"];
         if (bottomNav) {
           if (hideNavViews.includes(viewId)) {
             bottomNav.classList.add("hidden");
@@ -2140,7 +2247,7 @@
         } else {
           floatingBar.classList.remove("hidden");
           
-          const hideNavViews = ["checkout", "cart", "addresses", "address-form", "favorites", "order-details"];
+          const hideNavViews = ["checkout", "cart", "addresses", "address-form", "favorites", "order-details", "search"];
           if (hideNavViews.includes(APP_CURRENT_VIEW)) {
             floatingBar.style.bottom = "32px";
           } else {
@@ -2416,12 +2523,146 @@
         closeDeliveryTimeSheet();
       }
 
+      // Search Logic
+      let PREV_VIEW_BEFORE_SEARCH = 'home';
+      function openSearchView() {
+        PREV_VIEW_BEFORE_SEARCH = APP_CURRENT_VIEW;
+        switchView('search');
+        renderSearchInitialState();
+        setTimeout(() => {
+          const input = document.getElementById('main-search-input');
+          if(input) input.focus();
+        }, 100);
+      }
+
+      function closeSearchView() {
+        switchView(PREV_VIEW_BEFORE_SEARCH);
+        clearSearch();
+      }
+
+      function clearSearch() {
+        const input = document.getElementById('main-search-input');
+        if(input) {
+          input.value = '';
+          handleSearchInput('');
+          input.focus();
+        }
+      }
+
+      function renderSearchInitialState() {
+        const catContainer = document.getElementById('search-suggested-categories');
+        const prodContainer = document.getElementById('search-suggested-products');
+        
+        if (!catContainer || !prodContainer) return;
+
+        // Random 4 categories
+        const cats = [...APP_DATA.categories].sort(() => 0.5 - Math.random()).slice(0, 4);
+        catContainer.innerHTML = cats.map(c => `
+          <button onclick="closeSearchView(); showCategory('${c.id}')" class="px-4 py-2 bg-white border border-slate-100 rounded-xl text-xs font-bold text-slate-700 active:scale-95 transition-transform flex items-center gap-2">
+            <img src="${c.img}" class="w-5 h-5 rounded-md object-cover" />
+            ${c.name}
+          </button>
+        `).join('');
+
+        // Random 4 products
+        let allProducts = [];
+        APP_DATA.sections.forEach(s => allProducts.push(...s.products));
+        const uniqueProductsMap = new Map();
+        allProducts.forEach(p => uniqueProductsMap.set(p.id, p));
+        const uniqueProducts = Array.from(uniqueProductsMap.values());
+        
+        const prods = uniqueProducts.sort(() => 0.5 - Math.random()).slice(0, 4);
+        prodContainer.innerHTML = prods.map(p => renderProductCard(p, 0, true)).join('');
+        lucide.createIcons();
+      }
+
+      function handleSearchInput(query) {
+        const initialState = document.getElementById('search-initial-state');
+        const resultsState = document.getElementById('search-results-state');
+        const clearBtn = document.getElementById('clear-search-btn');
+        const resultsGrid = document.getElementById('search-results-grid');
+        const emptyState = document.getElementById('search-empty-state');
+
+        if (!initialState || !resultsState) return;
+
+        if (!query.trim()) {
+          initialState.classList.remove('hidden');
+          resultsState.classList.add('hidden');
+          clearBtn.classList.replace('flex', 'hidden');
+          return;
+        }
+
+        clearBtn.classList.replace('hidden', 'flex');
+        initialState.classList.add('hidden');
+        resultsState.classList.remove('hidden');
+
+        let allProducts = [];
+        APP_DATA.sections.forEach(s => allProducts.push(...s.products));
+        const uniqueProductsMap = new Map();
+        allProducts.forEach(p => uniqueProductsMap.set(p.id, p));
+        const uniqueProducts = Array.from(uniqueProductsMap.values());
+        
+        const matches = uniqueProducts.filter(p => p.name.includes(query) || (p.desc && p.desc.includes(query)));
+        
+        if (matches.length > 0) {
+          resultsGrid.innerHTML = matches.map(p => renderProductCard(p, 0, true)).join('');
+          resultsGrid.classList.remove('hidden');
+          emptyState.classList.replace('flex', 'hidden');
+        } else {
+          resultsGrid.classList.add('hidden');
+          emptyState.classList.replace('hidden', 'flex');
+        }
+        lucide.createIcons();
+      }
+
+      function initAnimatedPlaceholder() {
+        const placeholderEl = document.getElementById('animated-placeholder');
+        const searchInput = document.getElementById('home-search-input');
+        if (!placeholderEl || !searchInput) return;
+
+        let lastIndex = -1;
+
+        setInterval(() => {
+          if (document.activeElement === searchInput || searchInput.value.length > 0) return;
+
+          const categories = APP_DATA.categories.length ? APP_DATA.categories.map(c => c.name) : ["المنتجات", "العروض", "الأقسام"];
+          
+          let newIndex;
+          if (categories.length > 1) {
+            do {
+              newIndex = Math.floor(Math.random() * categories.length);
+            } while (newIndex === lastIndex);
+          } else {
+            newIndex = 0;
+          }
+          lastIndex = newIndex;
+          
+          const newText = categories[newIndex] + "...";
+
+          placeholderEl.style.transform = "translateY(-15px)";
+          placeholderEl.style.opacity = "0";
+
+          setTimeout(() => {
+            placeholderEl.style.transition = "none";
+            placeholderEl.style.transform = "translateY(15px)";
+            placeholderEl.innerText = newText;
+
+            void placeholderEl.offsetWidth;
+
+            placeholderEl.style.transition = "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)";
+            placeholderEl.style.transform = "translateY(0)";
+            placeholderEl.style.opacity = "1";
+          }, 300);
+        }, 2000);
+      }
+
       // Initial Render
       async function init() {
         await loadData();
         
         renderActiveOrderBanner();
         updateFloatingCartBar();
+        initAnimatedPlaceholder();
 
         // Render Home Categories
         document.getElementById("home-categories").innerHTML =
