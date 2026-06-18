@@ -175,6 +175,7 @@
           "desc": "بقوة الليمون",
           "fullDesc": "سائل جلي فيري يقضي على الدهون بفعالية عالية ويترك الأطباق لامعة.",
           "price": "2,750",
+          "stock": 0,
           "img": "https://orisdi.com/cdn/shop/products/8001090688033n.jpg?v=1578356055"
         }
       ]
@@ -191,6 +192,7 @@
           "name": "تونة العلالي - 170 غم",
           "desc": "لحم تونة خفيف بالزيت",
           "fullDesc": "لحم تونة خفيف بالزيت النباتي، غني بالأوميغا 3 والبروتين.",
+          "stock": 0,
           "price": "1,750",
           "img": "https://cdn.mafrservices.com/pim-content/UAE/media/product/1121777/1746428404/1121777_main.jpg?im=Resize=376"
         },
