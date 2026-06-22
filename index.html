@@ -177,6 +177,68 @@
         height: 100%;
         padding: 8px;
       }
+
+      /* ── AI Chatbot Floating Button ── */
+      @keyframes cb-float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-7px); }
+      }
+      @keyframes cb-glow {
+        0%, 100% {
+          box-shadow:
+            0 0 0 9px rgba(38,181,89,0.18),
+            0 0 14px 14px rgba(38,181,89,0.09),
+            0 8px 24px rgba(38,181,89,0.42),
+            0 3px 8px rgba(0,0,0,0.12);
+        }
+        50% {
+          box-shadow:
+            0 0 0 11px rgba(38,181,89,0.26),
+            0 0 18px 17px rgba(38,181,89,0.13),
+            0 10px 30px rgba(38,181,89,0.58),
+            0 4px 10px rgba(0,0,0,0.14);
+        }
+      }
+      @keyframes cb-sheet-up {
+        from { transform: translateY(100%); opacity: 0; }
+        to   { transform: translateY(0);    opacity: 1; }
+      }
+      .chatbot-btn-wrapper {
+        position: relative;
+        display: inline-flex;
+        animation: cb-float 4s ease-in-out infinite;
+      }
+      .chatbot-floating-btn {
+        width: 58px;
+        height: 58px;
+        border-radius: 50%;
+        background: linear-gradient(145deg, #30d472 0%, #26b559 45%, #189a48 100%);
+        animation: cb-glow 3.5s ease-in-out infinite;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        border: none;
+        outline: none;
+        transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1);
+        -webkit-tap-highlight-color: transparent;
+      }
+      .chatbot-floating-btn::before {
+        content: '';
+        position: absolute;
+        top: 5%; left: 10%;
+        width: 80%; height: 44%;
+        background: radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0) 100%);
+        border-radius: 50%;
+        pointer-events: none;
+      }
+      .chatbot-floating-btn:hover  { transform: scale(1.1) translateY(-2px); }
+      .chatbot-floating-btn:active { transform: scale(0.93); transition: transform 0.1s ease; }
+      .chatbot-sheet-enter {
+        animation: cb-sheet-up 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      }
     </style>
   </head>
   <body class="pb-32 text-slate-800 bg-background min-h-screen">
@@ -1438,6 +1500,61 @@
       </nav>
     </div>
 
+    <!-- ── AI Chatbot Floating Button ── -->
+    <div id="chatbot-container" class="fixed bottom-24 right-5 z-[60] flex items-center gap-3 md:bottom-32 lg:bottom-36">
+      <div class="chatbot-btn-wrapper">
+        <button id="chatbot-btn" onclick="openChatbot()" aria-label="فتح المساعد الذكي" class="chatbot-floating-btn" title="فتح المساعد الذكي">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10 2L11.6 8.4L18 10L11.6 11.6L10 18L8.4 11.6L2 10L8.4 8.4Z" fill="white" opacity="0.97"/>
+            <path d="M18.5 13.5L19.2 15.8L21.5 16.5L19.2 17.2L18.5 19.5L17.8 17.2L15.5 16.5L17.8 15.8Z" fill="white" opacity="0.82"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Chatbot Backdrop -->
+    <div id="chatbot-backdrop" class="hidden fixed inset-0 bg-black/30 backdrop-blur-sm z-[70]" onclick="closeChatbot()"></div>
+
+    <!-- Chatbot Bottom Sheet -->
+    <div id="chatbot-sheet" class="hidden fixed bottom-0 left-0 right-0 z-[80] rounded-t-[28px] bg-white shadow-2xl max-h-[80vh] flex flex-col chatbot-sheet-enter">
+      <div class="bg-gradient-to-r from-[#0f4220] to-[#1c6e35] text-white px-5 pt-6 pb-4 flex items-center justify-between shrink-0 rounded-t-[28px]">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-white/15 flex items-center justify-center shrink-0">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <ellipse cx="12" cy="12" rx="9" ry="4" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="1.3" transform="rotate(-40 12 12)"/>
+              <path d="M12 4L13.3 9.7L19 11L13.3 12.3L12 18L10.7 12.3L5 11L10.7 9.7Z" fill="white"/>
+              <circle cx="19.5" cy="7.5" r="1.3" fill="white" opacity="0.8"/>
+            </svg>
+          </div>
+          <div>
+            <h2 class="font-black text-base leading-tight">مساعدك الذكي</h2>
+            <p class="text-[11px] text-white/55 font-medium">هنا لمساعدتك في أي استفسار</p>
+          </div>
+        </div>
+        <button onclick="closeChatbot()" class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors active:scale-90">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div id="chatbot-messages" class="flex-1 overflow-y-auto px-4 py-4 space-y-3 min-h-0">
+        <div class="flex gap-2.5 items-end">
+          <div class="w-7 h-7 rounded-full bg-gradient-to-br from-[#1c6e35] to-[#0a2f18] flex items-center justify-center shrink-0">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M12 4L13.3 9.7L19 11L13.3 12.3L12 18L10.7 12.3L5 11L10.7 9.7Z" fill="white"/></svg>
+          </div>
+          <div class="bg-slate-100 rounded-2xl rounded-bl-sm px-4 py-2.5 max-w-[82%]">
+            <p class="text-sm text-slate-800 leading-relaxed">أهلاً! أنا مساعدك الذكي في متجر البصرة سنتر 👋<br>كيف يمكنني مساعدتك اليوم؟</p>
+          </div>
+        </div>
+      </div>
+      <div class="px-4 pb-6 pt-3 border-t border-slate-100 shrink-0">
+        <div class="flex gap-2 items-center bg-slate-50 rounded-2xl px-4 py-2 border border-slate-200/80">
+          <input id="chatbot-input" type="text" placeholder="اكتب رسالتك..." class="flex-1 bg-transparent text-sm text-slate-800 outline-none placeholder:text-slate-400" onkeydown="if(event.key==='Enter') sendChatMessage()"/>
+          <button onclick="sendChatMessage()" class="w-8 h-8 bg-gradient-to-br from-[#26b559] to-[#189a48] rounded-xl flex items-center justify-center active:scale-90 transition-transform shrink-0">
+            <i data-lucide="send-horizontal" class="w-4 h-4 text-white"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
     <script>
       // Global App State
       let APP_CURRENT_VIEW = 'home';
@@ -1500,41 +1617,22 @@
           
           <div onclick="window.location.href='product-details.html?id=${p.id}'" class="w-full product-image-container lg:h-56 rounded-[22px] mb-3 overflow-hidden cursor-pointer relative group">
             <img src="${p.img}" class="product-image bg-white w-full h-full object-contain border border-slate-200 rounded-lg" alt="${p.name}">
-            ${isSoldOut ? `
-              <div class="absolute inset-0 z-20 rounded-[22px] bg-slate-950/50 flex flex-col items-center justify-center p-4 text-center">
-                <span class="inline-flex items-center gap-2 rounded-full bg-[#ffeeee] text-rose-500 text-[10px] font-black px-3 py-2">
-                  <i data-lucide="ban" class="w-3.5 h-3.5"></i>
-                  نفذت الكمية
-                </span>
-              </div>
-            ` : ""}
 
             <div data-id="${p.id}" class="controls-container absolute bottom-2.5 z-20 w-full px-3">
-              ${isSoldOut ? `
-                <button onclick="event.stopPropagation(); notifyWhenAvailable('${p.id}')" class="w-full text-[11px] font-black text-primary bg-white/95 border border-primary/20 rounded-2xl py-2 flex items-center justify-center gap-2 shadow-sm hover:bg-primary/5 transition-colors">
-                  <i data-lucide="bell" class="w-4 h-4"></i>
-                  أبلغني عند التوفر
-                </button>
-              ` : `
-                <button onclick="event.stopPropagation(); addToCart('${p.id}')" class="w-9 h-9 bg-primary text-white rounded-xl flex items-center justify-center shadow-lg shadow-primary/20 active:scale-90 transition-transform ${inCart ? "hidden" : ""}">
-                  <i data-lucide="plus" class="w-5 h-5"></i>
-                </button>
-                <div data-id="${p.id}" class="selector-container ${inCart ? "flex" : "hidden"} items-center gap-1.5 bg-white/90 backdrop-blur-md rounded-xl p-1 animate-fade-in border border-slate-200">
-                  <button onclick="event.stopPropagation(); changeQty('${p.id}', 1)" class="w-7 h-7 bg-white rounded-lg flex items-center justify-center shadow-sm text-primary active:scale-90">
-                    <i data-lucide="plus" class="w-4 h-4"></i>
-                  </button>
-                  <span data-id="${p.id}" class="qty-text text-xs font-black px-1 min-w-[12px] text-center">${APP_DATA.cart[p.id] || 1}</span>
-                  <button onclick="event.stopPropagation(); changeQty('${p.id}', -1)" class="w-7 h-7 bg-white rounded-lg flex items-center justify-center shadow-sm text-slate-400 active:scale-90">
-                    <i data-lucide="minus" class="w-4 h-4"></i>
-                  </button>
-                </div>
-              `}
             </div>
           </div>
 
           <div class="px-3 pb-3 flex-1 flex flex-col">
             <h4 onclick="window.location.href='product-details.html?id=${p.id}'" class="text-[10px] lg:text-[12px] text-slate-900 truncate mb-1 cursor-pointer hover:text-primary transition-colors">${p.name}</h4>
             <p class="text-[10px] text-slate-400 mb-2">${p.desc || "وحدة واحدة"}</p>
+            ${isSoldOut ? `
+            <div class="flex items-center gap-2">
+              <span class="text-[11px] font-black text-rose-500">نفذت</span>
+              <button class=" w-full text-[11px] font-black text-primary bg-white/95 border border-primary/20 rounded-2xl py-2 flex items-center justify-center gap-2 shadow-sm hover:bg-primary/5 transition-colorstext-[11px] font-black text-green-500">
+                  أبلغني عند التوفر
+                </button>
+            </div>
+            ` : ``}
           </div>
         </div>
       `;
@@ -2990,6 +3088,49 @@
       }
 
       window.onload = init;
+
+      // ── Chatbot ──
+      function openChatbot() {
+        document.getElementById('chatbot-backdrop').classList.remove('hidden');
+        const sheet = document.getElementById('chatbot-sheet');
+        sheet.classList.remove('hidden');
+        sheet.classList.add('chatbot-sheet-enter');
+        setTimeout(() => sheet.classList.remove('chatbot-sheet-enter'), 400);
+        lucide.createIcons();
+        setTimeout(() => document.getElementById('chatbot-input')?.focus(), 450);
+      }
+
+      function closeChatbot() {
+        document.getElementById('chatbot-backdrop').classList.add('hidden');
+        document.getElementById('chatbot-sheet').classList.add('hidden');
+      }
+
+      function sendChatMessage() {
+        const input = document.getElementById('chatbot-input');
+        const messages = document.getElementById('chatbot-messages');
+        const text = input.value.trim();
+        if (!text) return;
+        messages.insertAdjacentHTML('beforeend', `
+          <div class="flex gap-2.5 items-end justify-end">
+            <div class="bg-[#26b559] rounded-2xl rounded-br-sm px-4 py-2.5 max-w-[82%]">
+              <p class="text-sm text-white leading-relaxed">${text}</p>
+            </div>
+          </div>`);
+        input.value = '';
+        messages.scrollTop = messages.scrollHeight;
+        setTimeout(() => {
+          messages.insertAdjacentHTML('beforeend', `
+            <div class="flex gap-2.5 items-end">
+              <div class="w-7 h-7 rounded-full bg-gradient-to-br from-[#1c6e35] to-[#0a2f18] flex items-center justify-center shrink-0">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M12 4L13.3 9.7L19 11L13.3 12.3L12 18L10.7 12.3L5 11L10.7 9.7Z" fill="white"/></svg>
+              </div>
+              <div class="bg-slate-100 rounded-2xl rounded-bl-sm px-4 py-2.5 max-w-[82%]">
+                <p class="text-sm text-slate-800 leading-relaxed">شكراً لتواصلك! سيتم الرد على استفسارك في أقرب وقت ممكن. 😊</p>
+              </div>
+            </div>`);
+          messages.scrollTop = messages.scrollHeight;
+        }, 900);
+      }
     </script>
   </body>
 </html>
