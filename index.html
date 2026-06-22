@@ -1628,7 +1628,7 @@
             ${isSoldOut ? `
             <div class="flex items-center gap-2">
               <span class="text-[11px] font-black text-rose-500">نفذت</span>
-              <button class=" w-full text-[11px] font-black text-primary bg-white/95 border border-primary/20 rounded-2xl py-2 flex items-center justify-center gap-2 shadow-sm hover:bg-primary/5 transition-colorstext-[11px] font-black text-green-500">
+              <button onclick="event.stopPropagation(); notifyWhenAvailable('${p.id}')" class=" w-full text-[11px] font-black text-primary bg-white/95 border border-primary/20 rounded-2xl py-2 flex items-center justify-center gap-2 shadow-sm hover:bg-primary/5 transition-colorstext-[11px] font-black text-green-500">
                   أبلغني عند التوفر
                 </button>
             </div>
