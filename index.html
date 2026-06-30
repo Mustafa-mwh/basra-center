@@ -2141,6 +2141,7 @@
           items.push({
             id,
             name: product.name || "منتج",
+            img: product.img,
             qty: quantity,
             price: priceNum,
             lineTotal,
@@ -2166,25 +2167,32 @@
 
         if (!itemsContainer || !subtotalEl || !totalEl) return;
 
-        itemsContainer.innerHTML = summary.items.length
-          ? summary.items
-              .map(
-                (item) => `
-                  <div class="flex items-center justify-between rounded-2xl bg-slate-50 px-3 py-3">
-                    <div class="flex flex-col">
-                      <span class="text-sm font-black text-slate-900">${item.name}</span>
-                      <span class="text-[11px] font-bold text-slate-400">الكمية: ${item.qty}</span>
-                    </div>
-                    <span class="text-sm font-black text-primary">${formatCurrency(item.lineTotal)}</span>
-                  </div>
-                `,
-              )
-              .join("")
-          : `
-            <div class="rounded-2xl border border-dashed border-slate-200 p-4 text-center text-sm font-bold text-slate-400">
-              لا توجد منتجات في السلة
-            </div>
-          `;
+        const itemsKey = summary.items.map((item) => `${item.id}:${item.qty}`).join("|");
+        if (itemsContainer.dataset.itemsKey !== itemsKey) {
+          itemsContainer.innerHTML = summary.items.length
+            ? summary.items
+                .map(
+                  (item) => `
+                      <div class="flex items-center justify-between rounded-2xl bg-slate-50 px-3 py-3">
+                        <div class="w-10 h-10 rounded-lg overflow-hidden shrink-0">
+                          <img src="${item.img || ""}" alt="${item.name}" class="w-full h-full object-cover" onerror="this.style.display='none'">
+                        </div>
+                        <div class="flex flex-col">
+                          <span class="text-sm font-black text-slate-900">${item.name}</span>
+                          <span class="text-[11px] font-bold text-slate-400">الكمية: ${item.qty}</span>
+                        </div>
+                        <span class="text-sm font-black text-primary">${formatCurrency(item.lineTotal)}</span>
+                      </div>
+                    `,
+                )
+                .join("")
+            : `
+              <div class="rounded-2xl border border-dashed border-slate-200 p-4 text-center text-sm font-bold text-slate-400">
+                لا توجد منتجات في السلة
+              </div>
+            `;
+          itemsContainer.dataset.itemsKey = itemsKey;
+        }
 
         const remaining = Math.max(0, Math.ceil(orderConfirmationCountdown));
         subtotalEl.innerText = formatCurrency(summary.subtotal);
