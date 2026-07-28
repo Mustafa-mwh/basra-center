@@ -218,6 +218,11 @@
 
       <!-- Product Info Content -->
       <main class="px-6 pt-8 animate-slide-up">
+        <div id="subscription-context-badge" class="hidden mb-3 flex items-center gap-2 bg-primary/10 text-primary text-[11px] font-black px-4 py-2.5 rounded-2xl w-fit">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+          <span id="subscription-context-text"></span>
+        </div>
+
         <div class="flex items-center gap-2 mb-3">
           <span
             id="product-cat"
@@ -296,7 +301,7 @@
       >
         <div class="pointer-events-auto max-w-md mx-auto">
           <button
-            onclick="window.location.href = 'index.html?view=cart'"
+            onclick="window.location.href = cartViewHref()"
             class="w-full bg-white/95 backdrop-blur-md rounded-2xl p-4 border border-slate-100 flex flex-col gap-3 shadow-premium active:scale-[0.98] transition-all animate-fade-in"
           >
             <!-- Reward Progress Section -->
@@ -410,10 +415,27 @@
         // Data Loading
         const urlParams = new URLSearchParams(window.location.search);
         const productId = urlParams.get("id") || "p1";
+        const subId = urlParams.get("sub") || "general"; // which cart bucket this page reads/writes
         let currentProduct = null;
-        let cart = {};
+        let allCarts = { general: {} }; // full carts store, kept in sync with localStorage "carts"
+        let cart = {}; // reference into allCarts[subId]
         let likes = {};
         window.appSections = [];
+        window.appSubscriptions = [];
+
+        function detailHref(id) {
+          return subId === "general"
+            ? `product-details.html?id=${id}`
+            : `product-details.html?id=${id}&sub=${subId}`;
+        }
+
+        function cartViewHref() {
+          return subId === "general" ? "index.html?view=cart" : `index.html?view=cart&sub=${subId}`;
+        }
+
+        function saveCarts() {
+          localStorage.setItem("carts", JSON.stringify(allCarts));
+        }
 
         // Snackbar Configuration
         const SNACKBAR_CONFIG = {
@@ -496,10 +518,26 @@
             const response = await fetch("data.json");
             const data = await response.json();
             window.appSections = data.sections;
+            window.appSubscriptions = data.subscriptions || [];
 
             // Load state from local storage
-            cart = JSON.parse(localStorage.getItem("cart") || "{}");
+            const legacyCart = localStorage.getItem("cart");
+            allCarts = JSON.parse(
+              localStorage.getItem("carts") || (legacyCart ? `{"general":${legacyCart}}` : '{"general":{}}'),
+            );
+            if (!allCarts[subId]) allCarts[subId] = {};
+            cart = allCarts[subId];
             likes = JSON.parse(localStorage.getItem("likes") || "{}");
+
+            if (subId !== "general") {
+              const sub = window.appSubscriptions.find((s) => s.id === subId);
+              const badge = document.getElementById("subscription-context-badge");
+              const badgeText = document.getElementById("subscription-context-text");
+              if (sub && badge && badgeText) {
+                badgeText.innerText = `يُضاف إلى سلة اشتراك: ${sub.name}`;
+                badge.classList.remove("hidden");
+              }
+            }
 
             // Find product across all sections
             data.sections.forEach((s) => {
@@ -625,7 +663,7 @@
           let qty = cart[productId] || 1;
           qty = Math.max(1, qty + delta);
           cart[productId] = qty;
-          localStorage.setItem("cart", JSON.stringify(cart));
+          saveCarts();
           updateCartUI();
         }
 
@@ -636,8 +674,8 @@
           }
 
           if (!cart[productId]) cart[productId] = 1;
-          localStorage.setItem("cart", JSON.stringify(cart));
-          window.location.href = "index.html?view=cart";
+          saveCarts();
+          window.location.href = cartViewHref();
         }
 
         function handleDetailAction() {
@@ -782,7 +820,7 @@
           qty = Math.max(0, qty + delta);
           if (qty === 0) delete cart[id];
           else cart[id] = qty;
-          localStorage.setItem("cart", JSON.stringify(cart));
+          saveCarts();
           updateFloatingCartBar();
           if (window.appSections)
             renderSimilarProducts(
@@ -795,7 +833,7 @@
 
         function addToCartId(id) {
           if (!cart[id]) cart[id] = 1;
-          localStorage.setItem("cart", JSON.stringify(cart));
+          saveCarts();
           updateFloatingCartBar();
           if (window.appSections)
             renderSimilarProducts(
@@ -842,7 +880,7 @@
                 <i data-lucide="heart" class="w-4 h-4 ${likes[p.id] ? "text-red-500 fill-red-500" : "text-slate-400"}"></i>
               </button>
               
-              <div onclick="window.location.href='product-details.html?id=${p.id}'" class="w-full product-image-container lg:h-56 rounded-[22px] mb-3 overflow-hidden cursor-pointer relative group">
+              <div onclick="window.location.href='${detailHref(p.id)}'" class="w-full product-image-container lg:h-56 rounded-[22px] mb-3 overflow-hidden cursor-pointer relative group">
                 <img src="${p.img}" class="product-image bg-white w-full h-full object-contain border border-slate-200 rounded-lg" alt="${p.name}">
                 
                 <div data-id="${p.id}" class="controls-container absolute bottom-2.5 right-2.5 z-20">
@@ -862,7 +900,7 @@
               </div>
 
               <div class="px-3 pb-3 flex-1 flex flex-col">
-                <h4 onclick="window.location.href='product-details.html?id=${p.id}'" class="text-[10px] lg:text-[12px] text-slate-900 truncate mb-1 cursor-pointer hover:text-primary transition-colors">${p.name}</h4>
+                <h4 onclick="window.location.href='${detailHref(p.id)}'" class="text-[10px] lg:text-[12px] text-slate-900 truncate mb-1 cursor-pointer hover:text-primary transition-colors">${p.name}</h4>
                 <p class="text-[10px] text-slate-400 mb-2">${p.desc || "وحدة واحدة"}</p>
                 <div class="">
                   <span class="text-sm text-slate-900">${p.price} <span class="text-[10px] opacity-40 font-bold">د.ع</span></span>

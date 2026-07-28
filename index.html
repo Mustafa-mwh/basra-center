@@ -367,6 +367,23 @@
         <!-- Active Order Banner Container -->
         <div id="active-order-container" class="px-5 mb-8 hidden"></div>
 
+        <!-- Subscriptions Promo Strip -->
+        <section class="px-5 mb-8">
+          <button
+            id="home-subscriptions-strip"
+            onclick="switchView('subscriptions')"
+            class="w-full rounded-2xl px-4 py-3 flex items-center gap-3 active:scale-[0.98] transition-all border"
+            style="background: linear-gradient(135deg, rgba(38,181,89,0.08), rgba(245,130,32,0.06)); border-color: rgba(38,181,89,0.15);"
+          >
+            <div class="w-9 h-9 rounded-xl flex items-center justify-center text-white shrink-0" style="background: linear-gradient(135deg,#26b559,#189a48); box-shadow: 0 6px 14px -4px rgba(38,181,89,0.4);">
+              <i data-lucide="crown" class="w-4.5 h-4.5"></i>
+            </div>
+            <span id="home-subscriptions-strip-text" class="flex-1 text-right text-slate-900 text-[13px] font-black">اكتشف الاشتراكات وتوصيلك المجاني</span>
+            <span id="home-subscriptions-strip-badge" class="text-[9px] font-black text-white px-2 py-1 rounded-full shrink-0" style="background: linear-gradient(135deg,#F58220,#d96a10);">جديد</span>
+            <i data-lucide="chevron-left" class="w-4 h-4 text-slate-400 shrink-0"></i>
+          </button>
+        </section>
+
         <!-- Categories -->
         <section class="mb-10">
           <div class="px-5 mb-5 flex items-center justify-between">
@@ -562,6 +579,12 @@
         </div>
       </header>
 
+      <!-- Cart Tabs (general + subscribed plans) -->
+      <div id="cart-tabs" class="hidden px-5 pt-4 pb-1 flex items-center gap-2 overflow-x-auto hide-scrollbar bg-white"></div>
+
+      <!-- Subscription Perk Banner -->
+      <div id="cart-perk-banner" class="hidden px-5 pt-4 pb-2 bg-white flex items-center justify-between text-[11px] font-black text-primary animate-fade-in"></div>
+
       <!-- Cart View Progress Bar -->
       <div id="cart-progress-container" class="px-5 pt-4 pb-2 bg-white hidden animate-fade-in">
         <div class="bg-accent/50 rounded-[24px] p-4 border border-slate-50 relative overflow-hidden">
@@ -601,8 +624,8 @@
             class="w-12 h-12 text-primary/40"
           ></i>
         </div>
-        <h3 class="text-lg font-black text-slate-900 mb-2">سلتك فارغة</h3>
-        <p class="text-sm font-bold text-slate-400 mb-8 leading-relaxed">
+        <h3 id="cart-empty-title" class="text-lg font-black text-slate-900 mb-2">سلتك فارغة</h3>
+        <p id="cart-empty-text" class="text-sm font-bold text-slate-400 mb-8 leading-relaxed">
           لا توجد منتجات في السلة. ابدأ بالتسوق الآن!
         </p>
         <button
@@ -666,16 +689,21 @@
                 <span class="text-slate-400">المجموع الفرعي</span>
                 <span id="cart-subtotal" class="text-slate-900">0 د.ع</span>
               </div>
+              <div id="cart-discount-row" class="hidden justify-between items-center text-xs font-bold">
+                <span class="text-slate-400">خصم الاشتراك</span>
+                <span id="cart-discount" class="text-emerald-500">- 0 د.ع</span>
+              </div>
               <div class="flex justify-between items-center text-xs font-bold">
                 <span class="text-slate-400">خدمة التوصيل</span>
-                <span class="text-primary">3,000 د.ع</span>
+                <span id="cart-delivery-fee" class="text-primary">3,000 د.ع</span>
               </div>
             </div>
           </div>
 
           <div class="max-w-md mx-auto pointer-events-auto">
           <button
-            onclick="switchView('checkout')"
+            id="cart-checkout-btn"
+            onclick="goToCheckout('general')"
             class="w-full bg-primary text-white h-14 rounded-2xl font-black shadow-xl active:scale-95 transition-transform flex items-center justify-center gap-3 text-sm"
           >
             إتمام الطلب
@@ -728,6 +756,23 @@
           </div>
           <div class="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center group-hover:bg-amber-50 transition-colors">
             <i data-lucide="chevron-left" class="w-5 h-5 text-slate-400 group-hover:text-amber-500"></i>
+          </div>
+        </div>
+
+        <!-- Subscriptions Card -->
+        <div onclick="switchView('subscriptions')" class="relative rounded-[32px] overflow-hidden p-5 flex items-center justify-between cursor-pointer active:scale-[0.98] transition-all group" style="background: linear-gradient(135deg, #0A2E2A, #123f38);">
+          <div class="absolute -left-6 -top-8 w-24 h-24 bg-primary/20 rounded-full blur-2xl"></div>
+          <div class="relative z-10 flex items-center gap-4">
+            <div class="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center text-white group-hover:scale-110 transition-all">
+              <i data-lucide="crown" class="w-6 h-6"></i>
+            </div>
+            <div class="flex flex-col">
+              <span class="text-sm font-black text-white">اشتراكاتي</span>
+              <span id="account-subscriptions-hint" class="text-[10px] font-bold text-white/50 mt-0.5">توصيل مجاني وخصومات شهرية</span>
+            </div>
+          </div>
+          <div class="relative z-10 w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">
+            <i data-lucide="chevron-left" class="w-5 h-5 text-white/70"></i>
           </div>
         </div>
 
@@ -916,6 +961,114 @@
       </section>
     </div>
 
+    <!-- Subscriptions View -->
+    <div
+      id="subscriptions-view"
+      class="hidden bg-[#fbfbfb] animate-fade-in pb-32 max-w-5xl mx-auto min-h-screen"
+    >
+      <header class="px-5 pt-8 pb-4 flex items-center gap-4">
+        <button
+          onclick="switchView('account')"
+          class="w-10 h-10 bg-white rounded-xl flex items-center justify-center border border-slate-100 active:scale-90 transition-transform shrink-0"
+        >
+          <i data-lucide="chevron-right" class="w-6 h-6 text-slate-600"></i>
+        </button>
+        <h1 class="text-2xl font-black text-slate-900">اشتراكاتي</h1>
+      </header>
+
+      <!-- Intro Banner -->
+      <section class="px-5 mb-8">
+        <div class="relative rounded-[28px] overflow-hidden p-6" style="background: linear-gradient(135deg, #0A2E2A, #123f38);">
+          <div class="absolute -left-6 -top-6 w-28 h-28 bg-primary/20 rounded-full blur-2xl"></div>
+          <div class="absolute -right-8 -bottom-8 w-32 h-32 bg-secondary/20 rounded-full blur-2xl"></div>
+          <div class="relative z-10 flex items-center gap-4">
+            <div class="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center text-white shrink-0">
+              <i data-lucide="crown" class="w-6 h-6"></i>
+            </div>
+            <div class="flex flex-col">
+              <h3 class="text-white font-black text-sm mb-1">اشترك واستفد من مزايا خاصة</h3>
+              <p class="text-white/60 text-[11px] font-bold leading-relaxed">توصيل مجاني، خصومات شهرية، وسلة مستقلة لكل اشتراك</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Active Subscriptions -->
+      <section id="my-subscriptions-section" class="hidden px-5 mb-8 space-y-4">
+        <h3 class="text-base font-black text-slate-900 px-1">اشتراكاتي النشطة</h3>
+        <div id="my-subscriptions-list" class="space-y-4">
+          <!-- Populated by JS -->
+        </div>
+      </section>
+
+      <!-- Available Subscriptions -->
+      <section class="px-5 space-y-4">
+        <h3 class="text-base font-black text-slate-900 px-1">الاشتراكات المتاحة</h3>
+        <div id="available-subscriptions-list" class="space-y-4">
+          <!-- Populated by JS -->
+        </div>
+      </section>
+    </div>
+
+    <!-- Subscription Detail View -->
+    <div
+      id="subscription-detail-view"
+      class="hidden bg-[#fbfbfb] animate-fade-in pb-32 max-w-5xl mx-auto min-h-screen"
+    >
+      <header class="px-5 pt-8 pb-4 flex items-center gap-4">
+        <button
+          onclick="switchView('subscriptions')"
+          class="w-10 h-10 bg-white rounded-xl flex items-center justify-center border border-slate-100 active:scale-90 transition-transform shrink-0"
+        >
+          <i data-lucide="chevron-right" class="w-6 h-6 text-slate-600"></i>
+        </button>
+        <div class="flex flex-col">
+          <h1 id="subscription-detail-name" class="text-xl font-black text-slate-900">اسم الاشتراك</h1>
+          <span id="subscription-detail-tagline" class="text-[10px] font-bold text-primary">وصف الاشتراك</span>
+        </div>
+      </header>
+
+      <!-- Plan Hero Card -->
+      <section class="px-5 mb-8">
+        <div class="bg-white rounded-[32px] border border-slate-100 p-6 space-y-5">
+          <div class="flex items-start justify-between">
+            <div class="flex items-center gap-4">
+              <div id="subscription-detail-icon" class="w-14 h-14 bg-primary/10 text-primary rounded-3xl flex items-center justify-center shrink-0">
+                <i data-lucide="crown" class="w-7 h-7"></i>
+              </div>
+              <div class="flex flex-col">
+                <span id="subscription-detail-price" class="text-lg font-black text-slate-900">0 د.ع</span>
+                <span id="subscription-detail-status" class="mt-1 bg-slate-100 text-slate-500 text-[10px] font-black px-3 py-1.5 rounded-lg w-fit">غير مشترك</span>
+              </div>
+            </div>
+          </div>
+
+          <div id="subscription-detail-benefits" class="space-y-3 pt-4 border-t border-slate-50">
+            <!-- Populated by JS -->
+          </div>
+
+          <button
+            id="subscription-detail-cta"
+            class="w-full bg-primary text-white h-14 rounded-2xl font-black active:scale-95 transition-transform flex items-center justify-center gap-2 text-sm"
+          >
+            <i data-lucide="crown" class="w-4 h-4"></i>
+            اشترك الآن
+          </button>
+        </div>
+      </section>
+
+      <!-- Included Products -->
+      <section class="px-5 space-y-4">
+        <div class="flex items-center justify-between px-1">
+          <h3 class="text-base font-black text-slate-900">المنتجات المشمولة</h3>
+        </div>
+
+        <div id="subscription-detail-products" class="grid grid-cols-2 lg:grid-cols-4 gap-2 lg:gap-3">
+          <!-- Populated by JS -->
+        </div>
+      </section>
+    </div>
+
     <!-- Orders View -->
     <div
       id="orders-view"
@@ -1089,19 +1242,26 @@
 
         <!-- Order Summary -->
         <section class="space-y-4">
-          <h3 class="text-base font-black text-slate-900 px-1">ملخص الطلب</h3>
+          <div class="flex items-center justify-between px-1">
+            <h3 class="text-base font-black text-slate-900">ملخص الطلب</h3>
+            <span id="checkout-subscription-badge" class="hidden flex items-center gap-1.5 bg-primary/10 text-primary text-[10px] font-black px-3 py-1.5 rounded-lg"></span>
+          </div>
           <div class="bg-white border border-slate-100 rounded-[32px] p-6 relative overflow-hidden">
             <!-- Decorative circle -->
             <div class="absolute -top-10 -left-10 w-32 h-32 bg-slate-50/50 rounded-full"></div>
-            
+
             <div class="space-y-4 relative z-10">
               <div class="flex justify-between items-center text-xs">
                 <span class="text-slate-400 font-bold">مجموع السلة</span>
                 <span id="checkout-subtotal" class="text-slate-900">0 د.ع</span>
               </div>
+              <div id="checkout-sub-discount-row" class="hidden justify-between items-center text-xs">
+                <span class="text-slate-400 font-bold">خصم الاشتراك</span>
+                <span id="checkout-sub-discount" class="text-emerald-500 font-black">- 0 د.ع</span>
+              </div>
               <div class="flex justify-between items-center text-xs">
                 <span class="text-slate-400 font-bold">رسوم التوصيل</span>
-                <span class="text-secondary font-black">+ 3,000 د.ع</span>
+                <span id="checkout-delivery-fee" class="text-secondary font-black">+ 3,000 د.ع</span>
               </div>
               <div id="checkout-wallet-discount-row" class="hidden justify-between items-center text-xs">
                 <span class="text-slate-400 font-bold">خصم المحفظة</span>
@@ -1164,6 +1324,7 @@
                 مراجعة الطلب
               </p>
             </div>
+            <span id="order-confirmation-sub-badge" class="hidden shrink-0 bg-primary/10 text-primary text-[10px] font-black px-2.5 py-1.5 rounded-lg"></span>
           </div>
 
           <div class="mt-5 space-y-2 overflow-y-auto px-1">
@@ -1175,9 +1336,13 @@
               <span>المجموع</span>
               <span id="order-confirmation-subtotal">0 د.ع</span>
             </div>
+            <div id="order-confirmation-discount-row" class="hidden mt-2 items-center justify-between text-sm font-bold text-emerald-500">
+              <span>خصم الاشتراك</span>
+              <span id="order-confirmation-discount">- 0 د.ع</span>
+            </div>
             <div class="mt-2 flex items-center justify-between text-sm font-bold text-slate-500">
               <span>التوصيل</span>
-              <span>+ 3,000 د.ع</span>
+              <span id="order-confirmation-delivery">+ 3,000 د.ع</span>
             </div>
             <div class="mt-3 flex items-center justify-between border-t border-slate-200 pt-3">
               <span class="text-sm font-black text-slate-900">الإجمالي</span>
@@ -1458,7 +1623,7 @@
       style="bottom: 130px;"
     >
       <div class="max-w-md lg:max-w-2xl mx-auto pointer-events-auto">
-        <button onclick="switchView('cart')" class="w-full bg-white/95 backdrop-blur-md rounded-2xl p-4 border border-slate-100 flex flex-col gap-3 shadow-premium active:scale-[0.98] transition-all animate-fade-in">
+        <button onclick="openCart(FLOATING_BAR_CART_ID)" class="w-full bg-white/95 backdrop-blur-md rounded-2xl p-4 border border-slate-100 flex flex-col gap-3 shadow-premium active:scale-[0.98] transition-all animate-fade-in">
           <!-- Reward Progress Section -->
           <div class="w-full flex flex-col gap-1.5">
             <div class="flex justify-between items-center text-[10px] font-black">
@@ -1480,7 +1645,7 @@
                 <i data-lucide="shopping-basket" class="w-5 h-5"></i>
               </div>
               <div class="flex flex-col items-start leading-none gap-1">
-                <span class="text-[11px] font-black text-slate-900">سلة التسوق</span>
+                <span id="floating-cart-label" class="text-[11px] font-black text-slate-900">سلة التسوق</span>
                 <span id="floating-cart-count" class="text-[10px] font-bold text-slate-400">0 منتج</span>
               </div>
             </div>
@@ -1534,7 +1699,7 @@
         </button>
         <button
           id="nav-cart"
-          onclick="switchView('cart')"
+          onclick="openCart('general')"
           class="flex flex-col items-center gap-1 min-w-[70px] py-3 text-slate-400 hover:text-primary relative group transition-all rounded-2xl"
         >
           <!-- <i
@@ -1619,10 +1784,21 @@
       let APP_DATA = {
         categories: [],
         sections: [],
-        cart: {},
+        subscriptions: [],
+        mySubscriptions: [],
+        carts: { general: {} },
         likes: {},
         addresses: [],
       };
+
+      // Which cart tab is showing inside the cart view
+      let ACTIVE_CART_TAB = 'general';
+      // Which cart the floating summary bar currently reflects
+      let FLOATING_BAR_CART_ID = 'general';
+      // Which cart is being paid for in checkout / order confirmation
+      let CHECKOUT_CART_ID = 'general';
+      // Subscription currently open in the subscription detail view
+      let CURRENT_SUBSCRIPTION_ID = null;
 
       function toggleCategorySearch() {
         const searchBar = document.getElementById("category-search-bar");
@@ -1641,15 +1817,25 @@
           const data = await response.json();
 
           // Load state from local storage
-              const savedCart = localStorage.getItem("cart");
+          const savedCarts = localStorage.getItem("carts");
+          const legacyCart = localStorage.getItem("cart"); // pre-subscriptions single-cart format
           const savedLikes = localStorage.getItem("likes");
           const savedAddresses = localStorage.getItem("addresses");
           const savedOrders = localStorage.getItem("orders");
+          const savedMySubscriptions = localStorage.getItem("mySubscriptions");
 
           APP_DATA.categories = data.categories || [];
           APP_DATA.sections = data.sections || [];
+          APP_DATA.subscriptions = data.subscriptions || [];
           APP_DATA.orders = savedOrders ? JSON.parse(savedOrders) : (data.orders || []);
-          APP_DATA.cart = savedCart ? JSON.parse(savedCart) : {};
+
+          APP_DATA.carts = savedCarts
+            ? JSON.parse(savedCarts)
+            : { general: legacyCart ? JSON.parse(legacyCart) : {} };
+          if (!APP_DATA.carts.general) APP_DATA.carts.general = {};
+          if (legacyCart) localStorage.removeItem("cart");
+
+          APP_DATA.mySubscriptions = savedMySubscriptions ? JSON.parse(savedMySubscriptions) : [];
           APP_DATA.likes = savedLikes ? JSON.parse(savedLikes) : {};
           APP_DATA.addresses = savedAddresses ? JSON.parse(savedAddresses) : [
             { id: '1', name: 'المنزل', landmark: 'قرب صيدلية الوفاء', isDefault: true }
@@ -1662,10 +1848,298 @@
         }
       }
 
+      // Cart / Subscription Helpers
+      function getCart(cartId) {
+        if (!APP_DATA.carts[cartId]) APP_DATA.carts[cartId] = {};
+        return APP_DATA.carts[cartId];
+      }
+
+      function saveCarts() {
+        localStorage.setItem("carts", JSON.stringify(APP_DATA.carts));
+      }
+
+      function getAllProducts() {
+        let all = [];
+        APP_DATA.sections.forEach((s) => (all = [...all, ...s.products]));
+        return all;
+      }
+
+      function getSubscriptionById(id) {
+        return APP_DATA.subscriptions.find((s) => s.id === id);
+      }
+
+      function isSubscribed(id) {
+        return APP_DATA.mySubscriptions.includes(id);
+      }
+
+      function saveMySubscriptions() {
+        localStorage.setItem("mySubscriptions", JSON.stringify(APP_DATA.mySubscriptions));
+      }
+
+      // Cart badge tint per plan color token
+      const SUBSCRIPTION_COLOR_CLASSES = {
+        primary: { bg: "bg-primary/10", text: "text-primary", solid: "bg-primary", glow: "shadow-primary/20", ring: "rgba(38,181,89,0.25)" },
+        secondary: { bg: "bg-secondary/10", text: "text-secondary", solid: "bg-secondary", glow: "shadow-secondary/20", ring: "rgba(245,130,32,0.25)" },
+        amber: { bg: "bg-amber-100", text: "text-amber-600", solid: "bg-amber-500", glow: "shadow-amber-500/20", ring: "rgba(217,119,6,0.25)" },
+      };
+
+      const SUBSCRIPTION_GRADIENTS = {
+        primary: "linear-gradient(135deg,#26b559,#189a48)",
+        secondary: "linear-gradient(135deg,#F58220,#d96a10)",
+        amber: "linear-gradient(135deg,#f59e0b,#d97706)",
+      };
+
+      // Centralized pricing for any cart (general or subscription), including perks
+      function computeCartPricing(cartId) {
+        const cart = getCart(cartId);
+        const allProducts = getAllProducts();
+
+        let subtotal = 0;
+        Object.keys(cart).forEach((id) => {
+          const p = allProducts.find((item) => item.id === id) || { price: "0" };
+          const priceNum = parseInt((p.price || "0").replace(/,/g, ""), 10) || 0;
+          subtotal += priceNum * cart[id];
+        });
+
+        const subscription = cartId !== "general" ? getSubscriptionById(cartId) : null;
+        const perk = subscription ? subscription.perk : null;
+
+        let discountPercent = 0;
+        if (perk && perk.type === "discount") {
+          discountPercent = parseInt(String(perk.value).replace("%", ""), 10) || 0;
+        }
+        const discountAmount = Math.round(subtotal * (discountPercent / 100));
+
+        const isFreeDelivery = !!(perk && perk.type === "free_delivery");
+        const deliveryFee = isFreeDelivery ? 0 : 3000;
+
+        return {
+          subscription,
+          subtotal,
+          discountPercent,
+          discountAmount,
+          isFreeDelivery,
+          deliveryFee,
+          total: subtotal - discountAmount + deliveryFee,
+        };
+      }
+
+      // Subscriptions UI
+      function renderSubscriptionCard(sub, subscribed) {
+        const colors = SUBSCRIPTION_COLOR_CLASSES[sub.color] || SUBSCRIPTION_COLOR_CLASSES.primary;
+        const gradient = SUBSCRIPTION_GRADIENTS[sub.color] || SUBSCRIPTION_GRADIENTS.primary;
+        const cartCount = Object.values(getCart(sub.id)).reduce((a, b) => a + b, 0);
+        const isFreeDelivery = sub.perk && sub.perk.type === "free_delivery";
+        const perkLabel = isFreeDelivery ? "توصيل مجاني" : `خصم ${sub.perk ? sub.perk.value : ""}`;
+
+        return `
+          <div class="bg-white rounded-[28px] p-5 space-y-4 animate-fade-in transition-all" style="border: 1.5px solid ${subscribed ? colors.ring : "#f1f5f9"}; box-shadow: 0 15px 30px -18px rgba(0,0,0,0.12);">
+            <div class="flex items-start justify-between gap-3">
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-white shrink-0" style="background: ${gradient}; box-shadow: 0 8px 16px -6px ${colors.ring};">
+                  <i data-lucide="${sub.icon}" class="w-6 h-6"></i>
+                </div>
+                <div class="flex flex-col">
+                  <span class="text-sm font-black text-slate-900">${sub.name}</span>
+                  <span class="text-[11px] font-bold text-slate-400 leading-snug">${sub.tagline}</span>
+                </div>
+              </div>
+              ${subscribed ? `<span class="shrink-0 flex items-center gap-1.5 text-white text-[9px] font-black px-3 py-1.5 rounded-full" style="background:${gradient};"><span class="w-1.5 h-1.5 rounded-full bg-white"></span>مُفعّل</span>` : ""}
+            </div>
+
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="text-[10px] font-black ${colors.text} ${colors.bg} px-3 py-1.5 rounded-full flex items-center gap-1">
+                <i data-lucide="${isFreeDelivery ? "truck" : "badge-percent"}" class="w-3 h-3"></i>
+                ${perkLabel}
+              </span>
+              <span class="text-[10px] font-black text-slate-400 bg-slate-50 px-3 py-1.5 rounded-full">${sub.productIds.length} منتج مشمول</span>
+            </div>
+
+            <div class="flex items-center justify-between pt-3 border-t border-slate-50">
+              <div class="flex flex-col">
+                <span class="text-[10px] font-bold text-slate-400">${sub.billingCycle}</span>
+                <span class="text-base font-black text-slate-900">${sub.price} د.ع</span>
+              </div>
+              <button onclick="openSubscriptionDetail('${sub.id}')" class="text-white text-xs font-black px-6 py-3 rounded-2xl active:scale-95 transition-transform flex items-center gap-2" style="background: ${gradient}; box-shadow: 0 10px 20px -8px ${colors.ring};">
+                ${subscribed ? "تصفح المنتجات" : "عرض التفاصيل"}
+                ${subscribed && cartCount > 0 ? `<span class="bg-white/25 rounded-full px-1.5 min-w-[18px] text-center text-[10px]">${cartCount}</span>` : ""}
+              </button>
+            </div>
+          </div>
+        `;
+      }
+
+      function renderSubscriptionsList() {
+        const activeSection = document.getElementById("my-subscriptions-section");
+        const activeContainer = document.getElementById("my-subscriptions-list");
+        const availableContainer = document.getElementById("available-subscriptions-list");
+
+        const mySubs = APP_DATA.mySubscriptions.map((id) => getSubscriptionById(id)).filter(Boolean);
+        const availableSubs = APP_DATA.subscriptions.filter((s) => !isSubscribed(s.id));
+
+        if (activeSection) activeSection.classList.toggle("hidden", mySubs.length === 0);
+        if (activeContainer) {
+          activeContainer.innerHTML = mySubs.map((s) => renderSubscriptionCard(s, true)).join("");
+        }
+
+        if (availableContainer) {
+          availableContainer.innerHTML = availableSubs.length
+            ? availableSubs.map((s) => renderSubscriptionCard(s, false)).join("")
+            : `<div class="text-center py-10"><p class="text-sm font-bold text-slate-400">أنت مشترك في جميع الباقات المتاحة حالياً 🎉</p></div>`;
+        }
+
+        lucide.createIcons();
+      }
+
+      function renderSubscriptionBrowseCard(p, subId, subscribed, delay = 0) {
+        const href = subscribed
+          ? `product-details.html?id=${p.id}&sub=${subId}`
+          : `product-details.html?id=${p.id}`;
+
+        return `
+          <div onclick="window.location.href='${href}'" class="bg-white rounded-[22px] border border-slate-100 p-3 flex flex-col cursor-pointer active:scale-[0.97] transition-transform animate-fade-in" style="animation-delay: ${delay}s">
+            <div class="w-full aspect-square rounded-2xl bg-accent/60 overflow-hidden mb-2 flex items-center justify-center">
+              <img src="${p.img}" class="w-full h-full object-contain p-2" alt="${p.name}">
+            </div>
+            <span class="text-[11px] font-bold text-slate-700 truncate">${p.name}</span>
+            <div class="flex items-center justify-between mt-1">
+              <span class="text-[11px] font-black text-primary">${p.price} د.ع</span>
+              <i data-lucide="chevron-left" class="w-3.5 h-3.5 text-slate-300"></i>
+            </div>
+          </div>
+        `;
+      }
+
+      function renderSubscriptionDetail(id) {
+        const sub = getSubscriptionById(id);
+        if (!sub) return;
+
+        const subscribed = isSubscribed(id);
+        const colors = SUBSCRIPTION_COLOR_CLASSES[sub.color] || SUBSCRIPTION_COLOR_CLASSES.primary;
+        const gradient = SUBSCRIPTION_GRADIENTS[sub.color] || SUBSCRIPTION_GRADIENTS.primary;
+        const allProducts = getAllProducts();
+        const products = sub.productIds.map((pid) => allProducts.find((p) => p.id === pid)).filter(Boolean);
+
+        document.getElementById("subscription-detail-name").innerText = sub.name;
+        document.getElementById("subscription-detail-tagline").innerText = sub.tagline;
+        document.getElementById("subscription-detail-price").innerText = `${sub.price} د.ع / ${sub.billingCycle}`;
+
+        const iconWrap = document.getElementById("subscription-detail-icon");
+        if (iconWrap) {
+          iconWrap.className = "w-14 h-14 rounded-3xl flex items-center justify-center text-white shrink-0";
+          iconWrap.style.background = gradient;
+          iconWrap.style.boxShadow = `0 10px 20px -8px ${colors.ring}`;
+          iconWrap.innerHTML = `<i data-lucide="${sub.icon}" class="w-7 h-7"></i>`;
+        }
+
+        const benefitsEl = document.getElementById("subscription-detail-benefits");
+        if (benefitsEl) {
+          benefitsEl.innerHTML = sub.benefits
+            .map(
+              (b) => `
+              <div class="flex items-start gap-2.5">
+                <div class="w-5 h-5 rounded-full ${colors.bg} ${colors.text} flex items-center justify-center shrink-0 mt-0.5">
+                  <i data-lucide="check" class="w-3 h-3"></i>
+                </div>
+                <span class="text-xs font-bold text-slate-600 leading-relaxed">${b}</span>
+              </div>
+            `,
+            )
+            .join("");
+        }
+
+        const statusBadge = document.getElementById("subscription-detail-status");
+        if (statusBadge) {
+          if (subscribed) {
+            statusBadge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-white"></span>مُفعّل`;
+            statusBadge.className = "mt-1 flex items-center gap-1.5 text-white text-[10px] font-black px-3 py-1.5 rounded-full w-fit";
+            statusBadge.style.background = gradient;
+          } else {
+            statusBadge.innerText = "غير مشترك";
+            statusBadge.className = "mt-1 bg-slate-100 text-slate-500 text-[10px] font-black px-3 py-1.5 rounded-full w-fit";
+            statusBadge.style.background = "";
+          }
+        }
+
+        const ctaBtn = document.getElementById("subscription-detail-cta");
+        if (ctaBtn) {
+          if (subscribed) {
+            ctaBtn.innerHTML = `<i data-lucide="check-circle-2" class="w-4 h-4"></i> اشتراكك نشط`;
+            ctaBtn.className = "w-full bg-emerald-50 text-emerald-600 h-14 rounded-2xl font-black flex items-center justify-center gap-2 text-sm cursor-default";
+            ctaBtn.style.background = "";
+            ctaBtn.onclick = null;
+          } else {
+            ctaBtn.innerHTML = `<i data-lucide="crown" class="w-4 h-4"></i> اشترك الآن`;
+            ctaBtn.className = "w-full text-white h-14 rounded-2xl font-black active:scale-95 transition-transform flex items-center justify-center gap-2 text-sm";
+            ctaBtn.style.background = gradient;
+            ctaBtn.style.boxShadow = `0 12px 24px -10px ${colors.ring}`;
+            ctaBtn.onclick = () => subscribeToPlan(id);
+          }
+        }
+
+        // Subscribed: same product card as the home page (with add-to-cart). Not subscribed: browse-only preview.
+        const gridContainer = document.getElementById("subscription-detail-products");
+        if (gridContainer) {
+          gridContainer.innerHTML = products.length
+            ? subscribed
+              ? products.map((p, i) => renderProductCard(p, i * 0.04, true, id)).join("")
+              : products.map((p, i) => renderSubscriptionBrowseCard(p, id, subscribed, i * 0.04)).join("")
+            : renderEmptyState("لا توجد منتجات مضافة لهذا الاشتراك بعد");
+        }
+
+        lucide.createIcons();
+      }
+
+      function renderHomeSubscriptionsStrip() {
+        const strip = document.getElementById("home-subscriptions-strip");
+        const text = document.getElementById("home-subscriptions-strip-text");
+        const badge = document.getElementById("home-subscriptions-strip-badge");
+        if (!strip) return;
+
+        const count = APP_DATA.mySubscriptions.length;
+        if (count > 0) {
+          text.innerText = `لديك ${count} ${count === 1 ? "اشتراك نشط" : "اشتراكات نشطة"}`;
+          badge.innerHTML = `<span class="inline-block w-1.5 h-1.5 rounded-full bg-white align-middle ml-1"></span>نشط`;
+          badge.style.background = "linear-gradient(135deg,#26b559,#189a48)";
+          strip.style.borderColor = "rgba(38,181,89,0.35)";
+          strip.style.boxShadow = "0 8px 20px -10px rgba(38,181,89,0.35)";
+        } else {
+          text.innerText = "اكتشف الاشتراكات وتوصيلك المجاني";
+          badge.innerText = "جديد";
+          badge.style.background = "linear-gradient(135deg,#F58220,#d96a10)";
+          strip.style.borderColor = "rgba(38,181,89,0.15)";
+          strip.style.boxShadow = "";
+        }
+        lucide.createIcons();
+      }
+
+      function renderAccountSubscriptionsHint() {
+        const hintEl = document.getElementById("account-subscriptions-hint");
+        if (!hintEl) return;
+        const count = APP_DATA.mySubscriptions.length;
+        hintEl.innerText = count > 0 ? `${count} اشتراكات نشطة` : "توصيل مجاني وخصومات شهرية";
+      }
+
+      function subscribeToPlan(id) {
+        if (!isSubscribed(id)) {
+          APP_DATA.mySubscriptions.push(id);
+          saveMySubscriptions();
+        }
+        const sub = getSubscriptionById(id);
+        showSnackbar("success", `تم الاشتراك في "${sub ? sub.name : ""}" بنجاح`);
+        renderSubscriptionsList();
+        renderHomeSubscriptionsStrip();
+        if (APP_CURRENT_VIEW === "subscription-detail") renderSubscriptionDetail(id);
+      }
+
       // UI Helpers
-      const renderProductCard = (p, delay = 0, isGrid = false) => {
+      const renderProductCard = (p, delay = 0, isGrid = false, cartId = "general") => {
         const isSoldOut = p.stock === 0;
-        const inCart = APP_DATA.cart[p.id] > 0;
+        const cart = getCart(cartId);
+        const inCart = cart[p.id] > 0;
+        const detailHref = cartId === "general"
+          ? `product-details.html?id=${p.id}`
+          : `product-details.html?id=${p.id}&sub=${cartId}`;
 
         return `
         <div class="product-card ${isGrid ? "w-full" : "product-card-horizontal"} lg:w-full bg-transparent rounded-[28px] shrink-0 lg:shrink relative animate-fade-in flex flex-col" style="animation-delay: ${delay}s">
@@ -1673,20 +2147,20 @@
           <button onclick="event.stopPropagation(); toggleLike('${p.id}')" data-id="${p.id}" class="like-btn absolute top-2.5 left-2.5 z-20 w-8 h-8 glass rounded-full flex items-center justify-center transition-all active:scale-90">
             <i data-lucide="heart" class="w-4 h-4 ${APP_DATA.likes[p.id] ? "text-red-500 fill-red-500" : "text-slate-400"}"></i>
           </button>
-          
-          <div onclick="window.location.href='product-details.html?id=${p.id}'" class="w-full product-image-container lg:h-56 rounded-[22px] mb-3 overflow-hidden cursor-pointer relative group">
+
+          <div onclick="window.location.href='${detailHref}'" class="w-full product-image-container lg:h-56 rounded-[22px] mb-3 overflow-hidden cursor-pointer relative group">
             <img src="${p.img}" class="product-image bg-white w-full h-full object-contain border border-slate-200 rounded-lg" alt="${p.name}">
 
-            <div data-id="${p.id}" class="controls-container absolute bottom-2.5 z-20 px-3">
-              <button onclick="event.stopPropagation(); addToCart('${p.id}')" class="w-9 h-9 bg-primary text-white rounded-xl flex items-center justify-center shadow-lg shadow-primary/20 active:scale-90 transition-transform ${APP_DATA.cart[p.id] > 0 ? "hidden" : ""}">
+            <div data-id="${p.id}" data-cart="${cartId}" class="controls-container absolute bottom-2.5 z-20 px-3">
+              <button onclick="event.stopPropagation(); addToCart('${p.id}', '${cartId}')" class="w-9 h-9 bg-primary text-white rounded-xl flex items-center justify-center shadow-lg shadow-primary/20 active:scale-90 transition-transform ${inCart ? "hidden" : ""}">
                 <i data-lucide="plus" class="w-5 h-5"></i>
               </button>
-              <div data-id="${p.id}" class="selector-container ${APP_DATA.cart[p.id] > 0 ? "flex" : "hidden"} items-center gap-1.5 bg-white/90 backdrop-blur-md rounded-xl p-1 animate-fade-in border border-slate-200">
-                <button onclick="event.stopPropagation(); changeQty('${p.id}', 1)" class="w-7 h-7 bg-white rounded-lg flex items-center justify-center shadow-sm text-primary active:scale-90">
+              <div data-id="${p.id}" data-cart="${cartId}" class="selector-container ${inCart ? "flex" : "hidden"} items-center gap-1.5 bg-white/90 backdrop-blur-md rounded-xl p-1 animate-fade-in border border-slate-200">
+                <button onclick="event.stopPropagation(); changeQty('${p.id}', 1, '${cartId}')" class="w-7 h-7 bg-white rounded-lg flex items-center justify-center shadow-sm text-primary active:scale-90">
                   <i data-lucide="plus" class="w-4 h-4"></i>
                 </button>
-                <span data-id="${p.id}" class="qty-text text-[11px] font-bold text-slate-900">${APP_DATA.cart[p.id]}</span>
-                <button onclick="event.stopPropagation(); changeQty('${p.id}', -1)" class="w-7 h-7 bg-white rounded-lg flex items-center justify-center shadow-sm text-primary active:scale-90">
+                <span data-id="${p.id}" data-cart="${cartId}" class="qty-text text-[11px] font-bold text-slate-900">${cart[p.id] || ""}</span>
+                <button onclick="event.stopPropagation(); changeQty('${p.id}', -1, '${cartId}')" class="w-7 h-7 bg-white rounded-lg flex items-center justify-center shadow-sm text-primary active:scale-90">
                   <i data-lucide="minus" class="w-4 h-4"></i>
                 </button>
               </div>
@@ -1694,7 +2168,7 @@
           </div>
 
           <div class="px-3 pb-3 flex-1 flex flex-col">
-            <h4 onclick="window.location.href='product-details.html?id=${p.id}'" class="text-[10px] lg:text-[12px] text-slate-900 truncate mb-1 cursor-pointer hover:text-primary transition-colors">${p.name}</h4>
+            <h4 onclick="window.location.href='${detailHref}'" class="text-[10px] lg:text-[12px] text-slate-900 truncate mb-1 cursor-pointer hover:text-primary transition-colors">${p.name}</h4>
             <p class="text-[10px] text-slate-400 mb-2">${p.desc || "وحدة واحدة"}</p>
             ${isSoldOut ? `
             <div class="flex items-center gap-2">
@@ -1762,7 +2236,9 @@
           "address-form",
           "favorites",
           "loyalty-points",
-          "search"
+          "search",
+          "subscriptions",
+          "subscription-detail"
         ];
         const navs = {
           home: "nav-home",
@@ -1793,6 +2269,7 @@
         if (viewId === 'addresses') renderAddresses();
         if (viewId === 'favorites') renderFavorites();
         if (viewId === 'loyalty-points') renderLoyaltyPoints('all');
+        if (viewId === 'account') renderAccountSubscriptionsHint();
 
         // Reset nav states
         Object.values(navs).forEach((id) => {
@@ -1816,9 +2293,11 @@
         }
 
         // View Specific Rendering
-        if (viewId === "cart") renderCart();
+        if (viewId === "cart") { renderCartTabs(); renderCart(ACTIVE_CART_TAB); }
         if (viewId === "orders") renderOrders();
         if (viewId === "checkout") renderCheckout();
+        if (viewId === "subscriptions") renderSubscriptionsList();
+        if (viewId === "subscription-detail") renderSubscriptionDetail(CURRENT_SUBSCRIPTION_ID);
         if (viewId === "order-confirmation") {
           renderOrderConfirmationModal();
           startOrderConfirmationTimer();
@@ -1826,10 +2305,33 @@
           stopOrderConfirmationTimer();
         }
 
-        // updateFloatingCartBar();
+        FLOATING_BAR_CART_ID = (viewId === "subscription-detail" && CURRENT_SUBSCRIPTION_ID) ? CURRENT_SUBSCRIPTION_ID : "general";
+        updateFloatingCartBar(FLOATING_BAR_CART_ID);
 
         lucide.createIcons();
         window.scrollTo(0, 0);
+      }
+
+      function openCart(cartId = "general") {
+        ACTIVE_CART_TAB = cartId;
+        switchView("cart");
+      }
+
+      function switchCartTab(cartId) {
+        ACTIVE_CART_TAB = cartId;
+        renderCartTabs();
+        renderCart(cartId);
+        lucide.createIcons();
+      }
+
+      function goToCheckout(cartId) {
+        CHECKOUT_CART_ID = cartId;
+        switchView("checkout");
+      }
+
+      function openSubscriptionDetail(id) {
+        CURRENT_SUBSCRIPTION_ID = id;
+        switchView("subscription-detail");
       }
 
       // Loyalty Points Logic
@@ -1936,18 +2438,9 @@
       }
 
       function renderCheckout() {
-        let allProducts = [];
-        APP_DATA.sections.forEach((s) => (allProducts = [...allProducts, ...s.products]));
+        const pricing = computeCartPricing(CHECKOUT_CART_ID);
 
-        let subtotal = 0;
-        Object.keys(APP_DATA.cart).forEach((id) => {
-          const p = allProducts.find((item) => item.id === id) || { price: "0" };
-          const priceNum = parseInt(p.price.replace(/,/g, ""));
-          subtotal += priceNum * APP_DATA.cart[id];
-        });
-
-        const deliveryFee = 3000;
-        let total = subtotal + deliveryFee;
+        let total = pricing.total;
         let walletDeduction = 0;
 
         if (isWalletUsed) {
@@ -1955,12 +2448,42 @@
           total -= walletDeduction;
         }
 
-        document.getElementById("checkout-subtotal").innerText = `${subtotal.toLocaleString()} د.ع`;
-        
+        document.getElementById("checkout-subtotal").innerText = `${pricing.subtotal.toLocaleString()} د.ع`;
+
+        const deliveryFeeEl = document.getElementById("checkout-delivery-fee");
+        if (deliveryFeeEl) {
+          deliveryFeeEl.innerText = pricing.isFreeDelivery
+            ? "مجاناً ضمن الاشتراك"
+            : `+ ${pricing.deliveryFee.toLocaleString()} د.ع`;
+        }
+
+        const subDiscountRow = document.getElementById("checkout-sub-discount-row");
+        const subDiscountText = document.getElementById("checkout-sub-discount");
+        if (subDiscountRow) {
+          if (pricing.discountAmount > 0) {
+            subDiscountRow.classList.remove("hidden");
+            subDiscountRow.classList.add("flex");
+            if (subDiscountText) subDiscountText.innerText = `- ${pricing.discountAmount.toLocaleString()} د.ع`;
+          } else {
+            subDiscountRow.classList.add("hidden");
+            subDiscountRow.classList.remove("flex");
+          }
+        }
+
+        const subBadge = document.getElementById("checkout-subscription-badge");
+        if (subBadge) {
+          if (pricing.subscription) {
+            subBadge.classList.remove("hidden");
+            subBadge.innerText = `طلب من اشتراك: ${pricing.subscription.name}`;
+          } else {
+            subBadge.classList.add("hidden");
+          }
+        }
+
         const discountRow = document.getElementById("checkout-wallet-discount-row");
         const discountText = document.getElementById("checkout-wallet-discount");
         const deductionAmountText = document.getElementById("wallet-deduction-amount");
-        
+
         if (isWalletUsed && walletDeduction > 0) {
           discountRow.classList.remove("hidden");
           discountRow.classList.add("flex");
@@ -2122,37 +2645,32 @@
         return `${value.toLocaleString()} د.ع`;
       }
 
-      function getOrderSummary() {
-        let allProducts = [];
-        APP_DATA.sections.forEach((s) => {
-          allProducts = [...allProducts, ...s.products];
-        });
+      function getOrderSummary(cartId = CHECKOUT_CART_ID) {
+        const cart = getCart(cartId);
+        const allProducts = getAllProducts();
+        const pricing = computeCartPricing(cartId);
 
-        let subtotal = 0;
-        const items = [];
-
-        Object.keys(APP_DATA.cart).forEach((id) => {
+        const items = Object.keys(cart).map((id) => {
           const product = allProducts.find((item) => item.id === id) || { name: "منتج", price: "0" };
-          const quantity = APP_DATA.cart[id];
+          const quantity = cart[id];
           const priceNum = parseInt((product.price || "0").replace(/,/g, ""), 10) || 0;
-          const lineTotal = priceNum * quantity;
-          subtotal += lineTotal;
-
-          items.push({
+          return {
             id,
             name: product.name || "منتج",
             img: product.img,
             qty: quantity,
             price: priceNum,
-            lineTotal,
-          });
+            lineTotal: priceNum * quantity,
+          };
         });
 
         return {
           items,
-          subtotal,
-          deliveryFee: 3000,
-          total: subtotal + 3000,
+          subtotal: pricing.subtotal,
+          discountAmount: pricing.discountAmount,
+          deliveryFee: pricing.deliveryFee,
+          total: pricing.total,
+          subscription: pricing.subscription,
         };
       }
 
@@ -2194,6 +2712,35 @@
           itemsContainer.dataset.itemsKey = itemsKey;
         }
 
+        const deliveryEl = document.getElementById("order-confirmation-delivery");
+        const discountRow = document.getElementById("order-confirmation-discount-row");
+        const discountEl = document.getElementById("order-confirmation-discount");
+        const subBadge = document.getElementById("order-confirmation-sub-badge");
+
+        if (deliveryEl) {
+          deliveryEl.innerText = summary.deliveryFee > 0
+            ? `+ ${formatCurrency(summary.deliveryFee)}`
+            : "مجاناً";
+        }
+        if (discountRow) {
+          if (summary.discountAmount > 0) {
+            discountRow.classList.remove("hidden");
+            discountRow.classList.add("flex");
+            if (discountEl) discountEl.innerText = `- ${formatCurrency(summary.discountAmount)}`;
+          } else {
+            discountRow.classList.add("hidden");
+            discountRow.classList.remove("flex");
+          }
+        }
+        if (subBadge) {
+          if (summary.subscription) {
+            subBadge.classList.remove("hidden");
+            subBadge.innerText = `طلب من اشتراك: ${summary.subscription.name}`;
+          } else {
+            subBadge.classList.add("hidden");
+          }
+        }
+
         const remaining = Math.max(0, Math.ceil(orderConfirmationCountdown));
         subtotalEl.innerText = formatCurrency(summary.subtotal);
         totalEl.innerText = formatCurrency(summary.total);
@@ -2210,7 +2757,7 @@
       }
 
       function startOrderConfirmationTimer() {
-        if (!APP_DATA.cart || Object.keys(APP_DATA.cart).length === 0) {
+        if (Object.keys(getCart(CHECKOUT_CART_ID)).length === 0) {
           showSnackbar("warning");
           return;
         }
@@ -2242,7 +2789,7 @@
       function confirmPendingOrder(isAuto = false) {
         stopOrderConfirmationTimer();
 
-        if (!APP_DATA.cart || Object.keys(APP_DATA.cart).length === 0) {
+        if (Object.keys(getCart(CHECKOUT_CART_ID)).length === 0) {
           showSnackbar("warning");
           return;
         }
@@ -2253,27 +2800,26 @@
           status: "processing",
           statusAr: "قيد المعالجة",
           date: new Date().toLocaleDateString("ar-EG"),
-          itemsCount: Object.values(APP_DATA.cart).reduce((sum, qty) => sum + qty, 0),
+          itemsCount: summary.items.reduce((sum, item) => sum + item.qty, 0),
           total: formatCurrency(summary.total),
           items: summary.items,
           subtotal: summary.subtotal,
           deliveryFee: summary.deliveryFee,
+          subscriptionId: summary.subscription ? summary.subscription.id : null,
+          subscriptionName: summary.subscription ? summary.subscription.name : null,
         };
 
         APP_DATA.orders = APP_DATA.orders || [];
         APP_DATA.orders.unshift(newOrder);
         localStorage.setItem("orders", JSON.stringify(APP_DATA.orders));
 
-        APP_DATA.cart = {};
-        localStorage.removeItem("cart");
-        updateUI();
+        APP_DATA.carts[CHECKOUT_CART_ID] = {};
+        saveCarts();
+        updateUI(undefined, CHECKOUT_CART_ID);
+        ACTIVE_CART_TAB = "general";
         switchView("home");
 
-        if (!isAuto) {
-          showSnackbar("success");
-        } else {
-          showSnackbar("success");
-        }
+        showSnackbar("success");
       }
 
       function renderOrders() {
@@ -2293,13 +2839,16 @@
               <div class="flex justify-between items-start">
                 <div class="flex flex-col gap-1">
                   <span class="text-[10px] font-bold text-slate-400">رقم الطلب</span>
-                  <span class="font-black text-slate-900">${order.id}</span>
+                  <div class="flex items-center gap-2">
+                    <span class="font-black text-slate-900">${order.id}</span>
+                    ${order.subscriptionName ? `<span class="flex items-center gap-1 bg-primary/10 text-primary text-[9px] font-black px-2 py-1 rounded-lg"><i data-lucide="crown" class="w-3 h-3"></i>${order.subscriptionName}</span>` : ""}
+                  </div>
                 </div>
                 <span class="px-4 py-2 rounded-xl text-[10px] font-black ${statusClass}">
                   ${order.statusAr}
                 </span>
               </div>
-              
+
               <div class="flex items-center justify-between py-2 border-y border-slate-50">
                 <div class="flex flex-col gap-1">
                   <span class="text-[10px] font-bold text-slate-400">التاريخ</span>
@@ -2627,26 +3176,20 @@
       }
 
       // Cart Logic
-      function addToCart(id) {
-        APP_DATA.cart[id] = 1;
-        localStorage.setItem("cart", JSON.stringify(APP_DATA.cart));
-        updateUI(id);
+      function addToCart(id, cartId = "general") {
+        getCart(cartId)[id] = 1;
+        saveCarts();
+        updateUI(id, cartId);
       }
 
-      function changeQty(id, delta) {
-        const newQty = (APP_DATA.cart[id] || 0) + delta;
-        if (newQty <= 0) delete APP_DATA.cart[id];
-        else APP_DATA.cart[id] = newQty;
+      function changeQty(id, delta, cartId = "general") {
+        const cart = getCart(cartId);
+        const newQty = (cart[id] || 0) + delta;
+        if (newQty <= 0) delete cart[id];
+        else cart[id] = newQty;
 
-        localStorage.setItem("cart", JSON.stringify(APP_DATA.cart));
-        updateUI(id);
-
-        // If cart view is open, re-render it to update totals and list
-        if (
-          !document.getElementById("cart-view").classList.contains("hidden")
-        ) {
-          renderCart();
-        }
+        saveCarts();
+        updateUI(id, cartId);
       }
 
       function notifyWhenAvailable(id) {
@@ -2655,23 +3198,75 @@
         const productName = product ? product.name : 'المنتج';
         showSnackbar('notify', `سنبلغك فور توفر ${productName} مجدداً`);
       }
-      
 
-      function renderCart() {
+      function renderCartTabs() {
+        const container = document.getElementById("cart-tabs");
+        if (!container) return;
+
+        const subs = APP_DATA.mySubscriptions.map((id) => getSubscriptionById(id)).filter(Boolean);
+
+        if (subs.length === 0) {
+          container.classList.add("hidden");
+          container.innerHTML = "";
+          return;
+        }
+
+        container.classList.remove("hidden");
+        const tabs = [
+          { id: "general", name: "السلة العامة", icon: "shopping-basket", color: null },
+          ...subs.map((s) => ({ id: s.id, name: s.name, icon: s.icon, color: s.color })),
+        ];
+
+        container.innerHTML = tabs
+          .map((t) => {
+            const active = ACTIVE_CART_TAB === t.id;
+            const count = Object.values(getCart(t.id)).reduce((a, b) => a + b, 0);
+            const colors = t.color ? (SUBSCRIPTION_COLOR_CLASSES[t.color] || SUBSCRIPTION_COLOR_CLASSES.primary) : null;
+            const activeBg = colors ? colors.solid : "bg-primary";
+            const activeGlow = colors ? colors.glow : "shadow-primary/20";
+            return `
+              <button onclick="switchCartTab('${t.id}')" class="shrink-0 flex items-center gap-1.5 px-4 py-2.5 rounded-full text-xs font-black transition-all ${active ? `${activeBg} text-white shadow-sm ${activeGlow}` : "bg-white border border-slate-100 text-slate-500"}">
+                <i data-lucide="${t.icon}" class="w-3.5 h-3.5"></i>
+                ${t.name}
+                ${count > 0 ? `<span class="${active ? "bg-white/25 text-white" : "bg-slate-100 text-slate-500"} rounded-full px-1.5 min-w-[18px] text-center text-[10px] leading-[18px]">${count}</span>` : ""}
+              </button>
+            `;
+          })
+          .join("");
+
+        lucide.createIcons({ nodes: [container] });
+      }
+
+      function renderCart(cartId = ACTIVE_CART_TAB) {
         const container = document.getElementById("cart-items");
         const emptyState = document.getElementById("cart-empty");
         const summary = document.getElementById("cart-summary");
         const badge = document.getElementById("cart-item-count");
+        const progressContainer = document.getElementById("cart-progress-container");
+        const perkBanner = document.getElementById("cart-perk-banner");
 
-        const cartItems = Object.keys(APP_DATA.cart);
+        const cart = getCart(cartId);
+        const cartItems = Object.keys(cart);
+        const pricing = computeCartPricing(cartId);
 
         if (cartItems.length === 0) {
           container.classList.add("hidden");
           emptyState.classList.remove("hidden");
           summary.classList.add("hidden");
-          const progressContainer = document.getElementById("cart-progress-container");
           if (progressContainer) progressContainer.classList.add("hidden");
-          badge.innerText = "السلة فارغة";
+          if (perkBanner) perkBanner.classList.add("hidden");
+
+          const emptyTitle = document.getElementById("cart-empty-title");
+          const emptyText = document.getElementById("cart-empty-text");
+          if (pricing.subscription) {
+            badge.innerText = "سلة الاشتراك فارغة";
+            if (emptyTitle) emptyTitle.innerText = "سلة الاشتراك فارغة";
+            if (emptyText) emptyText.innerText = `أضف منتجات من "${pricing.subscription.name}" لتظهر هنا.`;
+          } else {
+            badge.innerText = "السلة فارغة";
+            if (emptyTitle) emptyTitle.innerText = "سلتك فارغة";
+            if (emptyText) emptyText.innerText = "لا توجد منتجات في السلة. ابدأ بالتسوق الآن!";
+          }
           return;
         }
 
@@ -2679,13 +3274,8 @@
         emptyState.classList.add("hidden");
         summary.classList.remove("hidden");
 
-        // Find product details
-        let allProducts = [];
-        APP_DATA.sections.forEach(
-          (s) => (allProducts = [...allProducts, ...s.products]),
-        );
+        const allProducts = getAllProducts();
 
-        let subtotal = 0;
         container.innerHTML = cartItems
           .map((id) => {
             const p = allProducts.find((item) => item.id === id) || {
@@ -2694,9 +3284,8 @@
               price: "0",
               img: "",
             };
-            const qty = APP_DATA.cart[id];
-            const priceNum = parseInt(p.price.replace(/,/g, ""));
-            subtotal += priceNum * qty;
+            const qty = cart[id];
+            const priceNum = parseInt((p.price || "0").replace(/,/g, ""), 10) || 0;
 
             return `
             <div class="bg-white rounded-3xl p-4 flex gap-4 border border-slate-100 animate-fade-in">
@@ -2710,15 +3299,15 @@
                 </div>
                 <div class="flex items-center justify-between">
                   <div class="flex items-center gap-3 bg-accent rounded-xl p-1">
-                    <button onclick="changeQty('${id}', 1)" class="w-8 h-8 bg-white rounded-lg flex items-center justify-center shadow-sm text-primary active:scale-90 transition-transform">
+                    <button onclick="changeQty('${id}', 1, '${cartId}')" class="w-8 h-8 bg-white rounded-lg flex items-center justify-center shadow-sm text-primary active:scale-90 transition-transform">
                       <i data-lucide="plus" class="w-4 h-4"></i>
                     </button>
                     <span class="text-sm font-black w-4 text-center">${qty}</span>
-                    <button onclick="changeQty('${id}', -1)" class="w-8 h-8 bg-white rounded-lg flex items-center justify-center shadow-sm text-slate-400 active:scale-90 transition-transform">
+                    <button onclick="changeQty('${id}', -1, '${cartId}')" class="w-8 h-8 bg-white rounded-lg flex items-center justify-center shadow-sm text-slate-400 active:scale-90 transition-transform">
                       <i data-lucide="minus" class="w-4 h-4"></i>
                     </button>
                   </div>
-                  <button onclick="changeQty('${id}', -${qty})" class="text-rose-500 font-bold text-xs bg-rose-50 px-3 py-2 rounded-xl active:scale-95 transition-all">حذف</button>
+                  <button onclick="changeQty('${id}', -${qty}, '${cartId}')" class="text-rose-500 font-bold text-xs bg-rose-50 px-3 py-2 rounded-xl active:scale-95 transition-all">حذف</button>
                 </div>
               </div>
             </div>
@@ -2726,34 +3315,71 @@
           })
           .join("");
 
-        document.getElementById("cart-subtotal").innerText =
-          `${subtotal.toLocaleString()} د.ع`;
-        document.getElementById("cart-total").innerText =
-          `${(subtotal + 3000).toLocaleString()} د.ع`;
-        badge.innerText = `${cartItems.length} منتجات في السلة`;
+        document.getElementById("cart-subtotal").innerText = `${pricing.subtotal.toLocaleString()} د.ع`;
+        document.getElementById("cart-total").innerText = `${pricing.total.toLocaleString()} د.ع`;
+        badge.innerText = pricing.subscription
+          ? `${cartItems.length} منتجات في سلة ${pricing.subscription.name}`
+          : `${cartItems.length} منتجات في السلة`;
 
-        // Cart Progress Bar Logic
-        const progressContainer = document.getElementById("cart-progress-container");
-        const threshold = 50000;
-        const progress = Math.min((subtotal / threshold) * 100, 100);
-        const remaining = Math.max(threshold - subtotal, 0);
+        const deliveryFeeEl = document.getElementById("cart-delivery-fee");
+        if (deliveryFeeEl) {
+          deliveryFeeEl.innerText = pricing.isFreeDelivery ? "مجاناً" : `${pricing.deliveryFee.toLocaleString()} د.ع`;
+        }
 
-        if (progressContainer) {
-          progressContainer.classList.remove("hidden");
-          const progressEl = document.getElementById("cart-reward-progress");
-          const messageEl = document.getElementById("cart-reward-message");
-          const percentEl = document.getElementById("cart-reward-percent");
+        const discountRow = document.getElementById("cart-discount-row");
+        const discountEl = document.getElementById("cart-discount");
+        if (discountRow) {
+          if (pricing.discountAmount > 0) {
+            discountRow.classList.remove("hidden");
+            discountRow.classList.add("flex");
+            if (discountEl) discountEl.innerText = `- ${pricing.discountAmount.toLocaleString()} د.ع`;
+          } else {
+            discountRow.classList.add("hidden");
+            discountRow.classList.remove("flex");
+          }
+        }
 
-          if (progressEl) progressEl.style.width = `${progress}%`;
-          if (percentEl) percentEl.innerText = `${Math.round(progress)}%`;
+        const checkoutBtn = document.getElementById("cart-checkout-btn");
+        if (checkoutBtn) checkoutBtn.setAttribute("onclick", `goToCheckout('${cartId}')`);
 
-          if (messageEl) {
-            if (remaining > 0) {
-              messageEl.innerHTML = `<i data-lucide="truck" class="w-3.5 h-3.5"></i> باقي ${remaining.toLocaleString()} د.ع للحصول على توصيل مجاني`;
-              messageEl.classList.replace("text-amber-500", "text-primary");
-            } else {
-              messageEl.innerHTML = `<i data-lucide="party-popper" class="w-3.5 h-3.5"></i> مبروك! حصلت على توصيل مجاني`;
-              messageEl.classList.replace("text-primary", "text-amber-500");
+        if (pricing.subscription) {
+          if (progressContainer) progressContainer.classList.add("hidden");
+          if (perkBanner) {
+            const colors = SUBSCRIPTION_COLOR_CLASSES[pricing.subscription.color] || SUBSCRIPTION_COLOR_CLASSES.primary;
+            perkBanner.className = `px-5 pt-4 pb-2 bg-white flex items-center justify-between text-[11px] font-black ${colors.text} animate-fade-in`;
+            perkBanner.innerHTML = `
+              <span class="flex items-center gap-2">
+                <i data-lucide="${pricing.isFreeDelivery ? "truck" : "badge-percent"}" class="w-3.5 h-3.5"></i>
+                ${pricing.isFreeDelivery ? "توصيل مجاني ضمن اشتراكك" : `خصم ${pricing.discountPercent}% مطبق ضمن اشتراكك`}
+              </span>
+              <span class="opacity-60">${pricing.subscription.name}</span>
+            `;
+          }
+        } else {
+          if (perkBanner) perkBanner.classList.add("hidden");
+          if (progressContainer) {
+            progressContainer.classList.remove("hidden");
+            const threshold = 50000;
+            const progress = Math.min((pricing.subtotal / threshold) * 100, 100);
+            const remaining = Math.max(threshold - pricing.subtotal, 0);
+
+            const progressEl = document.getElementById("cart-reward-progress");
+            const messageEl = document.getElementById("cart-reward-message");
+            const percentEl = document.getElementById("cart-reward-percent");
+
+            if (progressEl) progressEl.style.width = `${progress}%`;
+            if (percentEl) percentEl.innerText = `${Math.round(progress)}%`;
+
+            if (messageEl) {
+              if (remaining > 0) {
+                messageEl.innerHTML = `<i data-lucide="truck" class="w-3.5 h-3.5"></i> باقي ${remaining.toLocaleString()} د.ع للحصول على توصيل مجاني`;
+                messageEl.classList.remove("text-amber-500");
+                messageEl.classList.add("text-primary");
+              } else {
+                messageEl.innerHTML = `<i data-lucide="party-popper" class="w-3.5 h-3.5"></i> مبروك! حصلت على توصيل مجاني`;
+                messageEl.classList.remove("text-primary");
+                messageEl.classList.add("text-amber-500");
+              }
             }
           }
         }
@@ -2761,12 +3387,12 @@
         lucide.createIcons();
       }
 
-      function updateUI(id) {
-        const qty = APP_DATA.cart[id] || 0;
+      function updateUI(id, cartId = "general") {
+        const qty = getCart(cartId)[id] || 0;
 
-        // Update all instances of the product controls
+        // Update all instances of the product controls for this exact cart context
         const containers = document.querySelectorAll(
-          `.controls-container[data-id="${id}"]`,
+          `.controls-container[data-id="${id}"][data-cart="${cartId}"]`,
         );
 
         containers.forEach((container) => {
@@ -2786,77 +3412,89 @@
           }
         });
 
-        const total = Object.values(APP_DATA.cart).reduce((a, b) => a + b, 0);
+        const totalAllCarts = Object.values(APP_DATA.carts).reduce(
+          (sum, c) => sum + Object.values(c).reduce((a, b) => a + b, 0),
+          0,
+        );
         const badge = document.getElementById("cart-badge");
-        badge.classList.toggle("hidden", total === 0);
-        badge.innerText = total;
+        badge.classList.toggle("hidden", totalAllCarts === 0);
+        badge.innerText = totalAllCarts;
 
-        updateFloatingCartBar();
+        updateFloatingCartBar(cartId);
 
-        // If we are on the cart view, re-render it
+        // If the cart view is open on this exact cart, re-render it
         if (
-          !document.getElementById("cart-view").classList.contains("hidden")
+          !document.getElementById("cart-view").classList.contains("hidden") &&
+          ACTIVE_CART_TAB === cartId
         ) {
-          renderCart();
+          renderCartTabs();
+          renderCart(cartId);
         }
       }
 
-      function updateFloatingCartBar() {
+      function updateFloatingCartBar(cartId = "general") {
         const floatingBar = document.getElementById("floating-cart-bar");
         if (!floatingBar) return;
 
-        const cartItems = Object.keys(APP_DATA.cart);
-        const totalProducts = cartItems.reduce((sum, id) => sum + APP_DATA.cart[id], 0);
+        const cart = getCart(cartId);
+        const totalProducts = Object.values(cart).reduce((a, b) => a + b, 0);
 
         if (totalProducts === 0) {
           floatingBar.classList.add("hidden");
           return;
         }
 
-        let allProducts = [];
-        APP_DATA.sections.forEach(s => allProducts = [...allProducts, ...s.products]);
-        
-        let subtotal = 0;
-        cartItems.forEach(id => {
-          const p = allProducts.find(item => item.id === id) || { price: "0" };
-          const priceNum = parseInt(p.price.replace(/,/g, ""));
-          subtotal += priceNum * APP_DATA.cart[id];
-        });
+        const pricing = computeCartPricing(cartId);
 
         const countEl = document.getElementById("floating-cart-count");
         const totalEl = document.getElementById("floating-cart-total");
+        const labelEl = document.getElementById("floating-cart-label");
         if (countEl) countEl.innerText = `${totalProducts} منتج`;
-        if (totalEl) totalEl.innerText = `${subtotal.toLocaleString()} د.ع`;
+        if (totalEl) totalEl.innerText = `${pricing.total.toLocaleString()} د.ع`;
+        if (labelEl) labelEl.innerText = pricing.subscription ? pricing.subscription.name : "سلة التسوق";
 
-        // Reward Progress Logic
-        const threshold = 50000;
-        const progress = Math.min((subtotal / threshold) * 100, 100);
-        const remaining = Math.max(threshold - subtotal, 0);
-        
         const progressEl = document.getElementById("reward-progress");
         const messageEl = document.getElementById("reward-message");
         const percentEl = document.getElementById("reward-percent");
-        
-        if (progressEl) progressEl.style.width = `${progress}%`;
-        if (percentEl) percentEl.innerText = `${Math.round(progress)}%`;
-        
-        if (messageEl) {
-          if (remaining > 0) {
-            messageEl.innerText = `باقي ${remaining.toLocaleString()} د.ع للحصول على توصيل مجاني`;
-            messageEl.classList.replace("text-amber-500", "text-primary");
-          } else {
-            messageEl.innerText = "مبروك! حصلت على توصيل مجاني";
-            messageEl.classList.replace("text-primary", "text-amber-500");
+
+        if (pricing.subscription) {
+          if (progressEl) progressEl.style.width = "100%";
+          if (percentEl) percentEl.innerText = pricing.isFreeDelivery ? "🚚" : `${pricing.discountPercent}%-`;
+          if (messageEl) {
+            messageEl.innerText = pricing.isFreeDelivery
+              ? "توصيل مجاني ضمن اشتراكك"
+              : `خصم ${pricing.discountPercent}% مطبق ضمن اشتراكك`;
+            messageEl.classList.remove("text-primary");
+            messageEl.classList.add("text-amber-500");
+          }
+        } else {
+          const threshold = 50000;
+          const progress = Math.min((pricing.subtotal / threshold) * 100, 100);
+          const remaining = Math.max(threshold - pricing.subtotal, 0);
+
+          if (progressEl) progressEl.style.width = `${progress}%`;
+          if (percentEl) percentEl.innerText = `${Math.round(progress)}%`;
+
+          if (messageEl) {
+            if (remaining > 0) {
+              messageEl.innerText = `باقي ${remaining.toLocaleString()} د.ع للحصول على توصيل مجاني`;
+              messageEl.classList.remove("text-amber-500");
+              messageEl.classList.add("text-primary");
+            } else {
+              messageEl.innerText = "مبروك! حصلت على توصيل مجاني";
+              messageEl.classList.remove("text-primary");
+              messageEl.classList.add("text-amber-500");
+            }
           }
         }
 
-        const excludedViews = ["home", "cart", "checkout", "order-details"];
-        
+        const excludedViews = ["home", "cart", "checkout", "order-details", "subscriptions"];
+
         if (excludedViews.includes(APP_CURRENT_VIEW)) {
           floatingBar.classList.add("hidden");
         } else {
           floatingBar.classList.remove("hidden");
-          
+
           const hideNavViews = ["checkout", "cart", "addresses", "address-form", "favorites", "order-details", "search"];
           if (hideNavViews.includes(APP_CURRENT_VIEW)) {
             floatingBar.style.bottom = "32px";
@@ -3271,6 +3909,7 @@
         await loadData();
         
         renderActiveOrderBanner();
+        renderHomeSubscriptionsStrip();
         // updateFloatingCartBar();
         initAnimatedPlaceholder();
 
@@ -3316,6 +3955,12 @@
             .join("");
 
         lucide.createIcons();
+
+        // Deep link support (e.g. coming back from product-details.html)
+        const initParams = new URLSearchParams(window.location.search);
+        if (initParams.get("view") === "cart") {
+          openCart(initParams.get("sub") || "general");
+        }
       }
 
       window.onload = init;
