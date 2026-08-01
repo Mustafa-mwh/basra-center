@@ -66,6 +66,78 @@
       ]
     }
   ],
+  "stores": [
+    {
+      "id": "st-central",
+      "name": "سوق البصرة المركزي",
+      "desc": "كل احتياجاتك اليومية من تمور وألبان ومخبوزات ولحوم طازجة",
+      "img": "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=800",
+      "rating": 4.8,
+      "ratingCount": 612,
+      "deliveryTime": "20 - 35 دقيقة",
+      "categories": [
+        { "id": "dates", "name": "تمور", "productIds": ["p13"] },
+        { "id": "dairy", "name": "ألبان", "productIds": ["p3", "p14", "p15"] },
+        { "id": "bakery", "name": "مخبوزات", "productIds": ["p16", "p17", "p22"] },
+        { "id": "meat", "name": "لحوم", "productIds": ["p5", "p18", "p19"] }
+      ]
+    },
+    {
+      "id": "st-bakery",
+      "name": "مخبز الرافدين",
+      "desc": "صمون طازج وحلويات ومعجنات تخبز يومياً",
+      "img": "https://images.unsplash.com/photo-1608198093002-ad4e005484ec?q=80&w=800",
+      "rating": 4.9,
+      "ratingCount": 348,
+      "deliveryTime": "15 - 25 دقيقة",
+      "categories": [
+        { "id": "bread", "name": "خبز وصمون", "productIds": ["p16"] },
+        { "id": "sweets", "name": "حلويات", "productIds": ["p17"] },
+        { "id": "pastries", "name": "معجنات", "productIds": ["p22"] }
+      ]
+    },
+    {
+      "id": "st-meat",
+      "name": "ملحمة الفرات",
+      "desc": "لحوم حمراء ودواجن طازجة ومجمدة يومياً",
+      "img": "https://images.unsplash.com/photo-1602470521006-59ab77068b0d?q=80&w=800",
+      "rating": 4.7,
+      "ratingCount": 271,
+      "deliveryTime": "25 - 40 دقيقة",
+      "categories": [
+        { "id": "red-meat", "name": "لحوم حمراء", "productIds": ["p18"] },
+        { "id": "poultry", "name": "دواجن", "productIds": ["p19"] },
+        { "id": "frozen", "name": "لحوم مجمدة", "productIds": ["p5"] }
+      ]
+    },
+    {
+      "id": "st-homecare",
+      "name": "بيت التنظيف",
+      "desc": "أدوات مطبخ ومواد تنظيف لكل أنحاء المنزل",
+      "img": "https://powerhouseexpress.com.pk/cdn/shop/collections/kitchen-appliances.webp?v=1745918952",
+      "rating": 4.6,
+      "ratingCount": 189,
+      "deliveryTime": "20 - 30 دقيقة",
+      "categories": [
+        { "id": "cleaning", "name": "مواد التنظيف", "productIds": ["p1", "p2", "p7", "p8", "p9"] },
+        { "id": "kitchen", "name": "أدوات مطبخ", "productIds": ["p4"] }
+      ]
+    },
+    {
+      "id": "st-grocery",
+      "name": "بقالة الخير",
+      "desc": "معلبات وزيوت ومواد جافة بأسعار مناسبة",
+      "img": "https://plus.unsplash.com/premium_photo-1664305040276-66cf5c0ac52b?q=80&w=1160&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "rating": 4.5,
+      "ratingCount": 156,
+      "deliveryTime": "20 - 35 دقيقة",
+      "categories": [
+        { "id": "tuna", "name": "تونة ومعلبات بحرية", "productIds": ["p10"] },
+        { "id": "dry", "name": "مواد جافة", "productIds": ["p6", "p11", "p12"] },
+        { "id": "oils", "name": "زيوت ودهون", "productIds": ["p23"] }
+      ]
+    }
+  ],
   "sections": [
     {
       "title": "جديد على بصرة سنتر",
@@ -138,7 +210,8 @@
           "desc": "1 كغم",
           "fullDesc": "مربى فراولة طبيعي بقطع الفاكهة، طعم رائع ومثالي للفطور.",
           "price": "1,250",
-          "img": "https://herostore.com.eg/wp-content/uploads/2022/01/6221024050015_H1C1_Hero_Strawberry_850g_Jumbo-min.png"
+          "img": "https://herostore.com.eg/wp-content/uploads/2022/01/6221024050015_H1C1_Hero_Strawberry_850g_Jumbo-min.png",
+          "discount": "10%"
         }
       ]
     },
@@ -204,7 +277,8 @@
           "desc": "شاي اسود حبيبات",
           "fullDesc": "شاي ربيع إكسبرس الفاخر، حبيبات شاي أسود نقية لطعم قوي ومنعش.",
           "price": "1,250",
-          "img": "https://cdn.salla.sa/qQqpAm/3a628b85-8c88-4f5b-a9d3-3a6d6e61e671-1000x1000-WhMWANvkLsGCSU0EwvYZr6TyVnsoXDm97TVjhxQh.jpg"
+          "img": "https://cdn.salla.sa/qQqpAm/3a628b85-8c88-4f5b-a9d3-3a6d6e61e671-1000x1000-WhMWANvkLsGCSU0EwvYZr6TyVnsoXDm97TVjhxQh.jpg",
+          "discount": "10%"
         },
         {
           "id": "p12",
@@ -251,7 +325,8 @@
           "desc": "طبيعي 100%",
           "fullDesc": "زبادي المراعي الطازج، غني بالكالسيوم والبروتين ومثالي لجميع الوجبات.",
           "price": "4,000",
-          "img": "https://cdn.salla.sa/xPdma/b236519d-94f8-4ac4-b473-02272845ba03-1000x1000-zWnAZKZOMXDKVjtFSrRtIfCKZlx0jYe9mUw6qXLL.jpg"
+          "img": "https://cdn.salla.sa/xPdma/b236519d-94f8-4ac4-b473-02272845ba03-1000x1000-zWnAZKZOMXDKVjtFSrRtIfCKZlx0jYe9mUw6qXLL.jpg",
+          "discount": "50%"
         },
         {
           "id": "p16",
@@ -271,7 +346,8 @@
           "desc": "بالفستق واللوز",
           "fullDesc": "تشكيلة من البقلاوة العراقية الفاخرة، محضرة بالسمن الحيواني والمكسرات الطازجة.",
           "price": "8,500",
-          "img": "https://img.ananinja.com/media/ninja-catalog-42/restaurants/e8te26r5hzx89w07llwhq5r3wtvy/806664.jpg?w=1080&q=75"
+          "img": "https://img.ananinja.com/media/ninja-catalog-42/restaurants/e8te26r5hzx89w07llwhq5r3wtvy/806664.jpg?w=1080&q=75",
+          "discount": "70%"
         },
         {
           "id": "p18",
@@ -291,7 +367,8 @@
           "desc": "دجاج مجمد",
           "fullDesc": "دجاج ساديا عالي الجودة، منظف ومجمد بعناية للحفاظ على القيمة الغذائية.",
           "price": "5,500",
-          "img": "https://m.media-amazon.com/images/I/41IIDthvbtL._AC_SY300_SX300_QL70_ML2_.jpg"
+          "img": "https://m.media-amazon.com/images/I/41IIDthvbtL._AC_SY300_SX300_QL70_ML2_.jpg",
+          "discount": "50%"
         },
         {
           "id": "p22",
@@ -311,7 +388,8 @@
           "desc": "عصرة أولى على البارد",
           "fullDesc": "زيت زيتون بكر ممتاز نقي 100%، غني بالفوائد الصحية والطعم الأصيل.",
           "price": "6,500",
-          "img": "https://cdn.salla.sa/QdoGmN/c04e4c9b-087a-4034-b73f-53bdf9005b96-1000x1000-Tr3ePS2dMr2NlshyXni4YG7uyQkAHJtKrxLwb2Qc.jpg"
+          "img": "https://cdn.salla.sa/QdoGmN/c04e4c9b-087a-4034-b73f-53bdf9005b96-1000x1000-Tr3ePS2dMr2NlshyXni4YG7uyQkAHJtKrxLwb2Qc.jpg",
+          "discount": "70%"
         }
       ]
     }

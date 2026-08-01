@@ -1106,6 +1106,95 @@
       </div>
     </div>
 
+    <!-- Stores List View -->
+    <div
+      id="stores-view"
+      class="hidden fixed inset-0 bg-background z-30 flex flex-col max-w-5xl mx-auto animate-fade-in"
+    >
+      <header
+        class="px-5 pt-8 pb-4 bg-background/80 backdrop-blur-xl border-b border-slate-50 shrink-0"
+      >
+        <div class="max-w-md mx-auto flex items-center justify-between">
+          <button
+            onclick="switchView('home')"
+            class="w-10 h-10 bg-white rounded-xl flex items-center justify-center border border-slate-100 active:scale-90 transition-transform"
+          >
+            <i data-lucide="chevron-right" class="w-6 h-6 text-slate-600"></i>
+          </button>
+          <h1 class="text-xl font-black text-slate-900">المتاجر</h1>
+          <div class="w-10"></div>
+        </div>
+      </header>
+
+      <div
+        id="stores-list"
+        class="flex-1 overflow-y-auto px-5 py-6 space-y-4 pb-32 hide-scrollbar"
+      >
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
+    <!-- Store Detail View -->
+    <div
+      id="store-detail-view"
+      class="hidden fixed inset-0 bg-background z-30 flex flex-col max-w-5xl mx-auto animate-fade-in overflow-y-auto hide-scrollbar"
+    >
+      <div class="relative w-full h-56 shrink-0 mb-6">
+        <img id="store-detail-img" src="" class="w-full h-full object-cover" alt="">
+        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-black/40"></div>
+        <button
+          onclick="switchView('stores')"
+          class="absolute top-8 right-5 w-10 h-10 glass rounded-xl flex items-center justify-center active:scale-90 transition-transform"
+        >
+          <i data-lucide="chevron-right" class="w-6 h-6 text-white"></i>
+        </button>
+        <div class="absolute bottom-10 right-5 left-5">
+          <h1 id="store-detail-name" class="text-xl font-black text-white drop-shadow-sm truncate"></h1>
+          <p id="store-detail-desc" class="text-xs font-bold text-white/80 mt-1 truncate"></p>
+        </div>
+      </div>
+
+      <div class="px-5 -mt-12 relative z-10">
+        <div class="bg-white rounded-[24px] border border-slate-100 shadow-[0_10px_30px_-15px_rgba(0,0,0,0.15)] p-4 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <div class="w-9 h-9 bg-amber-50 rounded-xl flex items-center justify-center shrink-0">
+              <i data-lucide="star" class="w-4 h-4 text-amber-500 fill-amber-500"></i>
+            </div>
+            <div class="flex flex-col">
+              <span id="store-detail-rating" class="text-sm font-black text-slate-900"></span>
+              <span id="store-detail-rating-count" class="text-[10px] font-bold text-slate-400"></span>
+            </div>
+          </div>
+          <div class="w-px h-8 bg-slate-100"></div>
+          <div class="flex items-center gap-2">
+            <div class="w-9 h-9 bg-primary/10 rounded-xl flex items-center justify-center shrink-0">
+              <i data-lucide="clock" class="w-4 h-4 text-primary"></i>
+            </div>
+            <div class="flex flex-col">
+              <span id="store-detail-delivery" class="text-sm font-black text-slate-900"></span>
+              <span class="text-[10px] font-bold text-slate-400">وقت التوصيل المتوقع</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Store Categories Tabs -->
+      <div
+        id="store-categories-list"
+        class="flex items-center gap-2 overflow-x-auto px-5 pt-7 pb-8 hide-scrollbar"
+      >
+        <!-- Populated by JS -->
+      </div>
+
+      <!-- Store Products Grid -->
+      <div
+        id="store-products"
+        class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 gap-1 lg:gap-3 px-5 pt-2 pb-32"
+      >
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
     <!-- Order Details View -->
     <div
       id="order-details-view"
@@ -1698,12 +1787,12 @@
           <span class="text-[10px] font-bold">الفئات</span>
         </button>
         <button
-          id="nav-orders"
-          onclick="switchView('orders')"
+          id="nav-stores"
+          onclick="switchView('stores')"
           class="flex flex-col items-center gap-1 min-w-[70px] py-3 text-slate-400 hover:text-primary transition-all rounded-2xl"
         >
-          <i data-lucide="package" class="w-5 h-5"></i>
-          <span class="text-[10px] font-bold">طلباتي</span>
+          <i data-lucide="store" class="w-5 h-5"></i>
+          <span class="text-[10px] font-bold">المتاجر</span>
         </button>
         <button
           id="nav-cart"
@@ -1807,6 +1896,8 @@
       let CHECKOUT_CART_ID = 'general';
       // Subscription currently open in the subscription detail view
       let CURRENT_SUBSCRIPTION_ID = null;
+      // Store currently open in the store detail view
+      let CURRENT_STORE_ID = null;
 
       function toggleCategorySearch() {
         const searchBar = document.getElementById("category-search-bar");
@@ -1833,6 +1924,7 @@
           const savedMySubscriptions = localStorage.getItem("mySubscriptions");
 
           APP_DATA.categories = data.categories || [];
+          APP_DATA.stores = data.stores || [];
           APP_DATA.sections = data.sections || [];
           APP_DATA.subscriptions = data.subscriptions || [];
           APP_DATA.orders = savedOrders ? JSON.parse(savedOrders) : (data.orders || []);
@@ -2206,12 +2298,49 @@
         </div>
       `;
 
+      // ── Offers (static pinned category) ──
+      const OFFERS_CATEGORY = {
+        id: "offers",
+        name: "العروض",
+        color: "secondary",
+        subCategories: [
+          { id: "10", name: "عروض 10%" },
+          { id: "50", name: "عروض 50%" },
+          { id: "70", name: "عروض 70%" },
+        ],
+      };
+
+      function getOfferProducts(discountTier) {
+        let products = [];
+        APP_DATA.sections.forEach((s) => {
+          const matches = s.products.filter((p) => {
+            if (!p.discount) return false;
+            if (!discountTier) return true;
+            const tier = parseInt(String(p.discount).replace("%", ""), 10);
+            return tier === parseInt(discountTier, 10);
+          });
+          products = [...products, ...matches];
+        });
+        return products;
+      }
+
+      const categoryMediaHtml = (cat) => {
+        if (cat.id === "offers") {
+          return `
+            <div class="w-full h-full rounded-md flex items-center justify-center group-hover:scale-110 transition-transform" style="background: linear-gradient(135deg,#F58220,#d96a10);">
+              <i data-lucide="percent" class="w-8 h-8 text-white"></i>
+            </div>
+          `;
+        }
+        return `<img src="${cat.img}" class="w-full h-full object-cover rounded-md group-hover:scale-110 transition-transform" alt="${cat.name}">`;
+      };
+
       const renderCategoryGridItem = (cat, view = "home") => {
         if (view === "home") {
           return `
             <div onclick="showCategory('${cat.id}')" class="flex flex-col items-center rounded-md gap-3 shrink-0 cursor-pointer">
               <div class="w-20 h-20 bg-white rounded-lg border border-slate-100 flex items-center justify-center p-2 group transition-all">
-                <img src="${cat.img}" class="w-full h-full object-cover rounded-md group-hover:scale-110 transition-transform" alt="${cat.name}">
+                ${categoryMediaHtml(cat)}
               </div>
               <span class="text-xs font-black text-slate-700">${cat.name}</span>
             </div>
@@ -2220,12 +2349,119 @@
         return `
           <div onclick="showCategory('${cat.id}')" class="flex flex-col items-center gap-2 cursor-pointer group active:scale-95 transition-transform">
             <div class="w-full aspect-square flex items-center rounded-md justify-center overflow-hidden">
-              <img src="${cat.img}" alt="${cat.name}" class="w-full h-full object-cover rounded-md group-hover:scale-110 transition-transform">
+              ${categoryMediaHtml(cat)}
             </div>
             <h4 class="text-slate-900 text-sm lg:text-xs text-center truncate w-full px-1">${cat.name}</h4>
           </div>
         `;
       };
+
+      // ── Stores ──
+      const renderStoreCard = (store) => `
+        <div onclick="openStore('${store.id}')" class="bg-white rounded-[28px] border border-slate-100 p-3 flex items-center gap-4 cursor-pointer active:scale-[0.98] transition-all shadow-[0_4px_20px_-10px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_30px_-10px_rgba(0,0,0,0.08)]">
+          <div class="w-20 h-20 rounded-2xl overflow-hidden shrink-0 border border-slate-100">
+            <img src="${store.img}" class="w-full h-full object-cover" alt="${store.name}">
+          </div>
+          <div class="flex-1 min-w-0">
+            <h4 class="text-base font-black text-slate-900 truncate">${store.name}</h4>
+            <p class="text-xs font-bold text-slate-400 mt-1 line-clamp-2 leading-relaxed">${store.desc || ""}</p>
+            <div class="flex items-center gap-3 mt-2">
+              <span class="flex items-center gap-1 text-[11px] font-black text-amber-500">
+                <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-500"></i>
+                ${store.rating || "-"}
+              </span>
+              <span class="flex items-center gap-1 text-[11px] font-bold text-slate-400 truncate">
+                <i data-lucide="clock" class="w-3.5 h-3.5 shrink-0"></i>
+                ${store.deliveryTime || ""}
+              </span>
+            </div>
+          </div>
+          <button class="w-8 h-8 flex items-center justify-center shrink-0">
+            <i data-lucide="chevron-left" class="w-4 h-4 text-slate-400"></i>
+          </button>
+        </div>
+      `;
+
+      function renderStoresList() {
+        const container = document.getElementById("stores-list");
+        if (!container) return;
+        const stores = APP_DATA.stores || [];
+        container.innerHTML = stores.length
+          ? stores.map(renderStoreCard).join("")
+          : renderEmptyState("لا توجد متاجر متوفرة حالياً");
+        lucide.createIcons();
+      }
+
+      function openStore(storeId) {
+        CURRENT_STORE_ID = storeId;
+        switchView("store-detail");
+      }
+
+      function renderStoreDetail(storeId) {
+        const store = (APP_DATA.stores || []).find((s) => s.id === storeId);
+        if (!store) return;
+
+        document.getElementById("store-detail-img").src = store.img;
+        document.getElementById("store-detail-name").innerText = store.name;
+        document.getElementById("store-detail-desc").innerText = store.desc || "";
+        document.getElementById("store-detail-rating").innerText = store.rating || "-";
+        document.getElementById("store-detail-rating-count").innerText =
+          store.ratingCount ? `${store.ratingCount} تقييم` : "";
+        document.getElementById("store-detail-delivery").innerText = store.deliveryTime || "";
+
+        const allProducts = getAllProducts();
+        const categories = store.categories || [];
+
+        const categoriesList = document.getElementById("store-categories-list");
+        categoriesList.innerHTML = `
+          <div onclick="filterStoreCategory('${storeId}', null)" class="px-4 py-2 rounded-full bg-primary text-white text-xs font-bold shrink-0 cursor-pointer transition-all active:scale-95 shadow-sm shadow-primary/20 whitespace-nowrap leading-none store-cat-item" data-catid="all">الكل</div>
+          ${categories
+            .map(
+              (c) => `
+            <div onclick="filterStoreCategory('${storeId}', '${c.id}')" class="px-4 py-2 rounded-full bg-slate-50 border border-slate-200 text-slate-600 text-xs font-bold shrink-0 cursor-pointer transition-all hover:border-primary/30 active:scale-95 whitespace-nowrap leading-none store-cat-item" data-catid="${c.id}">${c.name}</div>
+          `,
+            )
+            .join("")}
+        `;
+
+        renderStoreProducts(store, null, allProducts);
+        lucide.createIcons();
+      }
+
+      function renderStoreProducts(store, categoryId, allProducts) {
+        const container = document.getElementById("store-products");
+        const categories = store.categories || [];
+        const productIds = categoryId
+          ? (categories.find((c) => c.id === categoryId)?.productIds || [])
+          : categories.flatMap((c) => c.productIds || []);
+
+        const products = productIds
+          .map((id) => allProducts.find((p) => p.id === id))
+          .filter(Boolean);
+
+        container.innerHTML = products.length
+          ? products.map((p, i) => renderProductCard(p, i * 0.05, true, store.id)).join("")
+          : renderEmptyState("لا توجد منتجات في هذا القسم حالياً");
+        lucide.createIcons();
+      }
+
+      function filterStoreCategory(storeId, categoryId) {
+        document.querySelectorAll(".store-cat-item").forEach((item) => {
+          const itemId = item.getAttribute("data-catid");
+          const isActive = (!categoryId && itemId === "all") || itemId === categoryId;
+          if (isActive) {
+            item.classList.remove("bg-slate-50", "border-slate-200", "text-slate-600", "border");
+            item.classList.add("bg-primary", "text-white", "shadow-sm", "shadow-primary/20");
+          } else {
+            item.classList.remove("bg-primary", "text-white", "shadow-sm", "shadow-primary/20");
+            item.classList.add("bg-slate-50", "border-slate-200", "text-slate-600", "border");
+          }
+        });
+
+        const store = (APP_DATA.stores || []).find((s) => s.id === storeId);
+        if (!store) return;
+        renderStoreProducts(store, categoryId, getAllProducts());
+      }
 
       // View Controller
       function switchView(viewId) {
@@ -2246,13 +2482,16 @@
           "loyalty-points",
           "search",
           "subscriptions",
-          "subscription-detail"
+          "subscription-detail",
+          "stores",
+          "store-detail"
         ];
         const navs = {
           home: "nav-home",
           browse: "nav-browse",
           cart: "nav-cart",
           account: "nav-account",
+          stores: "nav-stores",
         };
 
         views.forEach((v) => {
@@ -2289,7 +2528,10 @@
         });
 
         // Set active nav
-        const activeNavId = viewId === "category" ? navs.browse : navs[viewId];
+        const activeNavId =
+          viewId === "category" ? navs.browse :
+          viewId === "store-detail" ? navs.stores :
+          navs[viewId];
         if (activeNavId) {
           const activeEl = document.getElementById(activeNavId);
           activeEl.classList.add("active");
@@ -2306,6 +2548,8 @@
         if (viewId === "checkout") renderCheckout();
         if (viewId === "subscriptions") renderSubscriptionsList();
         if (viewId === "subscription-detail") renderSubscriptionDetail(CURRENT_SUBSCRIPTION_ID);
+        if (viewId === "stores") renderStoresList();
+        if (viewId === "store-detail") renderStoreDetail(CURRENT_STORE_ID);
         if (viewId === "order-confirmation") {
           renderOrderConfirmationModal();
           startOrderConfirmationTimer();
@@ -2313,7 +2557,10 @@
           stopOrderConfirmationTimer();
         }
 
-        FLOATING_BAR_CART_ID = (viewId === "subscription-detail" && CURRENT_SUBSCRIPTION_ID) ? CURRENT_SUBSCRIPTION_ID : "general";
+        FLOATING_BAR_CART_ID =
+          (viewId === "subscription-detail" && CURRENT_SUBSCRIPTION_ID) ? CURRENT_SUBSCRIPTION_ID :
+          (viewId === "store-detail" && CURRENT_STORE_ID) ? CURRENT_STORE_ID :
+          "general";
         updateFloatingCartBar(FLOATING_BAR_CART_ID);
 
         lucide.createIcons();
@@ -3036,7 +3283,10 @@
         const categoryTitle = document.getElementById("category-title");
 
         // Find category info
-        const category = APP_DATA.categories.find((c) => c.id === categoryId);
+        const category =
+          categoryId === "offers"
+            ? OFFERS_CATEGORY
+            : APP_DATA.categories.find((c) => c.id === categoryId);
         categoryTitle.innerText = category ? category.name : categoryId;
 
         // Render Subcategories
@@ -3063,22 +3313,26 @@
 
         // Find products from data.json by categoryId
         let products = [];
-        APP_DATA.sections.forEach((s) => {
-          const matches = s.products.filter((p) => p.categoryId === categoryId);
-          products = [...products, ...matches];
-        });
-
-        // Fallback for search-like behavior if no products found with categoryId
-        if (products.length === 0) {
-          const categoryName = category ? category.name : categoryId;
+        if (categoryId === "offers") {
+          products = getOfferProducts(null);
+        } else {
           APP_DATA.sections.forEach((s) => {
-            const matches = s.products.filter(
-              (p) =>
-                p.name.includes(categoryName) ||
-                (p.desc && p.desc.includes(categoryName)),
-            );
+            const matches = s.products.filter((p) => p.categoryId === categoryId);
             products = [...products, ...matches];
           });
+
+          // Fallback for search-like behavior if no products found with categoryId
+          if (products.length === 0) {
+            const categoryName = category ? category.name : categoryId;
+            APP_DATA.sections.forEach((s) => {
+              const matches = s.products.filter(
+                (p) =>
+                  p.name.includes(categoryName) ||
+                  (p.desc && p.desc.includes(categoryName)),
+              );
+              products = [...products, ...matches];
+            });
+          }
         }
 
         document.getElementById("category-count").innerText =
@@ -3125,28 +3379,32 @@
         const productsContainer = document.getElementById("category-products");
         let products = [];
 
-        APP_DATA.sections.forEach((s) => {
-          const matches = s.products.filter((p) => {
-            const matchesCat = p.categoryId === categoryId;
-            const matchesSub =
-              !subCategoryId || p.subCategoryId === subCategoryId;
-            return matchesCat && matchesSub;
-          });
-          products = [...products, ...matches];
-        });
-
-        // Fallback search if still empty (only if no subcategory selected)
-        if (products.length === 0 && !subCategoryId) {
-          const category = APP_DATA.categories.find((c) => c.id === categoryId);
-          const categoryName = category ? category.name : categoryId;
+        if (categoryId === "offers") {
+          products = getOfferProducts(subCategoryId);
+        } else {
           APP_DATA.sections.forEach((s) => {
-            const matches = s.products.filter(
-              (p) =>
-                p.name.includes(categoryName) ||
-                (p.desc && p.desc.includes(categoryName)),
-            );
+            const matches = s.products.filter((p) => {
+              const matchesCat = p.categoryId === categoryId;
+              const matchesSub =
+                !subCategoryId || p.subCategoryId === subCategoryId;
+              return matchesCat && matchesSub;
+            });
             products = [...products, ...matches];
           });
+
+          // Fallback search if still empty (only if no subcategory selected)
+          if (products.length === 0 && !subCategoryId) {
+            const category = APP_DATA.categories.find((c) => c.id === categoryId);
+            const categoryName = category ? category.name : categoryId;
+            APP_DATA.sections.forEach((s) => {
+              const matches = s.products.filter(
+                (p) =>
+                  p.name.includes(categoryName) ||
+                  (p.desc && p.desc.includes(categoryName)),
+              );
+              products = [...products, ...matches];
+            });
+          }
         }
 
         document.getElementById("category-count").innerText =
@@ -3212,8 +3470,11 @@
         if (!container) return;
 
         const subs = APP_DATA.mySubscriptions.map((id) => getSubscriptionById(id)).filter(Boolean);
+        const storeTabs = (APP_DATA.stores || [])
+          .filter((s) => Object.values(getCart(s.id)).some((qty) => qty > 0))
+          .map((s) => ({ id: s.id, name: s.name, icon: "store", color: null }));
 
-        if (subs.length === 0) {
+        if (subs.length === 0 && storeTabs.length === 0) {
           container.classList.add("hidden");
           container.innerHTML = "";
           return;
@@ -3223,6 +3484,7 @@
         const tabs = [
           { id: "general", name: "السلة العامة", icon: "shopping-basket", color: null },
           ...subs.map((s) => ({ id: s.id, name: s.name, icon: s.icon, color: s.color })),
+          ...storeTabs,
         ];
 
         container.innerHTML = tabs
@@ -3498,18 +3760,18 @@
 
         const excludedViews = ["home", "cart", "checkout", "order-details", "subscriptions"];
 
-        if (excludedViews.includes(APP_CURRENT_VIEW)) {
-          floatingBar.classList.add("hidden");
-        } else {
-          floatingBar.classList.remove("hidden");
+        // if (excludedViews.includes(APP_CURRENT_VIEW)) {
+        //   floatingBar.classList.add("hidden");
+        // } else {
+        //   floatingBar.classList.remove("hidden");
 
-          const hideNavViews = ["checkout", "cart", "addresses", "address-form", "favorites", "order-details", "search"];
-          if (hideNavViews.includes(APP_CURRENT_VIEW)) {
-            floatingBar.style.bottom = "32px";
-          } else {
-            floatingBar.style.bottom = "130px";
-          }
-        }
+        //   const hideNavViews = ["checkout", "cart", "addresses", "address-form", "favorites", "order-details", "search"];
+        //   if (hideNavViews.includes(APP_CURRENT_VIEW)) {
+        //     floatingBar.style.bottom = "32px";
+        //   } else {
+        //     floatingBar.style.bottom = "130px";
+        //   }
+        // }
       }
 
       function toggleCartDetails() {
@@ -3922,10 +4184,12 @@
         initAnimatedPlaceholder();
 
         // Render Home Categories
-        document.getElementById("home-categories").innerHTML =
-          APP_DATA.categories
-            .map((c) => renderCategoryGridItem(c, "home"))
-            .join("");
+        document.getElementById("home-categories").innerHTML = [
+          OFFERS_CATEGORY,
+          ...APP_DATA.categories,
+        ]
+          .map((c) => renderCategoryGridItem(c, "home"))
+          .join("");
 
         // Render Home Sections
         const sectionsTop = APP_DATA.sections.slice(0, 2);
@@ -3957,10 +4221,12 @@
           sectionsBottom.map(renderSection).join("");
 
         // Render Browse Categories
-        document.getElementById("browse-categories").innerHTML =
-          APP_DATA.categories
-            .map((c) => renderCategoryGridItem(c, "browse"))
-            .join("");
+        document.getElementById("browse-categories").innerHTML = [
+          OFFERS_CATEGORY,
+          ...APP_DATA.categories,
+        ]
+          .map((c) => renderCategoryGridItem(c, "browse"))
+          .join("");
 
         lucide.createIcons();
 
