@@ -1188,6 +1188,14 @@
         </div>
       </section>
 
+      <!-- Store Subcategories -->
+      <div
+        id="store-subcategories-list"
+        class="flex gap-2 overflow-x-auto px-5 pb-4 mt-3 hide-scrollbar hidden"
+      >
+        <!-- Populated by JS -->
+      </div>
+
       <!-- Store Products Grid -->
       <div
         id="store-products"
@@ -2299,6 +2307,16 @@
           </button>
         </div>
       `;
+      const renderStoreEmptyState = (
+        message = "لا توجد منتجات في هذا القسم حالياً",
+      ) => `
+        <div class="col-span-full py-10 flex flex-col items-center justify-center text-center animate-fade-in">
+          <div class="w-16 h-16 bg-accent rounded-full flex items-center justify-center text-primary/30 mb-4 shadow-premium">
+            <i data-lucide="package-search" class="w-8 h-8"></i>
+          </div>
+          <h3 class="text-sm font-black text-slate-900">${message}</h3>
+        </div>
+      `;
 
       // ── Offers (static pinned category) ──
       const OFFERS_CATEGORY = {
@@ -2450,23 +2468,34 @@
             .join("")}
         `;
 
-        renderStoreProducts(store, null, allProducts);
+        document.getElementById("store-subcategories-list").classList.add("hidden");
+        document.getElementById("store-subcategories-list").innerHTML = "";
+
+        renderStoreProducts(store, null, null, allProducts);
         lucide.createIcons();
       }
 
-      function renderStoreProducts(store, categoryId, allProducts) {
+      function renderStoreProducts(store, categoryId, subCategoryId, allProducts) {
         const container = document.getElementById("store-products");
         const categories = store.categories || [];
 
         if (categoryId) {
           const productIds = categories.find((c) => c.id === categoryId)?.productIds || [];
-          const products = productIds
+          let products = productIds
             .map((id) => allProducts.find((p) => p.id === id))
             .filter(Boolean);
 
+          if (subCategoryId) {
+            products = products.filter((p) => p.subCategoryId === subCategoryId);
+          }
+
           container.innerHTML = products.length
             ? products.map((p, i) => renderProductCard(p, i * 0.05, true, store.id)).join("")
-            : renderEmptyState("لا توجد منتجات في هذا القسم حالياً");
+            : renderStoreEmptyState(
+                subCategoryId
+                  ? "لا توجد منتجات في هذه الفئة الفرعية حالياً"
+                  : "لا توجد منتجات في هذا القسم حالياً",
+              );
           lucide.createIcons();
           return;
         }
@@ -2490,7 +2519,7 @@
           `,
               )
               .join("")
-          : renderEmptyState("لا توجد منتجات في هذا القسم حالياً");
+          : renderStoreEmptyState("لا توجد منتجات في هذا المتجر حالياً");
         lucide.createIcons();
       }
 
@@ -2515,7 +2544,51 @@
 
         const store = (APP_DATA.stores || []).find((s) => s.id === storeId);
         if (!store) return;
-        renderStoreProducts(store, categoryId, getAllProducts());
+
+        // Render Subcategories (same style as the category page)
+        const subcategoriesList = document.getElementById("store-subcategories-list");
+        const category = categoryId
+          ? APP_DATA.categories.find((c) => c.id === categoryId)
+          : null;
+
+        if (category && category.subCategories && category.subCategories.length > 0) {
+          subcategoriesList.classList.remove("hidden");
+          subcategoriesList.innerHTML = `
+            <div onclick="filterStoreSubCategory('${storeId}', '${categoryId}', null)" class="px-4 py-1.5 rounded-full bg-primary text-white text-xs font-bold shrink-0 cursor-pointer transition-all active:scale-95 shadow-sm shadow-primary/20 store-subcat-item active" data-subid="all">الكل</div>
+            ${category.subCategories
+              .map(
+                (sub) => `
+              <div onclick="filterStoreSubCategory('${storeId}', '${categoryId}', '${sub.id}')" class="px-4 py-1.5 rounded-full bg-white border border-slate-100 text-slate-600 text-xs font-bold shrink-0 cursor-pointer transition-all hover:border-primary/30 active:scale-95 store-subcat-item" data-subid="${sub.id}">${sub.name}</div>
+            `,
+              )
+              .join("")}
+          `;
+        } else {
+          subcategoriesList.classList.add("hidden");
+          subcategoriesList.innerHTML = "";
+        }
+
+        renderStoreProducts(store, categoryId, null, getAllProducts());
+      }
+
+      function filterStoreSubCategory(storeId, categoryId, subCategoryId) {
+        document.querySelectorAll(".store-subcat-item").forEach((item) => {
+          const itemId = item.getAttribute("data-subid");
+          const isActive =
+            (!subCategoryId && itemId === "all") || itemId === subCategoryId;
+
+          if (isActive) {
+            item.classList.remove("bg-white", "text-slate-600", "border", "border-slate-100");
+            item.classList.add("bg-primary", "text-white", "shadow-sm", "shadow-primary/20");
+          } else {
+            item.classList.remove("bg-primary", "text-white", "shadow-sm", "shadow-primary/20");
+            item.classList.add("bg-white", "text-slate-600", "border", "border-slate-100");
+          }
+        });
+
+        const store = (APP_DATA.stores || []).find((s) => s.id === storeId);
+        if (!store) return;
+        renderStoreProducts(store, categoryId, subCategoryId, getAllProducts());
       }
 
       // View Controller
