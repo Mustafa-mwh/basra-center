@@ -819,7 +819,7 @@
           </button>
           <button
             onclick="switchView('favorites')"
-            class="w-full px-6 py-5 flex items-center justify-between hover:bg-slate-50 transition-colors"
+            class="w-full px-6 py-5 flex items-center justify-between hover:bg-slate-50 transition-colors border-b border-slate-50"
           >
             <div class="flex items-center gap-4">
               <div
@@ -828,6 +828,20 @@
                 <i data-lucide="heart" class="w-5 h-5"></i>
               </div>
               <span class="font-black text-slate-800 text-sm">المفضلة</span>
+            </div>
+            <i data-lucide="chevron-left" class="w-5 h-5 text-slate-300"></i>
+          </button>
+          <button
+            onclick="switchView('purchases')"
+            class="w-full px-6 py-5 flex items-center justify-between hover:bg-slate-50 transition-colors"
+          >
+            <div class="flex items-center gap-4">
+              <div
+                class="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center text-emerald-600"
+              >
+                <i data-lucide="history" class="w-5 h-5"></i>
+              </div>
+              <span class="font-black text-slate-800 text-sm">سجل المشتريات</span>
             </div>
             <i data-lucide="chevron-left" class="w-5 h-5 text-slate-300"></i>
           </button>
@@ -1614,8 +1628,32 @@
         </div>
       </header>
 
-      <div id="favorites-grid" class="flex-1 overflow-y-auto px-5 pt-4 grid grid-cols-2 lg:grid-cols-4 gap-1 pb-32 hide-scrollbar">
+      <div id="favorites-grid" class="flex-1 overflow-y-auto px-5 pt-4 grid grid-cols-2 lg:grid-cols-4 gap-1 content-start pb-32 hide-scrollbar">
         <!-- Favorites list populated by JS -->
+      </div>
+    </div>
+
+    <!-- Purchase History View -->
+    <div
+      id="purchases-view"
+      class="hidden bg-[#fbfbfb] fixed inset-0 z-30 flex flex-col animate-fade-in max-w-5xl mx-auto"
+    >
+      <header
+        class="px-5 pt-8 pb-4 bg-background/80 backdrop-blur-xl border-b border-slate-50 shrink-0"
+      >
+        <div class="mx-auto flex items-center justify-start gap-4">
+          <button
+            onclick="switchView('account')"
+            class="w-10 h-10 bg-white rounded-xl flex items-center justify-center border border-slate-100 active:scale-90 transition-transform"
+          >
+            <i data-lucide="chevron-right" class="w-6 h-6 text-slate-600"></i>
+          </button>
+          <h1 class="text-xl font-black text-slate-900">سجل المشتريات</h1>
+        </div>
+      </header>
+
+      <div id="purchase-history-grid" class="flex-1 overflow-y-auto px-5 pt-4 grid grid-cols-2 lg:grid-cols-4 gap-1 content-start pb-32 hide-scrollbar">
+        <!-- Purchase history populated by JS -->
       </div>
     </div>
 
@@ -2610,6 +2648,7 @@
           "addresses",
           "address-form",
           "favorites",
+          "purchases",
           "loyalty-points",
           "search",
           "subscriptions",
@@ -2635,7 +2674,7 @@
 
         // Toggle bottom navigation visibility
         const bottomNav = document.getElementById("bottom-nav");
-        const hideNavViews = ["checkout", "order-confirmation", "cart", "addresses", "address-form", "favorites", "order-details", "loyalty-points", "search"];
+        const hideNavViews = ["checkout", "order-confirmation", "cart", "addresses", "address-form", "favorites", "purchases", "order-details", "loyalty-points", "search"];
         if (bottomNav) {
           if (hideNavViews.includes(viewId)) {
             bottomNav.classList.add("hidden");
@@ -2646,6 +2685,7 @@
 
         if (viewId === 'addresses') renderAddresses();
         if (viewId === 'favorites') renderFavorites();
+        if (viewId === 'purchases') renderPurchaseHistory();
         if (viewId === 'loyalty-points') renderLoyaltyPoints('all');
         if (viewId === 'account') renderAccountSubscriptionsHint();
 
@@ -3938,6 +3978,35 @@
           `;
         } else {
           grid.innerHTML = favoriteProducts.map((p, i) => renderProductCard(p, i * 0.5, true)).join('');
+        }
+        lucide.createIcons();
+      }
+
+      // Purchase History (products previously ordered)
+      function renderPurchaseHistory() {
+        const grid = document.getElementById('purchase-history-grid');
+        if (!grid) return;
+
+        const allProducts = APP_DATA.sections.flatMap(s => s.products);
+        const orderedIds = [];
+        (APP_DATA.orders || []).forEach(order => {
+          (order.items || []).forEach(item => {
+            if (!orderedIds.includes(item.id)) orderedIds.push(item.id);
+          });
+        });
+        const purchasedProducts = orderedIds
+          .map(id => allProducts.find(p => p.id === id))
+          .filter(Boolean);
+
+        if (purchasedProducts.length === 0) {
+          grid.innerHTML = `
+            <div class="col-span-2 py-20 flex flex-col items-center justify-center opacity-40">
+              <i data-lucide="history" class="w-16 h-16 mb-4"></i>
+              <p class="font-black text-sm">لم تطلب أي منتجات بعد</p>
+            </div>
+          `;
+        } else {
+          grid.innerHTML = purchasedProducts.map((p, i) => renderProductCard(p, i * 0.5, true)).join('');
         }
         lucide.createIcons();
       }
