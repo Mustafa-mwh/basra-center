@@ -2419,7 +2419,7 @@
           `;
         }
         return `
-          <div onclick="${categoryTileClick(cat)}" class="flex flex-col items-center gap-2 cursor-pointer group active:scale-95 transition-transform">
+          <div onclick="showCategory('${cat.id}')" class="flex flex-col items-center gap-2 cursor-pointer group active:scale-95 transition-transform">
             <div class="w-full aspect-square flex items-center rounded-md justify-center overflow-hidden">
               ${categoryMediaHtml(cat)}
             </div>
@@ -4435,8 +4435,11 @@
             )
           : "";
 
-        document.getElementById("home-sections-top").innerHTML =
-          [renderSection(sectionsTop[0]), reorderSectionHtml, ...sectionsTop.slice(1).map((s) => renderSection(s))].join("");
+        document.getElementById("home-sections-top").innerHTML = [
+          sectionsTop[0] ? renderSection(sectionsTop[0]) : "",
+          reorderSectionHtml,
+          ...sectionsTop.slice(1).map((s) => renderSection(s)),
+        ].join("");
 
         document.getElementById("home-sections-bottom").innerHTML =
           sectionsBottom.map(renderSection).join("");
