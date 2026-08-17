@@ -2384,6 +2384,18 @@
         return products;
       }
 
+      // ── Order Again (products from past orders) ──
+      function getReorderProducts() {
+        const allProducts = APP_DATA.sections.flatMap((s) => s.products);
+        const orderedIds = [];
+        (APP_DATA.orders || []).slice().reverse().forEach((order) => {
+          (order.items || []).forEach((item) => {
+            if (!orderedIds.includes(item.id)) orderedIds.push(item.id);
+          });
+        });
+        return orderedIds.map((id) => allProducts.find((p) => p.id === id)).filter(Boolean);
+      }
+
       const categoryMediaHtml = (cat) => {
         if (cat.id === "offers") {
           return `
@@ -2407,7 +2419,7 @@
           `;
         }
         return `
-          <div onclick="showCategory('${cat.id}')" class="flex flex-col items-center gap-2 cursor-pointer group active:scale-95 transition-transform">
+          <div onclick="${categoryTileClick(cat)}" class="flex flex-col items-center gap-2 cursor-pointer group active:scale-95 transition-transform">
             <div class="w-full aspect-square flex items-center rounded-md justify-center overflow-hidden">
               ${categoryMediaHtml(cat)}
             </div>
@@ -4395,14 +4407,14 @@
         const sectionsTop = APP_DATA.sections.slice(0, 2);
         const sectionsBottom = APP_DATA.sections.slice(2);
 
-        const renderSection = (s) => `
+        const renderSection = (s, onViewAll = "switchView('browse')") => `
           <section style="margin-top: 2rem;">
             <div class="px-5 mb-5 flex items-center justify-between">
               <div class="flex flex-col">
                 <h3 class="text-lg font-black text-slate-900 leading-none mb-1">${s.title}</h3>
                 <span class="text-[10px] font-bold text-${s.accentColor}">${s.subtitle}</span>
               </div>
-              <button onclick="switchView('browse')" class="text-primary text-sm font-black bg-primary/5 px-3 py-1.5 rounded-lg">عرض الكل</button>
+              <button onclick="${onViewAll}" class="text-primary text-sm font-black bg-primary/5 px-3 py-1.5 rounded-lg">عرض الكل</button>
             </div>
             <div class="flex lg:grid-cols-4 xl:grid-cols-5 lg:gap-3 overflow-x-auto overflow-y-hidden px-5 gap-1 hide-scrollbar">
               ${s.products.map((p, i) => renderProductCard(p, i * 0.1)).join("")}
@@ -4410,9 +4422,21 @@
           </section>
         `;
 
-        document.getElementById("home-sections-top").innerHTML = sectionsTop
-          .map(renderSection)
-          .join("");
+        const reorderProducts = getReorderProducts();
+        const reorderSectionHtml = reorderProducts.length
+          ? renderSection(
+              {
+                title: "اطلب مجددا",
+                subtitle: `${reorderProducts.length} منتج من مشترياتك السابقة`,
+                accentColor: "slate-500",
+                products: reorderProducts,
+              },
+              "switchView('purchases')",
+            )
+          : "";
+
+        document.getElementById("home-sections-top").innerHTML =
+          [renderSection(sectionsTop[0]), reorderSectionHtml, ...sectionsTop.slice(1).map((s) => renderSection(s))].join("");
 
         document.getElementById("home-sections-bottom").innerHTML =
           sectionsBottom.map(renderSection).join("");
