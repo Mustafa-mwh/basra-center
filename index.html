@@ -131,6 +131,19 @@
         }
       }
 
+      .promo-card {
+        min-width: 30%;
+        height: 190px;
+      }
+
+      @media (min-width: 1024px) {
+        .promo-card {
+          min-width: 0;
+          flex: 1;
+          height: 260px;
+        }
+      }
+
       @keyframes fadeIn {
         from {
           opacity: 0;
@@ -305,7 +318,7 @@
         </section>
 
         <!-- Banners Section (Hypermarket Style) -->
-        <section class="mb-8">
+        <section class="mb-6">
           <div
             class="flex lg:grid lg:grid-cols-2 overflow-x-auto px-5 gap-4 hide-scrollbar"
           >
@@ -372,6 +385,91 @@
           </div>
         </section>
 
+        <!-- Smaller Promo Cards Strip -->
+        <section class="mb-8">
+          <div
+            class="flex lg:grid lg:grid-cols-3 overflow-x-auto px-5 gap-3 hide-scrollbar"
+          >
+            <!-- Banner 1: Fresh Food -->
+            <div
+              class="promo-card relative rounded-2xl overflow-hidden bg-[#0A2E2A] shrink-0 lg:shrink animate-fade-in"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=800"
+                class="absolute inset-0 w-full h-full object-cover opacity-60"
+                alt="Fresh Food"
+              />
+              <div
+                class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"
+              ></div>
+              <div class="relative h-full p-3 flex flex-col justify-between text-white">
+                <span
+                  class="bg-secondary text-white px-2 py-1 rounded-md text-[9px] font-black w-fit"
+                  >عروض الأسبوع</span
+                >
+                <div>
+                  <p class="text-[11px] font-bold leading-tight mb-1">
+                    قسم الخضروات<br />وفر مع خصم يصل حتى
+                  </p>
+                  <span class="text-2xl font-black">40%</span>
+                </div>
+              </div>
+            </div>
+            <!-- Banner 2: Beauty -->
+            <div
+              class="promo-card relative rounded-2xl overflow-hidden bg-[#5c1a2e] shrink-0 lg:shrink animate-fade-in"
+              style="animation-delay: 0.1s"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&q=80&w=800"
+                class="absolute inset-0 w-full h-full object-cover opacity-60"
+                alt="Beauty"
+              />
+              <div
+                class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"
+              ></div>
+              <div class="relative h-full p-3 flex flex-col justify-between text-white">
+                <span
+                  class="bg-primary text-white px-2 py-1 rounded-md text-[9px] font-black w-fit"
+                  >عروض الجمال</span
+                >
+                <div>
+                  <p class="text-[11px] font-bold leading-tight mb-1">
+                    منتجات العناية<br />خصم يصل حتى
+                  </p>
+                  <span class="text-2xl font-black">60%</span>
+                </div>
+              </div>
+            </div>
+            <!-- Banner 3: Electronics -->
+            <div
+              class="promo-card relative rounded-2xl overflow-hidden bg-slate-900 shrink-0 lg:shrink animate-fade-in"
+              style="animation-delay: 0.2s"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1498049794561-7780e7231661?auto=format&fit=crop&q=80&w=800"
+                class="absolute inset-0 w-full h-full object-cover opacity-50"
+                alt="Electronics"
+              />
+              <div
+                class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"
+              ></div>
+              <div class="relative h-full p-3 flex flex-col justify-between text-white">
+                <span
+                  class="bg-primary text-white px-2 py-1 rounded-md text-[9px] font-black w-fit"
+                  >جديد الهايبر ماركت</span
+                >
+                <div>
+                  <p class="text-[11px] font-bold leading-tight mb-1">
+                    أحدث الأجهزة<br />الكهربائية والذكية
+                  </p>
+                  <span class="text-2xl font-black">جديد</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         <!-- Active Order Banner Container -->
         <div id="active-order-container" class="px-5 mb-8 hidden"></div>
 
@@ -391,24 +489,6 @@
             <i data-lucide="chevron-left" class="w-4 h-4 text-slate-400 shrink-0"></i>
           </button>
         </section> -->
-
-        <!-- Categories -->
-        <section class="mb-10">
-          <div class="px-5 mb-5 flex items-center justify-between">
-            <h3 class="text-lg font-black text-slate-900">تسوق حسب القسم</h3>
-            <button
-              onclick="switchView('browse')"
-              class="text-primary text-sm font-black"
-            >
-              عرض الكل
-            </button>
-          </div>
-          <div
-            id="home-categories"
-            class="flex px-5 gap-1 lg:gap-5 overflow-x-auto overflow-y-hidden hide-scrollbar"
-          >
-          </div>
-        </section>
 
         <div id="home-sections-top" class="space-y-12">
           <!-- Populated by JS -->
@@ -4394,14 +4474,6 @@
         renderHomeSubscriptionsStrip();
         // updateFloatingCartBar();
         initAnimatedPlaceholder();
-
-        // Render Home Categories
-        document.getElementById("home-categories").innerHTML = [
-          OFFERS_CATEGORY,
-          ...APP_DATA.categories,
-        ]
-          .map((c) => renderCategoryGridItem(c, "home"))
-          .join("");
 
         // Render Home Sections
         const sectionsTop = APP_DATA.sections.slice(0, 2);
