@@ -133,14 +133,27 @@
 
       .promo-card {
         min-width: 30%;
-        height: 190px;
+        height: 195px;
       }
 
       @media (min-width: 1024px) {
         .promo-card {
           min-width: 0;
           flex: 1;
-          height: 260px;
+          height: 250px;
+        }
+      }
+
+      .promo-card-square {
+        min-width: 30%;
+        aspect-ratio: 1 / 1;
+        height: auto;
+      }
+
+      @media (min-width: 1024px) {
+        .promo-card-square {
+          min-width: 0;
+          flex: 1;
         }
       }
 
@@ -388,85 +401,10 @@
         <!-- Smaller Promo Cards Strip -->
         <section class="mb-8">
           <div
+            id="promo-banners-strip"
             class="flex lg:grid lg:grid-cols-3 overflow-x-auto px-5 gap-3 hide-scrollbar"
           >
-            <!-- Banner 1: Fresh Food -->
-            <div
-              class="promo-card relative rounded-2xl overflow-hidden bg-[#0A2E2A] shrink-0 lg:shrink animate-fade-in"
-            >
-              <img
-                src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=800"
-                class="absolute inset-0 w-full h-full object-cover opacity-60"
-                alt="Fresh Food"
-              />
-              <div
-                class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"
-              ></div>
-              <div class="relative h-full p-3 flex flex-col justify-between text-white">
-                <span
-                  class="bg-secondary text-white px-2 py-1 rounded-md text-[9px] font-black w-fit"
-                  >عروض الأسبوع</span
-                >
-                <div>
-                  <p class="text-[11px] font-bold leading-tight mb-1">
-                    قسم الخضروات<br />وفر مع خصم يصل حتى
-                  </p>
-                  <span class="text-2xl font-black">40%</span>
-                </div>
-              </div>
-            </div>
-            <!-- Banner 2: Beauty -->
-            <div
-              class="promo-card relative rounded-2xl overflow-hidden bg-[#5c1a2e] shrink-0 lg:shrink animate-fade-in"
-              style="animation-delay: 0.1s"
-            >
-              <img
-                src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&q=80&w=800"
-                class="absolute inset-0 w-full h-full object-cover opacity-60"
-                alt="Beauty"
-              />
-              <div
-                class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"
-              ></div>
-              <div class="relative h-full p-3 flex flex-col justify-between text-white">
-                <span
-                  class="bg-primary text-white px-2 py-1 rounded-md text-[9px] font-black w-fit"
-                  >عروض الجمال</span
-                >
-                <div>
-                  <p class="text-[11px] font-bold leading-tight mb-1">
-                    منتجات العناية<br />خصم يصل حتى
-                  </p>
-                  <span class="text-2xl font-black">60%</span>
-                </div>
-              </div>
-            </div>
-            <!-- Banner 3: Electronics -->
-            <div
-              class="promo-card relative rounded-2xl overflow-hidden bg-slate-900 shrink-0 lg:shrink animate-fade-in"
-              style="animation-delay: 0.2s"
-            >
-              <img
-                src="https://images.unsplash.com/photo-1498049794561-7780e7231661?auto=format&fit=crop&q=80&w=800"
-                class="absolute inset-0 w-full h-full object-cover opacity-50"
-                alt="Electronics"
-              />
-              <div
-                class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"
-              ></div>
-              <div class="relative h-full p-3 flex flex-col justify-between text-white">
-                <span
-                  class="bg-primary text-white px-2 py-1 rounded-md text-[9px] font-black w-fit"
-                  >جديد الهايبر ماركت</span
-                >
-                <div>
-                  <p class="text-[11px] font-bold leading-tight mb-1">
-                    أحدث الأجهزة<br />الكهربائية والذكية
-                  </p>
-                  <span class="text-2xl font-black">جديد</span>
-                </div>
-              </div>
-            </div>
+            <!-- Populated by JS: renderPromoBanners() -->
           </div>
         </section>
 
@@ -621,6 +559,72 @@
             </div>
           </div>
         </header>
+
+        <!-- Category Banners -->
+        <section class="mb-6 -mx-5">
+          <div
+            class="flex lg:grid lg:grid-cols-2 overflow-x-auto px-5 gap-4 hide-scrollbar"
+          >
+            <div
+              class="banner-card relative rounded-[32px] overflow-hidden bg-[#0A2E2A] shrink-0 lg:shrink animate-fade-in"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=800"
+                class="absolute inset-0 w-full h-full object-cover opacity-60"
+                alt="Fresh Food"
+              />
+              <div
+                class="absolute inset-0 bg-gradient-to-l from-black/40 via-transparent to-transparent"
+              ></div>
+              <div
+                class="relative h-full p-7 flex flex-col justify-center text-white"
+              >
+                <span
+                  class="bg-secondary text-white px-3 py-1 rounded-lg text-[10px] font-black w-fit mb-3"
+                  >عروض نهاية الأسبوع</span
+                >
+                <h2 class="text-lg font-black leading-tight mb-4">
+                  قسم الخضروات<br />خصم يصل إلى 40%
+                </h2>
+                <button
+                  class="bg-white text-primary w-fit px-6 py-2.5 rounded-xl font-bold text-sm shadow-xl active:scale-95 transition-transform"
+                >
+                  تسوق الآن
+                </button>
+              </div>
+            </div>
+            <div
+              class="banner-card relative rounded-[32px] overflow-hidden bg-slate-900 shrink-0 lg:shrink animate-fade-in"
+              style="animation-delay: 0.1s"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1498049794561-7780e7231661?auto=format&fit=crop&q=80&w=800"
+                class="absolute inset-0 w-full h-full object-cover opacity-50"
+                alt="Electronics"
+              />
+              <div
+                class="relative h-full p-7 flex flex-col justify-center text-white"
+              >
+                <span
+                  class="bg-primary text-white px-3 py-1 rounded-lg text-[10px] font-black w-fit mb-3"
+                  >جديد الهايبر ماركت</span
+                >
+                <h2 class="text-lg font-black leading-tight mb-4">
+                  أحدث الأجهزة<br />الكهربائية والذكية
+                </h2>
+                <button
+                  class="bg-secondary text-white w-fit px-6 py-2.5 rounded-xl font-bold text-sm shadow-xl active:scale-95 transition-transform"
+                >
+                  تصفح الأجهزة
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="flex justify-center gap-1.5 mt-5">
+            <div class="w-6 h-1.5 bg-primary rounded-full"></div>
+            <div class="w-1.5 h-1.5 bg-slate-200 rounded-full"></div>
+          </div>
+        </section>
 
         <!-- Subcategories List -->
         <div
@@ -1056,6 +1060,26 @@
                     <span class="text-[8px] text-blue-600 font-bold">color code: #3B82F6</span>
                   </div>
                 </button>
+              </div>
+            </div>
+
+            <!-- Promo Banners Style Toggle -->
+            <div class="border-t border-slate-800 pt-4">
+              <p class="text-[9px] font-bold text-slate-600 px-1 pb-2 uppercase tracking-widest">Promo Banners Style</p>
+              <div class="flex items-center gap-2 px-1">
+                <span class="text-[10px] font-bold text-slate-400 flex-1">نسخة تصميم البنرات الثانية (أسفل البنر الرئيسي)</span>
+                <div class="flex bg-slate-900 rounded-xl p-1 gap-1 shrink-0">
+                  <button
+                    id="dev-promo-style-rect"
+                    onclick="setPromoBannerStyle('rect')"
+                    class="px-3 py-1.5 rounded-lg text-[10px] font-black text-slate-400 transition-all"
+                  >مستطيل</button>
+                  <button
+                    id="dev-promo-style-square"
+                    onclick="setPromoBannerStyle('square')"
+                    class="px-3 py-1.5 rounded-lg text-[10px] font-black text-slate-400 transition-all"
+                  >مربع</button>
+                </div>
               </div>
             </div>
           </div>
@@ -3022,6 +3046,107 @@
         const isHidden = content.classList.contains('hidden');
         content.classList.toggle('hidden', !isHidden);
         chevron.style.transform = isHidden ? 'rotate(180deg)' : '';
+        if (isHidden) updateDevPromoBannerStyleUI();
+      }
+
+      // ── Smaller Promo Banners Strip (home page, below main banner) ──
+      const PROMO_BANNERS = [
+        {
+          bg: "#0A2E2A",
+          img: "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=800",
+          badge: "عروض الأسبوع",
+          badgeClass: "bg-secondary",
+          text: "قسم الخضروات<br>وفر مع خصم يصل حتى",
+          value: "40%",
+        },
+        {
+          bg: "#5c1a2e",
+          img: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&q=80&w=800",
+          badge: "عروض الجمال",
+          badgeClass: "bg-primary",
+          text: "منتجات العناية<br>خصم يصل حتى",
+          value: "60%",
+        },
+        {
+          bg: "#0f172a",
+          img: "https://images.unsplash.com/photo-1498049794561-7780e7231661?auto=format&fit=crop&q=80&w=800",
+          badge: "جديد الهايبر ماركت",
+          badgeClass: "bg-primary",
+          text: "أحدث الأجهزة<br>الكهربائية والذكية",
+          value: "جديد",
+        },
+        {
+          bg: "#0f172a",
+          img: "https://images.unsplash.com/photo-1498049794561-7780e7231661?auto=format&fit=crop&q=80&w=800",
+          badge: "جديد الهايبر ماركت",
+          badgeClass: "bg-primary",
+          text: "أحدث الأجهزة<br>الكهربائية والذكية",
+          value: "جديد",
+        },
+      ];
+
+      function getPromoBannerStyle() {
+        return localStorage.getItem("devPromoBannerStyle") || "rect";
+      }
+
+      const renderPromoBannerCard = (banner, i, style) => {
+        if (style === "square") {
+          return `
+            <div
+              class="promo-card-square relative rounded-2xl overflow-hidden shrink-0 lg:shrink animate-fade-in"
+              style="background:${banner.bg}; animation-delay:${(i * 0.1).toFixed(1)}s"
+            >
+              <img src="${banner.img}" class="absolute inset-0 w-full h-full object-cover" alt="${banner.badge}" />
+              <span class="absolute top-2 right-2 ${banner.badgeClass} text-white px-2 py-1 rounded-md text-[8px] font-black w-fit shadow">${banner.badge}</span>
+              <div class="absolute inset-x-0 bottom-0 h-[45%] bg-gradient-to-t from-black/85 via-black/30 to-transparent"></div>
+              <div class="absolute inset-x-0 bottom-0 p-2.5 flex items-end justify-center text-white">
+                <span class="text-xl font-black">${banner.value}</span>
+              </div>
+            </div>
+          `;
+        }
+        return `
+          <div
+            class="promo-card relative rounded-2xl overflow-hidden shrink-0 lg:shrink animate-fade-in"
+            style="background:${banner.bg}; animation-delay:${(i * 0.1).toFixed(1)}s"
+          >
+            <img src="${banner.img}" class="absolute inset-0 w-full h-full object-cover" alt="${banner.badge}" />
+            <span class="absolute top-2 right-2 ${banner.badgeClass} text-white px-2 py-1 rounded-md text-[8px] font-black w-fit shadow">${banner.badge}</span>
+            <div class="absolute inset-x-0 bottom-0 h-[40%] bg-gradient-to-t from-black/85 via-black/25 to-transparent"></div>
+            <div class="absolute inset-x-0 bottom-0 p-3 flex flex-col items-start text-white">
+              <p class="text-[10px] font-bold leading-tight mb-1">${banner.text}</p>
+              <span class="text-xl font-black">${banner.value}</span>
+            </div>
+          </div>
+        `;
+      };
+
+      function renderPromoBanners() {
+        const container = document.getElementById("promo-banners-strip");
+        if (!container) return;
+        const style = getPromoBannerStyle();
+        container.innerHTML = PROMO_BANNERS
+          .map((b, i) => renderPromoBannerCard(b, i, style))
+          .join("");
+      }
+
+      function setPromoBannerStyle(style) {
+        localStorage.setItem("devPromoBannerStyle", style);
+        renderPromoBanners();
+        updateDevPromoBannerStyleUI();
+      }
+
+      function updateDevPromoBannerStyleUI() {
+        const style = getPromoBannerStyle();
+        const rectBtn = document.getElementById("dev-promo-style-rect");
+        const squareBtn = document.getElementById("dev-promo-style-square");
+        if (!rectBtn || !squareBtn) return;
+        rectBtn.classList.toggle("bg-primary", style === "rect");
+        rectBtn.classList.toggle("text-white", style === "rect");
+        rectBtn.classList.toggle("text-slate-400", style !== "rect");
+        squareBtn.classList.toggle("bg-primary", style === "square");
+        squareBtn.classList.toggle("text-white", style === "square");
+        squareBtn.classList.toggle("text-slate-400", style !== "square");
       }
 
       // Snackbar Notification System
@@ -4472,6 +4597,8 @@
         
         renderActiveOrderBanner();
         renderHomeSubscriptionsStrip();
+        renderPromoBanners();
+        updateDevPromoBannerStyleUI();
         // updateFloatingCartBar();
         initAnimatedPlaceholder();
 
