@@ -725,6 +725,10 @@
                 <span class="text-slate-400">خصم الاشتراك</span>
                 <span id="cart-discount" class="text-emerald-500">- 0 د.ع</span>
               </div>
+              <div id="cart-promo-discount-row" class="hidden justify-between items-center text-xs font-bold">
+                <span class="text-slate-400">خصم العروض المطبّقة</span>
+                <span id="cart-promo-discount" class="text-emerald-500">- 0 د.ع</span>
+              </div>
               <div class="flex justify-between items-center text-xs font-bold">
                 <span class="text-slate-400">خدمة التوصيل</span>
                 <span id="cart-delivery-fee" class="text-primary">3,000 د.ع</span>
@@ -1426,6 +1430,10 @@
                 <span class="text-slate-400 font-bold">خصم الاشتراك</span>
                 <span id="checkout-sub-discount" class="text-emerald-500 font-black">- 0 د.ع</span>
               </div>
+              <div id="checkout-promo-discount-row" class="hidden justify-between items-center text-xs">
+                <span class="text-slate-400 font-bold">خصم العروض المطبّقة</span>
+                <span id="checkout-promo-discount" class="text-emerald-500 font-black">- 0 د.ع</span>
+              </div>
               <div class="flex justify-between items-center text-xs">
                 <span class="text-slate-400 font-bold">رسوم التوصيل</span>
                 <span id="checkout-delivery-fee" class="text-secondary font-black">+ 3,000 د.ع</span>
@@ -1978,6 +1986,8 @@
         subscriptions: [],
         mySubscriptions: [],
         carts: { general: {} },
+        cartPromotions: { general: {} },
+        promotions: [],
         likes: {},
         addresses: [],
       };
@@ -2012,6 +2022,7 @@
           // Load state from local storage
           const savedCarts = localStorage.getItem("carts");
           const legacyCart = localStorage.getItem("cart"); // pre-subscriptions single-cart format
+          const savedCartPromotions = localStorage.getItem("cartPromotions");
           const savedLikes = localStorage.getItem("likes");
           const savedAddresses = localStorage.getItem("addresses");
           const savedOrders = localStorage.getItem("orders");
@@ -2021,6 +2032,7 @@
           APP_DATA.stores = data.stores || [];
           APP_DATA.sections = data.sections || [];
           APP_DATA.subscriptions = data.subscriptions || [];
+          APP_DATA.promotions = data.promotions || [];
           APP_DATA.orders = savedOrders ? JSON.parse(savedOrders) : (data.orders || []);
 
           APP_DATA.carts = savedCarts
@@ -2028,6 +2040,8 @@
             : { general: legacyCart ? JSON.parse(legacyCart) : {} };
           if (!APP_DATA.carts.general) APP_DATA.carts.general = {};
           if (legacyCart) localStorage.removeItem("cart");
+
+          APP_DATA.cartPromotions = savedCartPromotions ? JSON.parse(savedCartPromotions) : {};
 
           APP_DATA.mySubscriptions = savedMySubscriptions ? JSON.parse(savedMySubscriptions) : [];
           APP_DATA.likes = savedLikes ? JSON.parse(savedLikes) : {};
@@ -2052,10 +2066,45 @@
         localStorage.setItem("carts", JSON.stringify(APP_DATA.carts));
       }
 
+      function getCartPromotions(cartId) {
+        if (!APP_DATA.cartPromotions[cartId]) APP_DATA.cartPromotions[cartId] = {};
+        return APP_DATA.cartPromotions[cartId];
+      }
+
+      function saveCartPromotions() {
+        localStorage.setItem("cartPromotions", JSON.stringify(APP_DATA.cartPromotions));
+      }
+
       function getAllProducts() {
         let all = [];
         APP_DATA.sections.forEach((s) => (all = [...all, ...s.products]));
         return all;
+      }
+
+      function getPromotionById(id) {
+        return (APP_DATA.promotions || []).find((pr) => pr.id === id);
+      }
+
+      // Money helpers — prices are stored as "12,000" strings throughout the app
+      function parseMoney(v) {
+        return parseInt(String(v || "0").replace(/,/g, ""), 10) || 0;
+      }
+      function formatMoney(n) {
+        return Math.round(n).toLocaleString("en-US");
+      }
+
+      // Resolves a product's real charged price after any direct discount
+      // (percent via p.discount, or fixed amount via p.discountAmount).
+      function getProductPricing(p) {
+        const original = parseMoney(p.price);
+        let final = original;
+        if (p.discount) {
+          const pct = parseInt(String(p.discount).replace("%", ""), 10) || 0;
+          final = original - Math.round(original * (pct / 100));
+        } else if (p.discountAmount) {
+          final = Math.max(0, original - parseMoney(p.discountAmount));
+        }
+        return { original, final, hasDiscount: final < original };
       }
 
       function getSubscriptionById(id) {
@@ -2091,8 +2140,7 @@
         let subtotal = 0;
         Object.keys(cart).forEach((id) => {
           const p = allProducts.find((item) => item.id === id) || { price: "0" };
-          const priceNum = parseInt((p.price || "0").replace(/,/g, ""), 10) || 0;
-          subtotal += priceNum * cart[id];
+          subtotal += getProductPricing(p).final * cart[id];
         });
 
         const subscription = cartId !== "general" ? getSubscriptionById(cartId) : null;
@@ -2104,6 +2152,29 @@
         }
         const discountAmount = Math.round(subtotal * (discountPercent / 100));
 
+        // Extra savings from applied offers (buy X get Y / bundle / mix & match).
+        // Re-validated on every read: an offer only counts while the cart still
+        // holds the quantities it was built from, so it drops off cleanly if the
+        // customer later removes one of its items.
+        const promos = getCartPromotions(cartId);
+        let promoDiscountAmount = 0;
+        const appliedPromotions = [];
+        let promosChanged = false;
+        Object.keys(promos).forEach((promoId) => {
+          const entry = promos[promoId];
+          const stillValid = Object.entries(entry.requiredQty || {}).every(
+            ([pid, qty]) => (cart[pid] || 0) >= qty,
+          );
+          if (stillValid) {
+            promoDiscountAmount += entry.discountAmount;
+            appliedPromotions.push({ id: promoId, title: entry.title, discountAmount: entry.discountAmount });
+          } else {
+            delete promos[promoId];
+            promosChanged = true;
+          }
+        });
+        if (promosChanged) saveCartPromotions();
+
         const isFreeDelivery = !!(perk && perk.type === "free_delivery");
         const deliveryFee = isFreeDelivery ? 0 : 3000;
 
@@ -2112,9 +2183,11 @@
           subtotal,
           discountPercent,
           discountAmount,
+          promoDiscountAmount,
+          appliedPromotions,
           isFreeDelivery,
           deliveryFee,
-          total: subtotal - discountAmount + deliveryFee,
+          total: subtotal - discountAmount - promoDiscountAmount + deliveryFee,
         };
       }
 
@@ -2331,13 +2404,19 @@
         const isSoldOut = p.stock === 0;
         const cart = getCart(cartId);
         const inCart = cart[p.id] > 0;
+        const pricing = getProductPricing(p);
         const detailHref = cartId === "general"
           ? `product-details.html?id=${p.id}`
           : `product-details.html?id=${p.id}&sub=${cartId}`;
+        const discountBadge = p.discount
+          ? `خصم ${p.discount}`
+          : p.discountAmount
+            ? `خصم ${p.discountAmount} د.ع`
+            : "";
 
         return `
         <div class="product-card ${isGrid ? "w-full" : "product-card-horizontal"} lg:w-full bg-transparent rounded-[28px] shrink-0 lg:shrink relative animate-fade-in flex flex-col" style="animation-delay: ${delay}s">
-          ${p.discount ? `<div class="absolute top-2.5 right-2.5 z-10"><span class="bg-secondary text-white text-[9px] font-black px-2 py-1 rounded-lg">خصم ${p.discount}</span></div>` : ""}
+          ${discountBadge ? `<div class="absolute top-2.5 right-2.5 z-10"><span class="bg-secondary text-white text-[9px] font-black px-2 py-1 rounded-lg">${discountBadge}</span></div>` : ""}
           <button onclick="event.stopPropagation(); toggleLike('${p.id}')" data-id="${p.id}" class="like-btn absolute top-2.5 left-2.5 z-20 w-8 h-8 glass rounded-full flex items-center justify-center transition-all active:scale-90">
             <i data-lucide="heart" class="w-4 h-4 ${APP_DATA.likes[p.id] ? "text-red-500 fill-red-500" : "text-slate-400"}"></i>
           </button>
@@ -2363,6 +2442,10 @@
 
           <div class="px-3 pb-3 flex-1 flex flex-col">
             <h4 onclick="window.location.href='${detailHref}'" class="text-[10px] lg:text-[12px] text-slate-900 truncate mb-1 cursor-pointer hover:text-primary transition-colors">${p.name}</h4>
+            <div class="flex items-baseline gap-1.5 mb-1">
+              <span class="text-[12px] lg:text-[13px] font-black ${pricing.hasDiscount ? "text-secondary" : "text-slate-900"}">${formatMoney(pricing.final)} <span class="text-[9px] font-bold opacity-40">د.ع</span></span>
+              ${pricing.hasDiscount ? `<span class="text-[10px] font-bold text-slate-300 line-through">${formatMoney(pricing.original)}</span>` : ""}
+            </div>
             <p class="text-[10px] text-slate-400 mb-2">${p.desc || "وحدة واحدة"}</p>
             ${isSoldOut ? `
             <div class="flex items-center gap-2">
@@ -2402,30 +2485,410 @@
         </div>
       `;
 
-      // ── Offers (static pinned category) ──
-      const OFFERS_CATEGORY = {
-        id: "offers",
-        name: "العروض",
-        color: "secondary",
-        subCategories: [
-          { id: "10", name: "عروض 10%" },
-          { id: "50", name: "عروض 50%" },
-          { id: "70", name: "عروض 70%" },
-        ],
-      };
+      // ── Offers (static pinned category) ──────────────────────────────────
+      // Four promotion mechanics, each with its own data shape in
+      // data.json → promotions[], plus "direct" which reuses the plain
+      // product.discount / product.discountAmount fields already on products.
+      const OFFERS_CATEGORY = { id: "offers", name: "العروض", color: "secondary" };
 
-      function getOfferProducts(discountTier) {
-        let products = [];
-        APP_DATA.sections.forEach((s) => {
-          const matches = s.products.filter((p) => {
-            if (!p.discount) return false;
-            if (!discountTier) return true;
-            const tier = parseInt(String(p.discount).replace("%", ""), 10);
-            return tier === parseInt(discountTier, 10);
-          });
-          products = [...products, ...matches];
+      const OFFERS_TABS = [
+        { id: "all", name: "الكل" },
+        { id: "direct", name: "خصم مباشر" },
+        { id: "buy_x_get_y", name: "اشترِ وخذ" },
+        { id: "bundle", name: "مجموعات" },
+        { id: "mix_match", name: "تجميع مفتوح" },
+      ];
+
+      function getDirectDiscountProducts() {
+        return getAllProducts().filter((p) => p.discount || p.discountAmount);
+      }
+
+      function getPromotionsByType(type) {
+        return (APP_DATA.promotions || []).filter((pr) => pr.type === type);
+      }
+
+      function renderOffersTabs(activeTab) {
+        const subcategoriesList = document.getElementById("subcategories-list");
+        if (!subcategoriesList) return;
+        subcategoriesList.classList.remove("hidden");
+        subcategoriesList.innerHTML = OFFERS_TABS.map(
+          (t) => `
+          <div onclick="filterOffersTab('${t.id}')" class="offers-tab-item px-4 py-1.5 rounded-full text-xs font-bold shrink-0 cursor-pointer transition-all active:scale-95 ${t.id === activeTab ? "bg-primary text-white shadow-sm shadow-primary/20" : "bg-white border border-slate-100 text-slate-600"}" data-tabid="${t.id}">${t.name}</div>
+        `,
+        ).join("");
+      }
+
+      function filterOffersTab(tab) {
+        document.querySelectorAll(".offers-tab-item").forEach((item) => {
+          const isActive = item.getAttribute("data-tabid") === tab;
+          item.classList.toggle("bg-primary", isActive);
+          item.classList.toggle("text-white", isActive);
+          item.classList.toggle("shadow-sm", isActive);
+          item.classList.toggle("shadow-primary/20", isActive);
+          item.classList.toggle("bg-white", !isActive);
+          item.classList.toggle("border", !isActive);
+          item.classList.toggle("border-slate-100", !isActive);
+          item.classList.toggle("text-slate-600", !isActive);
         });
-        return products;
+        renderOffersView(tab);
+      }
+
+      function renderOffersSection(title, iconName, colorClass, itemsHtml) {
+        if (!itemsHtml) return "";
+        return `
+          <div class="mb-8">
+            <div class="flex items-center gap-2 mb-4">
+              <div class="w-8 h-8 rounded-xl ${colorClass} flex items-center justify-center shrink-0"><i data-lucide="${iconName}" class="w-4 h-4 text-white"></i></div>
+              <h3 class="text-sm font-black text-slate-900">${title}</h3>
+            </div>
+            ${itemsHtml}
+          </div>
+        `;
+      }
+
+      function renderOffersView(tab = "all") {
+        const container = document.getElementById("category-products");
+        if (!container) return;
+        container.className = "flex flex-col pb-10";
+
+        const direct = getDirectDiscountProducts();
+        const bxgy = getPromotionsByType("buy_x_get_y");
+        const bundles = getPromotionsByType("bundle");
+        const mixmatch = getPromotionsByType("mix_match");
+
+        let html = "";
+
+        if (tab === "all" || tab === "direct") {
+          const grid = direct.length
+            ? `<div class="grid grid-cols-2 md:grid-cols-4 gap-1 lg:gap-3">${direct.map((p, i) => renderProductCard(p, i * 0.05, true)).join("")}</div>`
+            : "";
+          html += tab === "direct"
+            ? grid || renderStoreEmptyState("لا توجد خصومات مباشرة حالياً")
+            : renderOffersSection("خصومات مباشرة", "tag", "bg-secondary", grid);
+        }
+
+        if (tab === "all" || tab === "buy_x_get_y") {
+          const list = bxgy.length
+            ? `<div class="flex flex-col gap-3">${bxgy.map((pr, i) => renderBuyXGetYCard(pr, i * 0.05)).join("")}</div>`
+            : "";
+          html += tab === "buy_x_get_y"
+            ? list || renderStoreEmptyState("لا توجد عروض اشترِ وخذ حالياً")
+            : renderOffersSection("اشترِ وخذ", "gift", "bg-primary", list);
+        }
+
+        if (tab === "all" || tab === "bundle") {
+          const list = bundles.length
+            ? `<div class="flex flex-col gap-3">${bundles.map((pr, i) => renderBundleCard(pr, i * 0.05)).join("")}</div>`
+            : "";
+          html += tab === "bundle"
+            ? list || renderStoreEmptyState("لا توجد مجموعات متاحة حالياً")
+            : renderOffersSection("مجموعات مميزة", "package", "bg-amber-500", list);
+        }
+
+        if (tab === "all" || tab === "mix_match") {
+          const list = mixmatch.length
+            ? `<div class="flex flex-col gap-3">${mixmatch.map((pr, i) => mixMatchCardHtml(pr, i * 0.05)).join("")}</div>`
+            : "";
+          html += tab === "mix_match"
+            ? list || renderStoreEmptyState("لا توجد عروض تجميع مفتوح حالياً")
+            : renderOffersSection("تجميع مفتوح", "shuffle", "bg-teal-600", list);
+        }
+
+        container.innerHTML = html || renderEmptyState("لا توجد عروض متاحة حالياً");
+
+        const counts = { direct: direct.length, buy_x_get_y: bxgy.length, bundle: bundles.length, mix_match: mixmatch.length };
+        const countEl = document.getElementById("category-count");
+        if (countEl) {
+          countEl.innerText = tab === "all"
+            ? `${direct.length + bxgy.length + bundles.length + mixmatch.length} عرضاً متاحاً`
+            : `${counts[tab] || 0} عرضاً متاحاً`;
+        }
+
+        lucide.createIcons();
+      }
+
+      // ── Buy X Get Y ──
+      function renderBuyXGetYCard(promo, delay = 0) {
+        const allProducts = getAllProducts();
+        const buyP = allProducts.find((p) => p.id === promo.buyProductId);
+        const getP = allProducts.find((p) => p.id === promo.getProductId);
+        if (!buyP || !getP) return "";
+
+        const buyUnit = getProductPricing(buyP).final;
+        const getUnit = getProductPricing(getP).final;
+        const isFree = promo.getDiscountValue >= 100;
+        const getFinalUnit = Math.round(getUnit * (1 - promo.getDiscountValue / 100));
+
+        const totalOriginal = buyUnit * promo.buyQty + getUnit * promo.getQty;
+        const totalFinal = buyUnit * promo.buyQty + getFinalUnit * promo.getQty;
+
+        return `
+          <div class="bg-white rounded-[28px] border border-slate-100 p-4 flex flex-col gap-4 animate-fade-in" style="animation-delay:${delay}s">
+            <div class="flex items-center gap-2">
+              <span class="bg-primary text-white text-[9px] font-black px-2.5 py-1 rounded-lg flex items-center gap-1 shrink-0"><i data-lucide="gift" class="w-3 h-3"></i>اشترِ وخذ</span>
+              <h4 class="text-sm font-black text-slate-900 flex-1 truncate">${promo.title}</h4>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="flex-1 flex items-center gap-2 bg-accent/60 rounded-2xl p-2.5 min-w-0">
+                <img src="${buyP.img}" class="w-12 h-12 object-contain rounded-xl bg-white shrink-0" alt="${buyP.name}">
+                <div class="min-w-0">
+                  <span class="text-[11px] font-black text-slate-900 truncate block">${buyP.name}</span>
+                  <span class="text-[10px] font-bold text-slate-400">الكمية × ${promo.buyQty}</span>
+                </div>
+              </div>
+              <i data-lucide="plus" class="w-4 h-4 text-slate-300 shrink-0"></i>
+              <div class="flex-1 flex items-center gap-2 bg-primary/5 rounded-2xl p-2.5 relative min-w-0">
+                <span class="absolute -top-2 -right-2 bg-secondary text-white text-[8px] font-black px-2 py-0.5 rounded-full">${isFree ? "مجاناً" : `خصم ${promo.getDiscountValue}%`}</span>
+                <img src="${getP.img}" class="w-12 h-12 object-contain rounded-xl bg-white shrink-0" alt="${getP.name}">
+                <div class="min-w-0">
+                  <span class="text-[11px] font-black text-slate-900 truncate block">${getP.name}</span>
+                  <span class="text-[10px] font-bold text-slate-400">الكمية × ${promo.getQty}</span>
+                </div>
+              </div>
+            </div>
+            <div class="flex items-center justify-between pt-3 border-t border-slate-50">
+              <div class="flex items-baseline gap-2">
+                <span class="text-base font-black text-primary">${formatMoney(totalFinal)} <span class="text-[10px] opacity-60">د.ع</span></span>
+                ${totalFinal < totalOriginal ? `<span class="text-[11px] font-bold text-slate-300 line-through">${formatMoney(totalOriginal)}</span>` : ""}
+              </div>
+              <button onclick="addBuyXGetYToCart('${promo.id}')" class="bg-primary text-white text-xs font-black px-5 py-3 rounded-2xl active:scale-95 transition-transform shadow-lg shadow-primary/20">أضف العرض</button>
+            </div>
+          </div>
+        `;
+      }
+
+      function addBuyXGetYToCart(promoId, cartId = "general") {
+        const promo = getPromotionById(promoId);
+        if (!promo) return;
+        const allProducts = getAllProducts();
+        const buyP = allProducts.find((p) => p.id === promo.buyProductId);
+        const getP = allProducts.find((p) => p.id === promo.getProductId);
+        if (!buyP || !getP) return;
+
+        const cart = getCart(cartId);
+        cart[promo.buyProductId] = (cart[promo.buyProductId] || 0) + promo.buyQty;
+        cart[promo.getProductId] = (cart[promo.getProductId] || 0) + promo.getQty;
+
+        const requiredQty = {};
+        requiredQty[promo.buyProductId] = (requiredQty[promo.buyProductId] || 0) + promo.buyQty;
+        requiredQty[promo.getProductId] = (requiredQty[promo.getProductId] || 0) + promo.getQty;
+
+        const discountAmount = Math.round(
+          getProductPricing(getP).final * promo.getQty * (promo.getDiscountValue / 100),
+        );
+
+        getCartPromotions(cartId)[promoId] = { title: promo.title, discountAmount, requiredQty };
+
+        saveCarts();
+        saveCartPromotions();
+        Object.keys(requiredQty).forEach((pid) => updateUI(pid, cartId));
+        showSnackbar("success", `تمت إضافة "${promo.title}" للسلة`);
+      }
+
+      // ── Bundle ──
+      function renderBundleCard(promo, delay = 0) {
+        const allProducts = getAllProducts();
+        const products = promo.productIds.map((id) => allProducts.find((p) => p.id === id)).filter(Boolean);
+        if (!products.length) return "";
+
+        const sum = products.reduce((acc, p) => acc + getProductPricing(p).final, 0);
+        const bundlePrice = parseMoney(promo.bundlePrice);
+        const savings = Math.max(0, sum - bundlePrice);
+        const pct = sum > 0 ? Math.round((savings / sum) * 100) : 0;
+
+        return `
+          <div class="bg-white rounded-[28px] border border-slate-100 p-4 flex flex-col gap-4 animate-fade-in" style="animation-delay:${delay}s">
+            <div class="flex items-center gap-2">
+              <span class="bg-amber-500 text-white text-[9px] font-black px-2.5 py-1 rounded-lg flex items-center gap-1 shrink-0"><i data-lucide="package" class="w-3 h-3"></i>مجموعة</span>
+              <h4 class="text-sm font-black text-slate-900 flex-1 truncate">${promo.title}</h4>
+              ${pct > 0 ? `<span class="text-[10px] font-black text-amber-600 bg-amber-50 px-2 py-1 rounded-lg shrink-0">وفّر ${pct}%</span>` : ""}
+            </div>
+            <div class="flex items-center gap-2 overflow-x-auto hide-scrollbar">
+              ${products
+                .map(
+                  (p) => `
+                <div class="shrink-0 w-16 flex flex-col items-center gap-1.5">
+                  <div class="w-16 h-16 rounded-2xl bg-accent/60 flex items-center justify-center overflow-hidden">
+                    <img src="${p.img}" class="w-full h-full object-contain p-1.5" alt="${p.name}">
+                  </div>
+                  <span class="text-[9px] font-bold text-slate-500 text-center leading-tight line-clamp-2">${p.name}</span>
+                </div>
+              `,
+                )
+                .join('<i data-lucide="plus" class="w-3.5 h-3.5 text-slate-300 shrink-0 self-center mt-6"></i>')}
+            </div>
+            <div class="flex items-center justify-between pt-3 border-t border-slate-50">
+              <div class="flex items-baseline gap-2">
+                <span class="text-base font-black text-amber-600">${formatMoney(bundlePrice)} <span class="text-[10px] opacity-60">د.ع</span></span>
+                ${savings > 0 ? `<span class="text-[11px] font-bold text-slate-300 line-through">${formatMoney(sum)}</span>` : ""}
+              </div>
+              <button onclick="addBundleToCart('${promo.id}')" class="bg-amber-500 text-white text-xs font-black px-5 py-3 rounded-2xl active:scale-95 transition-transform shadow-lg shadow-amber-500/20">أضف الحزمة</button>
+            </div>
+          </div>
+        `;
+      }
+
+      function addBundleToCart(promoId, cartId = "general") {
+        const promo = getPromotionById(promoId);
+        if (!promo) return;
+        const allProducts = getAllProducts();
+        const products = promo.productIds.map((id) => allProducts.find((p) => p.id === id)).filter(Boolean);
+        if (products.length !== promo.productIds.length) return;
+
+        const cart = getCart(cartId);
+        const requiredQty = {};
+        products.forEach((p) => {
+          cart[p.id] = (cart[p.id] || 0) + 1;
+          requiredQty[p.id] = (requiredQty[p.id] || 0) + 1;
+        });
+
+        const sum = products.reduce((acc, p) => acc + getProductPricing(p).final, 0);
+        const discountAmount = Math.max(0, sum - parseMoney(promo.bundlePrice));
+
+        getCartPromotions(cartId)[promoId] = { title: promo.title, discountAmount, requiredQty };
+
+        saveCarts();
+        saveCartPromotions();
+        Object.keys(requiredQty).forEach((pid) => updateUI(pid, cartId));
+        showSnackbar("success", `تمت إضافة "${promo.title}" للسلة`);
+      }
+
+      // ── Mix & Match ── (in-memory selection state, cleared once added to cart)
+      const MIXMATCH_STATE = {};
+      function getMixMatchSelection(promoId) {
+        if (!MIXMATCH_STATE[promoId]) MIXMATCH_STATE[promoId] = {};
+        return MIXMATCH_STATE[promoId];
+      }
+      function getMixMatchCount(promoId) {
+        return Object.values(getMixMatchSelection(promoId)).reduce((a, b) => a + b, 0);
+      }
+
+      function mixMatchCardHtml(promo, delay = 0) {
+        const allProducts = getAllProducts();
+        const candidates = promo.candidateProductIds.map((id) => allProducts.find((p) => p.id === id)).filter(Boolean);
+        const sel = getMixMatchSelection(promo.id);
+        const count = getMixMatchCount(promo.id);
+        const sum = candidates.reduce((acc, p) => acc + (sel[p.id] || 0) * getProductPricing(p).final, 0);
+        const ready = count === promo.pickCount;
+
+        let finalPrice = sum;
+        let label = "";
+        if (promo.priceType === "fixed") {
+          finalPrice = ready ? parseMoney(promo.fixedPrice) : sum;
+          label = `${formatMoney(parseMoney(promo.fixedPrice))} د.ع لأي ${promo.pickCount}`;
+        } else {
+          finalPrice = Math.round(sum * (1 - promo.value / 100));
+          label = `خصم ${promo.value}% عند اختيار ${promo.pickCount}`;
+        }
+
+        return `
+          <div id="mixmatch-card-${promo.id}" class="bg-white rounded-[28px] border border-slate-100 p-4 flex flex-col gap-4 animate-fade-in" style="animation-delay:${delay}s">
+            <div class="flex items-center gap-2">
+              <span class="bg-teal-600 text-white text-[9px] font-black px-2.5 py-1 rounded-lg flex items-center gap-1 shrink-0"><i data-lucide="shuffle" class="w-3 h-3"></i>تجميع مفتوح</span>
+              <h4 class="text-sm font-black text-slate-900 flex-1 truncate">${promo.title}</h4>
+            </div>
+            <p class="text-[11px] font-bold text-slate-400">${label} — اختر ${promo.pickCount} من القائمة${promo.allowRepeat ? " (يمكن تكرار نفس المنتج)" : ""}</p>
+
+            <div class="flex flex-col gap-2">
+              ${candidates
+                .map((p) => {
+                  const qty = sel[p.id] || 0;
+                  return `
+                  <div class="flex items-center gap-3 rounded-2xl border ${qty > 0 ? "border-teal-500/40 bg-teal-500/5" : "border-slate-100"} p-2.5 transition-colors">
+                    <img src="${p.img}" class="w-16 h-16 object-contain rounded-xl bg-white border border-slate-100 shrink-0" alt="${p.name}">
+                    <div class="min-w-0 flex-1">
+                      <span class="text-[12px] font-black text-slate-900 leading-snug line-clamp-2 block">${p.name}</span>
+                      <span class="text-[11px] font-bold text-slate-400 mt-0.5 block">${p.price} د.ع</span>
+                    </div>
+                    <div class="flex items-center gap-1.5 shrink-0">
+                      <button onclick="changeMixMatchQty('${promo.id}','${p.id}',-1)" class="w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center active:scale-90 transition-transform"><i data-lucide="minus" class="w-3.5 h-3.5 text-slate-500"></i></button>
+                      <span class="text-sm font-black w-5 text-center">${qty}</span>
+                      <button onclick="changeMixMatchQty('${promo.id}','${p.id}',1)" class="w-7 h-7 rounded-lg bg-teal-600 flex items-center justify-center active:scale-90 transition-transform"><i data-lucide="plus" class="w-3.5 h-3.5 text-white"></i></button>
+                    </div>
+                  </div>
+                `;
+                })
+                .join("")}
+            </div>
+
+            <div class="flex items-center justify-between pt-3 border-t border-slate-50">
+              <div class="flex flex-col">
+                <span class="text-[10px] font-black ${ready ? "text-teal-600" : "text-slate-400"}">${count}/${promo.pickCount} تم الاختيار</span>
+                <span class="text-base font-black text-slate-900">${formatMoney(finalPrice)} <span class="text-[10px] opacity-60">د.ع</span></span>
+              </div>
+              <button onclick="confirmMixMatch('${promo.id}')" ${ready ? "" : "disabled"} class="text-white text-xs font-black px-5 py-3 rounded-2xl transition-all ${ready ? "bg-teal-600 active:scale-95 shadow-lg shadow-teal-600/20" : "bg-slate-200 cursor-not-allowed"}">أضف للسلة</button>
+            </div>
+          </div>
+        `;
+      }
+
+      function renderMixMatchCard(promoId) {
+        const promo = getPromotionById(promoId);
+        const container = document.getElementById(`mixmatch-card-${promoId}`);
+        if (container && promo) {
+          container.outerHTML = mixMatchCardHtml(promo);
+          lucide.createIcons();
+        }
+      }
+
+      function changeMixMatchQty(promoId, productId, delta) {
+        const promo = getPromotionById(promoId);
+        if (!promo) return;
+        const sel = getMixMatchSelection(promoId);
+        const count = getMixMatchCount(promoId);
+        const current = sel[productId] || 0;
+        const maxPerItem = promo.allowRepeat ? promo.pickCount : 1;
+
+        if (delta > 0) {
+          if (count >= promo.pickCount) {
+            showSnackbar("warning", `يمكنك اختيار ${promo.pickCount} منتجات فقط لهذا العرض`);
+            return;
+          }
+          if (current >= maxPerItem) return;
+          sel[productId] = current + 1;
+        } else {
+          if (current <= 0) return;
+          sel[productId] = current - 1;
+          if (sel[productId] === 0) delete sel[productId];
+        }
+        renderMixMatchCard(promoId);
+      }
+
+      function confirmMixMatch(promoId, cartId = "general") {
+        const promo = getPromotionById(promoId);
+        if (!promo) return;
+        const sel = getMixMatchSelection(promoId);
+        const count = getMixMatchCount(promoId);
+        if (count !== promo.pickCount) {
+          showSnackbar("warning", `يجب اختيار ${promo.pickCount} منتجات بالضبط لإتمام العرض`);
+          return;
+        }
+
+        const allProducts = getAllProducts();
+        const cart = getCart(cartId);
+        const requiredQty = {};
+        let sum = 0;
+        Object.entries(sel).forEach(([pid, qty]) => {
+          const p = allProducts.find((pp) => pp.id === pid);
+          if (!p) return;
+          cart[pid] = (cart[pid] || 0) + qty;
+          requiredQty[pid] = (requiredQty[pid] || 0) + qty;
+          sum += getProductPricing(p).final * qty;
+        });
+
+        const discountAmount =
+          promo.priceType === "fixed"
+            ? Math.max(0, sum - parseMoney(promo.fixedPrice))
+            : Math.round(sum * (promo.value / 100));
+
+        getCartPromotions(cartId)[promo.id] = { title: promo.title, discountAmount, requiredQty };
+
+        saveCarts();
+        saveCartPromotions();
+        MIXMATCH_STATE[promo.id] = {};
+        Object.keys(requiredQty).forEach((pid) => updateUI(pid, cartId));
+        renderMixMatchCard(promo.id);
+        showSnackbar("success", `تمت إضافة "${promo.title}" للسلة`);
       }
 
       // ── Order Again (products from past orders) ──
@@ -2949,6 +3412,19 @@
           } else {
             subDiscountRow.classList.add("hidden");
             subDiscountRow.classList.remove("flex");
+          }
+        }
+
+        const promoDiscountRow = document.getElementById("checkout-promo-discount-row");
+        const promoDiscountText = document.getElementById("checkout-promo-discount");
+        if (promoDiscountRow) {
+          if (pricing.promoDiscountAmount > 0) {
+            promoDiscountRow.classList.remove("hidden");
+            promoDiscountRow.classList.add("flex");
+            if (promoDiscountText) promoDiscountText.innerText = `- ${pricing.promoDiscountAmount.toLocaleString()} د.ع`;
+          } else {
+            promoDiscountRow.classList.add("hidden");
+            promoDiscountRow.classList.remove("flex");
           }
         }
 
@@ -3655,11 +4131,16 @@
         const subcategoriesList = document.getElementById("subcategories-list");
         const categoryTitle = document.getElementById("category-title");
 
+        if (categoryId === "offers") {
+          categoryTitle.innerText = OFFERS_CATEGORY.name;
+          renderOffersTabs("all");
+          renderOffersView("all");
+          switchView("category");
+          return;
+        }
+
         // Find category info
-        const category =
-          categoryId === "offers"
-            ? OFFERS_CATEGORY
-            : APP_DATA.categories.find((c) => c.id === categoryId);
+        const category = APP_DATA.categories.find((c) => c.id === categoryId);
         categoryTitle.innerText = category ? category.name : categoryId;
         renderCategoryBanner(category);
 
@@ -3686,27 +4167,25 @@
         }
 
         // Find products from data.json by categoryId
+        productsContainer.className =
+          "grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 gap-1 lg:gap-3 pb-10";
         let products = [];
-        if (categoryId === "offers") {
-          products = getOfferProducts(null);
-        } else {
+        APP_DATA.sections.forEach((s) => {
+          const matches = s.products.filter((p) => p.categoryId === categoryId);
+          products = [...products, ...matches];
+        });
+
+        // Fallback for search-like behavior if no products found with categoryId
+        if (products.length === 0) {
+          const categoryName = category ? category.name : categoryId;
           APP_DATA.sections.forEach((s) => {
-            const matches = s.products.filter((p) => p.categoryId === categoryId);
+            const matches = s.products.filter(
+              (p) =>
+                p.name.includes(categoryName) ||
+                (p.desc && p.desc.includes(categoryName)),
+            );
             products = [...products, ...matches];
           });
-
-          // Fallback for search-like behavior if no products found with categoryId
-          if (products.length === 0) {
-            const categoryName = category ? category.name : categoryId;
-            APP_DATA.sections.forEach((s) => {
-              const matches = s.products.filter(
-                (p) =>
-                  p.name.includes(categoryName) ||
-                  (p.desc && p.desc.includes(categoryName)),
-              );
-              products = [...products, ...matches];
-            });
-          }
         }
 
         document.getElementById("category-count").innerText =
@@ -3753,32 +4232,28 @@
         const productsContainer = document.getElementById("category-products");
         let products = [];
 
-        if (categoryId === "offers") {
-          products = getOfferProducts(subCategoryId);
-        } else {
+        APP_DATA.sections.forEach((s) => {
+          const matches = s.products.filter((p) => {
+            const matchesCat = p.categoryId === categoryId;
+            const matchesSub =
+              !subCategoryId || p.subCategoryId === subCategoryId;
+            return matchesCat && matchesSub;
+          });
+          products = [...products, ...matches];
+        });
+
+        // Fallback search if still empty (only if no subcategory selected)
+        if (products.length === 0 && !subCategoryId) {
+          const category = APP_DATA.categories.find((c) => c.id === categoryId);
+          const categoryName = category ? category.name : categoryId;
           APP_DATA.sections.forEach((s) => {
-            const matches = s.products.filter((p) => {
-              const matchesCat = p.categoryId === categoryId;
-              const matchesSub =
-                !subCategoryId || p.subCategoryId === subCategoryId;
-              return matchesCat && matchesSub;
-            });
+            const matches = s.products.filter(
+              (p) =>
+                p.name.includes(categoryName) ||
+                (p.desc && p.desc.includes(categoryName)),
+            );
             products = [...products, ...matches];
           });
-
-          // Fallback search if still empty (only if no subcategory selected)
-          if (products.length === 0 && !subCategoryId) {
-            const category = APP_DATA.categories.find((c) => c.id === categoryId);
-            const categoryName = category ? category.name : categoryId;
-            APP_DATA.sections.forEach((s) => {
-              const matches = s.products.filter(
-                (p) =>
-                  p.name.includes(categoryName) ||
-                  (p.desc && p.desc.includes(categoryName)),
-              );
-              products = [...products, ...matches];
-            });
-          }
         }
 
         document.getElementById("category-count").innerText =
@@ -3929,7 +4404,7 @@
               img: "",
             };
             const qty = cart[id];
-            const priceNum = parseInt((p.price || "0").replace(/,/g, ""), 10) || 0;
+            const priceNum = getProductPricing(p).final;
 
             return `
             <div class="bg-white rounded-3xl p-4 flex gap-4 border border-slate-100 animate-fade-in">
@@ -3980,6 +4455,19 @@
           } else {
             discountRow.classList.add("hidden");
             discountRow.classList.remove("flex");
+          }
+        }
+
+        const promoDiscountRow = document.getElementById("cart-promo-discount-row");
+        const promoDiscountEl = document.getElementById("cart-promo-discount");
+        if (promoDiscountRow) {
+          if (pricing.promoDiscountAmount > 0) {
+            promoDiscountRow.classList.remove("hidden");
+            promoDiscountRow.classList.add("flex");
+            if (promoDiscountEl) promoDiscountEl.innerText = `- ${pricing.promoDiscountAmount.toLocaleString()} د.ع`;
+          } else {
+            promoDiscountRow.classList.add("hidden");
+            promoDiscountRow.classList.remove("flex");
           }
         }
 

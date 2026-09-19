@@ -152,7 +152,8 @@
           "desc": "عبوة 1 كغم",
           "fullDesc": "معطر جو منعش يدوم طويلاً، يقضي على الروائح الكريهة ويمنح منزلك عبقاً مميزاً.",
           "price": "4,500",
-          "img": "https://www.elryan.com/img/600/600/resize/catalog/product/6/3/636f74c8a2429e9897d84cc852665ls2-14782.jpg"
+          "img": "https://www.elryan.com/img/600/600/resize/catalog/product/6/3/636f74c8a2429e9897d84cc852665ls2-14782.jpg",
+          "discountAmount": "500"
         },
         {
           "id": "p2",
@@ -190,7 +191,8 @@
           "desc": "1 كغم",
           "fullDesc": "خلاط يدوي قوي ومتعدد الاستخدامات، مثالي لتحضير الشوربات والصلصات.",
           "price": "24,000",
-          "img": "https://www.elryan.com/img/600/600/resize/catalog/product/6/4/64788760807f48007ca9b873755886824-26506.jpg"
+          "img": "https://www.elryan.com/img/600/600/resize/catalog/product/6/4/64788760807f48007ca9b873755886824-26506.jpg",
+          "discountAmount": "3,000"
         },
         {
           "id": "p5",
@@ -525,6 +527,62 @@
           "img": "https://cdn.salla.sa/qQqpAm/3a628b85-8c88-4f5b-a9d3-3a6d6e61e671-1000x1000-WhMWANvkLsGCSU0EwvYZr6TyVnsoXDm97TVjhxQh.jpg"
         }
       ]
+    }
+  ],
+  "promotions": [
+    {
+      "id": "bxgy-1",
+      "type": "buy_x_get_y",
+      "title": "اشترِ 2 تايد واحصل على فيري مجاناً",
+      "buyProductId": "p7",
+      "buyQty": 2,
+      "getProductId": "p9",
+      "getQty": 1,
+      "getDiscountValue": 100
+    },
+    {
+      "id": "bxgy-2",
+      "type": "buy_x_get_y",
+      "title": "اشترِ كيلو لحم غنم واحصل على كبة لحم بنصف السعر",
+      "buyProductId": "p18",
+      "buyQty": 1,
+      "getProductId": "p5",
+      "getQty": 2,
+      "getDiscountValue": 50
+    },
+    {
+      "id": "bundle-1",
+      "type": "bundle",
+      "title": "مجموعة العناية بالمنزل",
+      "productIds": ["p7", "p8", "p9"],
+      "bundlePrice": "16,000"
+    },
+    {
+      "id": "bundle-2",
+      "type": "bundle",
+      "title": "سلة الفطور الصباحي",
+      "productIds": ["p16", "p14", "p3"],
+      "bundlePrice": "4,500"
+    },
+    {
+      "id": "mixmatch-1",
+      "type": "mix_match",
+      "title": "زوّد مؤونة بيتك",
+      "candidateProductIds": ["p10", "p11", "p12", "p6", "p23"],
+      "pickCount": 3,
+      "priceType": "percent",
+      "value": 25,
+      "allowRepeat": false
+    },
+    {
+      "id": "mixmatch-2",
+      "type": "mix_match",
+      "title": "سلة صباحية مفتوحة",
+      "candidateProductIds": ["p16", "p22", "p3", "p14"],
+      "pickCount": 2,
+      "priceType": "fixed",
+      "fixedPrice": "3,000",
+      "allowRepeat": true
     }
   ]
 }

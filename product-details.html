@@ -248,11 +248,14 @@
               class="text-xs font-bold text-slate-400 uppercase tracking-widest"
               >السعر</span
             >
-            <div class="flex items-baseline gap-1">
+            <div class="flex items-baseline gap-1.5">
               <span id="product-price" class="text-xl font-black text-primary"
                 >0,000</span
               >
               <span class="text-sm font-bold text-primary/60">د.ع</span>
+              <span id="product-price-original" class="hidden text-sm font-bold text-slate-300 line-through"
+                >0,000 د.ع</span
+              >
             </div>
           </div>
           <div class="h-10 w-px bg-slate-100 mx-2"></div>
@@ -437,6 +440,28 @@
           localStorage.setItem("carts", JSON.stringify(allCarts));
         }
 
+        // Money helpers — prices are stored as "12,000" strings throughout the app
+        function parseMoney(v) {
+          return parseInt(String(v || "0").replace(/,/g, ""), 10) || 0;
+        }
+        function formatMoney(n) {
+          return Math.round(n).toLocaleString("en-US");
+        }
+
+        // Resolves a product's real charged price after any direct discount
+        // (percent via p.discount, or fixed amount via p.discountAmount).
+        function getProductPricing(p) {
+          const original = parseMoney(p.price);
+          let final = original;
+          if (p.discount) {
+            const pct = parseInt(String(p.discount).replace("%", ""), 10) || 0;
+            final = original - Math.round(original * (pct / 100));
+          } else if (p.discountAmount) {
+            final = Math.max(0, original - parseMoney(p.discountAmount));
+          }
+          return { original, final, hasDiscount: final < original };
+        }
+
         // Snackbar Configuration
         const SNACKBAR_CONFIG = {
           success: {
@@ -551,8 +576,14 @@
             if (currentProduct) {
               document.getElementById("product-name").innerText =
                 currentProduct.name;
+              const pricing = getProductPricing(currentProduct);
               document.getElementById("product-price").innerText =
-                currentProduct.price;
+                formatMoney(pricing.final);
+              const originalPriceEl = document.getElementById("product-price-original");
+              if (originalPriceEl) {
+                originalPriceEl.classList.toggle("hidden", !pricing.hasDiscount);
+                originalPriceEl.innerText = `${formatMoney(pricing.original)} د.ع`;
+              }
               document.getElementById("product-desc").innerText =
                 currentProduct.fullDesc || currentProduct.desc;
               document.getElementById("product-cat").innerText =
@@ -622,8 +653,7 @@
               const p = allProducts.find((item) => item.id === id) || {
                 price: "0",
               };
-              const priceNum = parseInt(p.price.replace(/,/g, ""));
-              subtotal += priceNum * cart[id];
+              subtotal += getProductPricing(p).final * cart[id];
             });
 
             document.getElementById("floating-cart-count").innerText =
@@ -872,10 +902,16 @@
           }
 
           container.innerHTML = similar
-            .map(
-              (p, i) => `
+            .map((p, i) => {
+              const pricing = getProductPricing(p);
+              const discountBadge = p.discount
+                ? `خصم ${p.discount}`
+                : p.discountAmount
+                  ? `خصم ${p.discountAmount} د.ع`
+                  : "";
+              return `
             <div class="product-card product-card-horizontal lg:w-full bg-transparent rounded-[28px] shrink-0 lg:shrink relative animate-fade-in flex flex-col" style="animation-delay: ${i * 0.1}s">
-              ${p.discount ? `<div class="absolute top-2.5 right-2.5 z-10"><span class="bg-secondary text-white text-[9px] font-black px-2 py-1 rounded-lg">خصم ${p.discount}</span></div>` : ""}
+              ${discountBadge ? `<div class="absolute top-2.5 right-2.5 z-10"><span class="bg-secondary text-white text-[9px] font-black px-2 py-1 rounded-lg">${discountBadge}</span></div>` : ""}
               <button onclick="event.stopPropagation(); toggleLikeId('${p.id}')" data-id="${p.id}" class="like-btn absolute top-2.5 left-2.5 z-20 w-8 h-8 glass rounded-full flex items-center justify-center transition-all active:scale-90">
                 <i data-lucide="heart" class="w-4 h-4 ${likes[p.id] ? "text-red-500 fill-red-500" : "text-slate-400"}"></i>
               </button>
@@ -902,13 +938,14 @@
               <div class="px-3 pb-3 flex-1 flex flex-col">
                 <h4 onclick="window.location.href='${detailHref(p.id)}'" class="text-[10px] lg:text-[12px] text-slate-900 truncate mb-1 cursor-pointer hover:text-primary transition-colors">${p.name}</h4>
                 <p class="text-[10px] text-slate-400 mb-2">${p.desc || "وحدة واحدة"}</p>
-                <div class="">
-                  <span class="text-sm text-slate-900">${p.price} <span class="text-[10px] opacity-40 font-bold">د.ع</span></span>
+                <div class="flex items-baseline gap-1.5">
+                  <span class="text-sm ${pricing.hasDiscount ? "text-secondary font-black" : "text-slate-900"}">${formatMoney(pricing.final)} <span class="text-[10px] opacity-40 font-bold">د.ع</span></span>
+                  ${pricing.hasDiscount ? `<span class="text-[10px] font-bold text-slate-300 line-through">${formatMoney(pricing.original)}</span>` : ""}
                 </div>
               </div>
             </div>
-          `,
-            )
+          `;
+            })
             .join("");
         }
 
