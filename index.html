@@ -119,28 +119,28 @@
       }
 
       .banner-card {
-        min-width: 90%;
-        height: 180px;
+        min-width: 100%;
+        height: 150px;
       }
 
       @media (min-width: 1024px) {
         .banner-card {
           min-width: 0;
           flex: 1;
-          height: 240px;
+          height: 200px;
         }
       }
 
       .promo-card {
-        min-width: 30%;
-        height: 150px;
+        min-width: 32%;
+        aspect-ratio: 5.5 / 7;
+        height: auto;
       }
 
       @media (min-width: 1024px) {
         .promo-card {
           min-width: 0;
           flex: 1;
-          height: 250px;
         }
       }
 
@@ -337,7 +337,7 @@
           >
             <!-- Banner 1: Fresh Food -->
             <div
-              class="banner-card relative rounded-[32px] overflow-hidden bg-[#0A2E2A] shrink-0 lg:shrink animate-fade-in"
+              class="banner-card relative rounded-[15px] overflow-hidden bg-[#0A2E2A] shrink-0 lg:shrink animate-fade-in"
             >
               <img
                 src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=800"
@@ -366,7 +366,7 @@
             </div>
             <!-- Banner 2: Electronics -->
             <div
-              class="banner-card relative rounded-[32px] overflow-hidden bg-slate-900 shrink-0 lg:shrink animate-fade-in"
+              class="banner-card relative rounded-[15px] overflow-hidden bg-slate-900 shrink-0 lg:shrink animate-fade-in"
               style="animation-delay: 0.1s"
             >
               <img
@@ -438,7 +438,7 @@
           style="animation-delay: 0.4s"
         >
           <div
-            class="relative h-32 lg:h-96 rounded-[32px] overflow-hidden bg-gradient-to-br from-emerald-900 to-primary"
+            class="relative h-32 lg:h-96 rounded-[15px] overflow-hidden bg-gradient-to-br from-emerald-900 to-primary"
           >
             <img
               src="images/banner1.png"
@@ -560,69 +560,13 @@
           </div>
         </header>
 
-        <!-- Category Banners -->
-        <section class="mb-6 -mx-5">
+        <!-- Category Banner (Populated by JS: renderCategoryBanner) -->
+        <section id="category-banner-section" class="mb-6 -mx-5 hidden">
           <div
-            class="flex lg:grid lg:grid-cols-2 overflow-x-auto px-5 gap-4 hide-scrollbar"
+            id="category-banner"
+            class="flex overflow-x-auto px-5 gap-4 hide-scrollbar"
           >
-            <div
-              class="banner-card relative rounded-[32px] overflow-hidden bg-[#0A2E2A] shrink-0 lg:shrink animate-fade-in"
-            >
-              <img
-                src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=800"
-                class="absolute inset-0 w-full h-full object-cover opacity-60"
-                alt="Fresh Food"
-              />
-              <div
-                class="absolute inset-0 bg-gradient-to-l from-black/40 via-transparent to-transparent"
-              ></div>
-              <div
-                class="relative h-full p-7 flex flex-col justify-center text-white"
-              >
-                <span
-                  class="bg-secondary text-white px-3 py-1 rounded-lg text-[10px] font-black w-fit mb-3"
-                  >عروض نهاية الأسبوع</span
-                >
-                <h2 class="text-lg font-black leading-tight mb-4">
-                  قسم الخضروات<br />خصم يصل إلى 40%
-                </h2>
-                <button
-                  class="bg-white text-primary w-fit px-6 py-2.5 rounded-xl font-bold text-sm shadow-xl active:scale-95 transition-transform"
-                >
-                  تسوق الآن
-                </button>
-              </div>
-            </div>
-            <div
-              class="banner-card relative rounded-[32px] overflow-hidden bg-slate-900 shrink-0 lg:shrink animate-fade-in"
-              style="animation-delay: 0.1s"
-            >
-              <img
-                src="https://images.unsplash.com/photo-1498049794561-7780e7231661?auto=format&fit=crop&q=80&w=800"
-                class="absolute inset-0 w-full h-full object-cover opacity-50"
-                alt="Electronics"
-              />
-              <div
-                class="relative h-full p-7 flex flex-col justify-center text-white"
-              >
-                <span
-                  class="bg-primary text-white px-3 py-1 rounded-lg text-[10px] font-black w-fit mb-3"
-                  >جديد الهايبر ماركت</span
-                >
-                <h2 class="text-lg font-black leading-tight mb-4">
-                  أحدث الأجهزة<br />الكهربائية والذكية
-                </h2>
-                <button
-                  class="bg-secondary text-white w-fit px-6 py-2.5 rounded-xl font-bold text-sm shadow-xl active:scale-95 transition-transform"
-                >
-                  تصفح الأجهزة
-                </button>
-              </div>
-            </div>
-          </div>
-          <div class="flex justify-center gap-1.5 mt-5">
-            <div class="w-6 h-1.5 bg-primary rounded-full"></div>
-            <div class="w-1.5 h-1.5 bg-slate-200 rounded-full"></div>
+            <!-- Populated by JS -->
           </div>
         </section>
 
@@ -3665,6 +3609,51 @@
         lucide.createIcons();
       }
 
+      // ── Category Banner (top of category page, styled like the home hero banner) ──
+      function renderCategoryBanner(category) {
+        const section = document.getElementById("category-banner-section");
+        const container = document.getElementById("category-banner");
+        if (!section || !container) return;
+
+        if (!category) {
+          section.classList.add("hidden");
+          container.innerHTML = "";
+          return;
+        }
+
+        const img =
+          category.img ||
+          "https://images.unsplash.com/photo-1607082350899-7e105aa886ae?auto=format&fit=crop&q=80&w=1200";
+        const badgeColor =
+          category.color === "secondary"
+            ? "bg-secondary"
+            : category.color === "primary"
+              ? "bg-primary"
+              : `bg-${category.color}-500`;
+
+        container.innerHTML = `
+          <div class="banner-card relative rounded-[32px] overflow-hidden bg-slate-900 shrink-0 animate-fade-in">
+            <img
+              src="${img}"
+              class="absolute inset-0 w-full h-full object-cover opacity-60"
+              alt="${category.name}"
+            />
+            <div class="absolute inset-0 bg-gradient-to-l from-black/50 via-black/10 to-transparent"></div>
+            <div class="relative h-full p-6 flex flex-col justify-center text-white">
+              <span class="${badgeColor} text-white px-3 py-1 rounded-lg text-[10px] font-black w-fit mb-2">عروض القسم</span>
+              <h2 class="text-lg font-black leading-tight mb-3">تسوق ${category.name}<br />بأفضل الأسعار</h2>
+              <button
+                onclick="document.getElementById('category-products').scrollIntoView({behavior:'smooth'})"
+                class="bg-white text-primary w-fit px-5 py-2 rounded-xl font-bold text-sm shadow-xl active:scale-95 transition-transform"
+              >
+                تسوق الآن
+              </button>
+            </div>
+          </div>
+        `;
+        section.classList.remove("hidden");
+      }
+
       function showCategory(categoryId) {
         const productsContainer = document.getElementById("category-products");
         const subcategoriesList = document.getElementById("subcategories-list");
@@ -3676,6 +3665,7 @@
             ? OFFERS_CATEGORY
             : APP_DATA.categories.find((c) => c.id === categoryId);
         categoryTitle.innerText = category ? category.name : categoryId;
+        renderCategoryBanner(category);
 
         // Render Subcategories
         if (
